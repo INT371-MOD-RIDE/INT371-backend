@@ -8,7 +8,7 @@
         <version>2.6.7</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>sit.int221</groupId>
+    <groupId>sit.int371</groupId>
     <artifactId>oasip-service</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>oasip-service</name>
