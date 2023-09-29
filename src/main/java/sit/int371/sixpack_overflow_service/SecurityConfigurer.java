@@ -68,7 +68,9 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 //public endpoints
                 .antMatchers(HttpMethod.POST,"/api/login").permitAll()
-                .antMatchers(HttpMethod.GET,"/api/event-categories/**").permitAll()
+                .antMatchers(HttpMethod.GET,"/api/").permitAll()
+                // ทดสอบ roles
+                .antMatchers(HttpMethod.GET,"/api/roles/**").permitAll()
 
                 //filter menu
                 .antMatchers(HttpMethod.GET,"/api/events/getByEventCategories/{eventCategoryId}").hasAnyAuthority("admin","lecturer","student")

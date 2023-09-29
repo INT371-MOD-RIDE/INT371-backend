@@ -1,4 +1,4 @@
-package sit.int371.sixpack_overflow_service.bean;
+package sit.int371.sixpack_overflow_service.beans;
 
 import lombok.*;
 
@@ -8,5 +8,4 @@ public class RolesBean {
     private String role_name;
     private String created_on;
     private String updated_on;
-    
 }
