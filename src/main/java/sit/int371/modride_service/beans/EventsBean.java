@@ -16,6 +16,7 @@ public class EventsBean {
     private String start_point;
     private String dest_point;
     private String departure_time;
+    private Integer vehicle_id;
     private Integer seats;
     private Integer costs;
     // private Integer status;

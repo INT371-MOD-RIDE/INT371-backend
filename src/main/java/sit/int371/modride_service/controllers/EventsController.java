@@ -131,6 +131,7 @@ public class EventsController extends BaseController {
             params.put("start_point", data.get("start_point"));
             params.put("dest_point", data.get("dest_point"));
             params.put("departure_time", data.get("departure_time"));
+            params.put("vehicle_id", data.get("vehicle_id"));
             params.put("seats", data.get("seats"));
             params.put("costs", data.get("costs"));
             eventsRepository.editEvents(params);

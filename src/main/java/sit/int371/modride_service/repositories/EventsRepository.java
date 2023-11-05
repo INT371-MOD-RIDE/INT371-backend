@@ -40,8 +40,8 @@ public interface EventsRepository {
     public List<EventDetailBean> getEventsById(HashMap<String, Object> event_id) throws Exception;
 
     @Insert({
-        " INSERT INTO events(user_id,event_name,event_detail,start_point,dest_point,departure_time,seats,costs,status,create_date,update_date) ",
-        " VALUES(#{user_id},#{event_name},#{event_detail},#{start_point},#{dest_point},#{departure_time},#{seats},#{costs},1,sysdate(),sysdate())"
+        " INSERT INTO events(user_id,vehicle_id,event_name,event_detail,start_point,dest_point,departure_time,seats,costs,status,create_date,update_date) ",
+        " VALUES(#{user_id},#{vehicle_id},#{event_name},#{event_detail},#{start_point},#{dest_point},#{departure_time},#{seats},#{costs},1,sysdate(),sysdate())"
     })
     @Options(useGeneratedKeys = true, keyColumn = "event_id", keyProperty = "event_id")
     public void createEvents(EventsBean eventsBean) throws Exception;
@@ -49,6 +49,7 @@ public interface EventsRepository {
     @Update({
         " UPDATE events SET ",
         " event_name = #{event_name}, ",
+        " vehicle_id = #{vehicle_id}, ",
         " event_detail = #{event_detail}, ",
         " start_point = #{start_point}, ",
         " dest_point = #{dest_point}, ",
