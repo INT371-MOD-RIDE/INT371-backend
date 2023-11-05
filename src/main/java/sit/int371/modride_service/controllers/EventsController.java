@@ -1,4 +1,3 @@
-// เก่าแล้ว อันนี้ไม่ใช้
 package sit.int371.modride_service.controllers;
 
 import java.util.HashMap;
