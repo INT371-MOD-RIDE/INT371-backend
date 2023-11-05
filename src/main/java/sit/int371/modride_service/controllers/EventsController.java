@@ -1,18 +1,28 @@
 // เก่าแล้ว อันนี้ไม่ใช้
 package sit.int371.modride_service.controllers;
 
+import java.util.HashMap;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.method.P;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.azure.core.annotation.Delete;
+import com.azure.core.annotation.Post;
+
 import sit.int371.modride_service.beans.APIResponseBean;
+import sit.int371.modride_service.beans.EventDetailBean;
 import sit.int371.modride_service.beans.EventsBean;
 import sit.int371.modride_service.beans.FriendsBean;
 import sit.int371.modride_service.beans.MutualFriendBean;
@@ -65,6 +75,99 @@ public class EventsController extends BaseController {
                 }
             }
             res.setData(eventList);
+        } catch (Exception e) {
+            this.checkException(e, res);
+        }
+        return res;
+    }
+
+    @GetMapping("/get/{id}")
+    public APIResponseBean getEventsById(HttpServletRequest request, 
+    @PathVariable Integer id) {
+        APIResponseBean res = new APIResponseBean();
+        HashMap<String, Object> params = new HashMap<>();
+        params.put("event_id", id);
+        try {
+            List<EventDetailBean> eventsBean = eventsRepository.getEventsById(params);
+            res.setData(eventsBean);
+        } catch (Exception e) {
+            this.checkException(e, res);
+        }
+        return res;
+    }
+
+    @PostMapping("/post")
+    public APIResponseBean createEvents(HttpServletRequest request, 
+    @RequestBody EventsBean bean) {
+        APIResponseBean res = new APIResponseBean();
+        // HashMap<String, Object> params = new HashMap<>();
+        try {
+            // params.put("user_id", data.get("user_id"));
+            // params.put("event_name", data.get("event_name"));
+            // params.put("event_detail", data.get("event_detail"));
+            // params.put("start_point", data.get("start_point"));
+            // params.put("dest_point", data.get("dest_point"));
+            // params.put("departure_time", data.get("departure_time"));
+            // params.put("seats", data.get("seats"));
+            // params.put("costs", data.get("costs"));
+            eventsRepository.createEvents(bean);
+            res.setData(bean);
+        } catch (Exception e) {
+            this.checkException(e, res);
+        }
+        return res;
+    }
+
+    @PutMapping("/edit/{id}")
+    public APIResponseBean editEvents(HttpServletRequest request,@PathVariable Integer id,
+    @RequestBody HashMap<String, Object> data)
+    {
+        APIResponseBean res = new APIResponseBean();
+        HashMap<String, Object> params = new HashMap<>();
+        try {
+            params.put("event_id", id);
+            params.put("event_name", data.get("event_name"));
+            params.put("event_detail", data.get("event_detail"));
+            params.put("start_point", data.get("start_point"));
+            params.put("dest_point", data.get("dest_point"));
+            params.put("departure_time", data.get("departure_time"));
+            params.put("seats", data.get("seats"));
+            params.put("costs", data.get("costs"));
+            eventsRepository.editEvents(params);
+            res.setData(params);
+        } catch (Exception e) {
+            this.checkException(e, res);
+        }
+        return res;
+    }
+    @PutMapping("/updateStatus/{id}")
+    public APIResponseBean closeEvents(HttpServletRequest request,@PathVariable Integer id,
+    @RequestBody HashMap<String, Object> data)
+    {
+        APIResponseBean res = new APIResponseBean();
+        HashMap<String, Object> params = new HashMap<>();
+        try {
+            params.put("event_id", id);
+            params.put("status", data.get("status"));
+            eventsRepository.editEventsStatus(params);
+            res.setData(params);
+        } catch (Exception e) {
+            this.checkException(e, res);
+        }
+        return res;
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public APIResponseBean deleteEvents(HttpServletRequest request,@PathVariable Integer id)
+    {
+        APIResponseBean res = new APIResponseBean();
+        HashMap<String, Object> params = new HashMap<>();
+        try {
+            params.put("event_id", id);
+            eventsRepository.deleteEvents(params);
+            // res.setData(params);
+            res.setResponse_code("200");
+            res.setResponse_desc("Delete Success");
         } catch (Exception e) {
             this.checkException(e, res);
         }
