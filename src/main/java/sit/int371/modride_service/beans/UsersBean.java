@@ -1,7 +1,5 @@
 package sit.int371.modride_service.beans;
 
-import org.hibernate.mapping.List;
-
 import lombok.*;
 
 @Data
@@ -13,6 +11,7 @@ public class UsersBean {
     private String lastname;
     private String tel;
     private String profile_img_path;
-    private List roles;
+    private String fac_name;
+    private String branch;
 
 }

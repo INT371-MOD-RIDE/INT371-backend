@@ -31,7 +31,7 @@ import java.util.HashMap;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/api/v1/users")
+@RequestMapping("/api/v1/users")
 public class UsersController extends BaseController {
     @Autowired
     private UserService userService;
@@ -77,7 +77,20 @@ public class UsersController extends BaseController {
         return res;
     }
 
-    // add new user
+    // createAccount
+    @PostMapping("/sign-up")
+    public APIResponseBean createAccount(HttpServletRequest request, @RequestBody UsersBean usersBean) {
+        APIResponseBean res = new APIResponseBean();
+        try {
+            System.out.println("?test");
+            usersRepository.createAccount(usersBean);
+            System.out.println("user-bean: " + usersBean);
+            res.setData(usersBean);
+        } catch (Exception e) {
+            this.checkException(e, res);
+        }
+        return res;
+    }
 
     // edit user
 

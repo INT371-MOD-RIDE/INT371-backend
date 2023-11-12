@@ -11,11 +11,22 @@ import org.apache.ibatis.annotations.Update;
 
 import sit.int371.modride_service.beans.FriendsBean;
 import sit.int371.modride_service.beans.MutualFriendBean;
+import sit.int371.modride_service.beans.UsersBean;
 
 @Mapper
 public interface FriendsRepository {
 
+        // หน้าการแนะนำเพื่อน (เด่วค่อยมาปรับ)
         // ---ใช้งานสำหรับ events-----------------------------------------
+        @Select({
+                        " select u.user_id,f.faculty_id,u.email,u.firstname,u.lastname, ",
+                        " u.tel,u.profile_img_path,f.fac_name,f.branch from users u inner join faculties f  ",
+                        " on u.faculty_id = f.faculty_id ",
+                        " order by f.fac_name = 'เทคโนโลยีสารสนเทศ' desc, f.fac_name asc, ",
+                        " f.branch = 'สาขาวิชาเทคโนโลยีสารสนเทศ (IT)' desc, f.branch asc, ",
+                        " u.firstname asc ",
+        })
+        public List<UsersBean> friendListSuggestion(HashMap<String, Object> params) throws Exception;
 
         // friendships-in-event
         // -- check ว่า driver เป็นเพื่อนกับเราหรือไม่
