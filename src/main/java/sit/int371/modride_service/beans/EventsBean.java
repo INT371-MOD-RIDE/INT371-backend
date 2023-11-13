@@ -22,6 +22,12 @@ public class EventsBean {
     // private Integer status;
     private String create_date;
     private String update_date;
+    private String fullname;
+    private String tel;
+    private String profile_img_path;
+    private String rate;
+    private String total;
+    private String fac_name;    
     // check is it friend-together
     private Boolean isThisFriend;
     // list for friendship
