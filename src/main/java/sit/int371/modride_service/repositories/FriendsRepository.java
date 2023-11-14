@@ -17,7 +17,6 @@ import sit.int371.modride_service.beans.UsersBean;
 public interface FriendsRepository {
 
         // หน้าการแนะนำเพื่อน (เด่วค่อยมาปรับ)
-        // ---ใช้งานสำหรับ events-----------------------------------------
         @Select({
                         " select u.user_id,f.faculty_id,u.email,u.firstname,u.lastname, ",
                         " u.tel,u.profile_img_path,f.fac_name,f.branch from users u inner join faculties f  ",
@@ -69,7 +68,7 @@ public interface FriendsRepository {
                         " insert into friendships(user_id,friend_id,friend_status) ",
                         " values(#{user_id},#{friend_id},#{friend_status}) "
         })
-        public void createFriendship(HashMap<String, Object> params) throws Exception;
+        public void createFriendship(FriendsBean bean) throws Exception;
 
         // update friendships to "accepted"
         @Update({

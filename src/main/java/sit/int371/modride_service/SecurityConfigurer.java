@@ -66,16 +66,24 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable()
                 .authorizeRequests()
+                // socialNetwork
+                .antMatchers(HttpMethod.GET, "/api/v1/socialNetwork/**").permitAll()
+                .antMatchers(HttpMethod.POST, "/api/v1/socialNetwork/**").permitAll()
+                .antMatchers(HttpMethod.DELETE, "/api/v1/socialNetwork/**").permitAll()
+                .antMatchers(HttpMethod.PUT, "/api/v1/socialNetwork/**").permitAll()
+                .antMatchers(HttpMethod.OPTIONS, "/api/v1/socialNetwork/**").permitAll()
                 // users
                 .antMatchers(HttpMethod.GET, "/api/v1/users/**").permitAll()
                 .antMatchers(HttpMethod.POST, "/api/v1/users/**").permitAll()
                 .antMatchers(HttpMethod.DELETE, "/api/v1/users/**").permitAll()
                 .antMatchers(HttpMethod.PUT, "/api/v1/users/**").permitAll()
+                .antMatchers(HttpMethod.OPTIONS, "/api/v1/users/**").permitAll()
                 // events
                 .antMatchers(HttpMethod.GET, "/api/v1/events/**").permitAll()
                 .antMatchers(HttpMethod.POST, "/api/v1/events/**").permitAll()
                 .antMatchers(HttpMethod.DELETE, "/api/v1/events/**").permitAll()
                 .antMatchers(HttpMethod.PUT, "/api/v1/events/**").permitAll()
+                .antMatchers(HttpMethod.OPTIONS, "/api/v1/events/**").permitAll()
 
                 // public endpoints
                 .antMatchers(HttpMethod.POST, "/api/login").permitAll()

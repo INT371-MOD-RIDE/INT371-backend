@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import sit.int371.modride_service.beans.APIResponseBean;
+import sit.int371.modride_service.beans.FacultiesBean;
 import sit.int371.modride_service.beans.RolesBean;
 import sit.int371.modride_service.beans.UsersBean;
 //import sit.int371.modride_service.dtos.NewUserDTO;
@@ -76,6 +77,20 @@ public class UsersController extends BaseController {
         }
         return res;
     }
+
+    // Get faculties
+    @GetMapping("/getFaculties")
+    public APIResponseBean getFaculties(HttpServletRequest request) {
+        APIResponseBean res = new APIResponseBean();
+        try {
+            List<FacultiesBean> faculties = usersRepository.getFaculties();
+            res.setData(faculties);
+        } catch (Exception e) {
+            this.checkException(e, res);
+        }
+        return res;
+    }
+
 
     // createAccount
     @PostMapping("/sign-up")
