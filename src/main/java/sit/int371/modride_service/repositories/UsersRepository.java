@@ -8,6 +8,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Select;
 
+import sit.int371.modride_service.beans.BranchesBean;
 import sit.int371.modride_service.beans.FacultiesBean;
 import sit.int371.modride_service.beans.UsersBean;
 
@@ -33,9 +34,14 @@ public interface UsersRepository {
         public List<String> getRolesById(HashMap<String, Object> params) throws Exception;
         
         @Select({
-                " select faculty_id,fac_name,branch from faculties "
+                " select faculty_id,faculty_name from faculties; "
         })
         public List<FacultiesBean> getFaculties() throws Exception;
+
+        @Select({
+                " select branch_id,faculty_id,branch_name from branches "
+        })
+        public List<BranchesBean> getBranches() throws Exception;
 
         // sign-up users account
         @Insert({

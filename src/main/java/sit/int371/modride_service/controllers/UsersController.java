@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import sit.int371.modride_service.beans.APIResponseBean;
+import sit.int371.modride_service.beans.BranchesBean;
 import sit.int371.modride_service.beans.FacultiesBean;
 import sit.int371.modride_service.beans.RolesBean;
 import sit.int371.modride_service.beans.UsersBean;
@@ -85,6 +86,19 @@ public class UsersController extends BaseController {
         try {
             List<FacultiesBean> faculties = usersRepository.getFaculties();
             res.setData(faculties);
+        } catch (Exception e) {
+            this.checkException(e, res);
+        }
+        return res;
+    }
+
+    // Get branches
+    @GetMapping("/getBranches")
+    public APIResponseBean getBranches(HttpServletRequest request) {
+        APIResponseBean res = new APIResponseBean();
+        try {
+            List<BranchesBean> branches = usersRepository.getBranches();
+            res.setData(branches);
         } catch (Exception e) {
             this.checkException(e, res);
         }

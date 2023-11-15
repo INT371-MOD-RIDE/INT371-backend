@@ -5,7 +5,8 @@ import org.hibernate.mapping.List;
 import lombok.*;
 
 @Data
-public class FacultiesBean {
+public class BranchesBean {
+    private Integer branch_id;
     private Integer faculty_id;
-    private String faculty_name;
+    private String branch_name;
 }
