@@ -16,14 +16,19 @@ import sit.int371.modride_service.beans.UsersBean;
 @Mapper
 public interface FriendsRepository {
 
-        // หน้าการแนะนำเพื่อน (เด่วค่อยมาปรับ)
+        // หน้าการแนะนำเพื่อน -- query clear ✅
         @Select({
                         " select u.user_id,f.faculty_id,u.email,u.firstname,u.lastname, ",
-                        " u.tel,u.profile_img_path,f.fac_name,f.branch from users u inner join faculties f  ",
-                        " on u.faculty_id = f.faculty_id ",
-                        " order by f.fac_name = 'เทคโนโลยีสารสนเทศ' desc, f.fac_name asc, ",
-                        " f.branch = 'สาขาวิชาเทคโนโลยีสารสนเทศ (IT)' desc, f.branch asc, ",
-                        " u.firstname asc ",
+                        " u.tel,u.profile_img_path,f.faculty_name,b.branch_name, ",
+                        " fs.user_id as my_id,fs.friend_id,fs.friend_status ",
+                        " from users u  ",
+                        " inner join branches b on u.branch_id = b.branch_id ",
+                        " inner join faculties f on b.faculty_id = f.faculty_id ",
+                        " left join friendships fs  ",
+                        " 	on (u.user_id = fs.friend_id and fs.user_id = #{user_id}) ",
+                        " where u.user_id != #{user_id} ",
+                        " order by b.branch_name = #{branch_name} desc, b.branch_name asc, ",
+                        " f.faculty_name = #{faculty_name} desc, f.faculty_name asc, u.firstname asc ",
         })
         public List<UsersBean> friendListSuggestion(HashMap<String, Object> params) throws Exception;
 
@@ -80,8 +85,8 @@ public interface FriendsRepository {
         // delete friendships when "rejected"
         @Delete({
                         " delete from friendships ",
-                        " where (user_id = #{user_id} and friend_id = #{friend_id}) or (user_id = #{friend_id} and friend_id = #{user_id}) "
+                        " where user_id = #{user_id} and friend_id = #{friend_id} "
         })
-        public void deleteFriendship(HashMap<String, Object> params) throws Exception;
+        public void cancelFriend(FriendsBean bean) throws Exception;
 
 }

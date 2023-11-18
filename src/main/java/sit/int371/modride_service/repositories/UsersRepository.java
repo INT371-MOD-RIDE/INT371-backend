@@ -14,14 +14,15 @@ import sit.int371.modride_service.beans.UsersBean;
 
 @Mapper
 public interface UsersRepository {
-        @Select("SELECT u.user_id,u.faculty_id,u.email,u.firstname,u.lastname FROM users u")
+        @Select("SELECT u.user_id,u.branch_id,u.email,u.firstname,u.lastname FROM users u")
         public List<UsersBean> getAllUsers() throws Exception;
 
         @Select({
-                        " select u.email,u.firstname,u.lastname,u.tel,u.profile_img_path, ",
-                        " f.fac_name,f.branch from users u ",
-                        " inner join faculties f on f.faculty_id = u.faculty_id ",
-                        " where u.user_id = #{user_id} "
+                " select u.user_id,u.email,u.firstname,u.lastname,u.tel,u.profile_img_path,  ",
+                " f.faculty_name,b.branch_name from users u  ",
+                " inner join branches b on u.branch_id = b.branch_id ",
+                " inner join faculties f on b.faculty_id = f.faculty_id  ",
+                " where u.user_id = #{user_id} ",
         })
         public HashMap<String, Object> getUserById(HashMap<String, Object> params) throws Exception;
 
@@ -45,8 +46,8 @@ public interface UsersRepository {
 
         // sign-up users account
         @Insert({
-                " insert into users(faculty_id,email,firstname,lastname,tel,profile_img_path) ",
-                " values(#{faculty_id},#{email},#{firstname},#{lastname},#{tel},#{profile_img_path}) ",
+                " insert into users(branch_id,email,firstname,lastname,tel,profile_img_path) ",
+                " values(#{branch_id},#{email},#{firstname},#{lastname},#{tel},#{profile_img_path}) ",
         })
         @Options(useGeneratedKeys = true, keyColumn = "user_id", keyProperty = "user_id")
         public void createAccount(UsersBean bean) throws Exception;

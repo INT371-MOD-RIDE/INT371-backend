@@ -111,10 +111,12 @@ public class UsersController extends BaseController {
     public APIResponseBean createAccount(HttpServletRequest request, @RequestBody UsersBean usersBean) {
         APIResponseBean res = new APIResponseBean();
         try {
-            System.out.println("?test");
             usersRepository.createAccount(usersBean);
             System.out.println("user-bean: " + usersBean);
-            res.setData(usersBean);
+            HashMap<String, Object> params = new HashMap<>();
+            params.put("user_id", usersBean.getUser_id());
+            HashMap<String, Object> userDetail = usersRepository.getUserById(params);
+            res.setData(userDetail);
         } catch (Exception e) {
             this.checkException(e, res);
         }
