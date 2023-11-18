@@ -17,10 +17,19 @@ import sit.int371.modride_service.beans.UsersBean;
 @Mapper
 public interface EventsRepository {
     @Select({
-            " SELECT event_id,user_id,event_name,event_detail, ",
-            " start_point,dest_point,departure_time,seats,costs,create_date,update_date FROM events ",
+            // " SELECT event_id,user_id,event_name,event_detail, ",
+            // " start_point,dest_point,departure_time,seats,costs,create_date,update_date FROM events ",
+            // " where status = 1 ",
+            // " order by create_date desc ",
+            " SELECT e.event_id,e.user_id,e.event_name,e.event_detail, ",
+            " e.start_point,e.dest_point,e.departure_time,e.seats,e.costs,e.create_date,e.update_date ",
+            " ,concat(u.firstname, ' ', u.lastname) as fullname,u.profile_img_path,r.rate,r.total,f.fac_name ",
+            " FROM events e ",
+            " left join users u on e.user_id = u.user_id ",
+            " left join ratings r on e.user_id = r.user_id ",
+            " left join faculties f on u.faculty_id = f.faculty_id ",
             " where status = 1 ",
-            " order by create_date desc ",
+            " order by create_date desc ; "
     })
 
     public List<EventsBean> getAllEvents() throws Exception;
