@@ -1,5 +1,7 @@
 package sit.int371.modride_service.beans;
 
+import java.util.List;
+
 import lombok.*;
 
 @Data
@@ -16,6 +18,7 @@ public class UsersBean {
     private Integer my_id;
     private Integer friend_id;
     private String friend_status;
+    private List<RolesBean> roles;
 
 
 }

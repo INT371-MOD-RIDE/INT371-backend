@@ -18,7 +18,7 @@ public interface UsersRepository {
         public List<UsersBean> getAllUsers() throws Exception;
 
         @Select({
-                " select u.user_id,u.email,u.firstname,u.lastname,u.tel,u.profile_img_path,  ",
+                " select u.user_id,u.email,u.firstname,u.lastname,concat(u.firstname, ' ', u.lastname) as fullname,u.tel,u.profile_img_path,  ",
                 " f.faculty_name,b.branch_name from users u  ",
                 " inner join branches b on u.branch_id = b.branch_id ",
                 " inner join faculties f on b.faculty_id = f.faculty_id  ",
@@ -51,4 +51,11 @@ public interface UsersRepository {
         })
         @Options(useGeneratedKeys = true, keyColumn = "user_id", keyProperty = "user_id")
         public void createAccount(UsersBean bean) throws Exception;
+
+        // add role of user from create-account
+        @Insert({
+                " insert into user_role(user_id,role_id) ",
+                " values(#{user_id},#{role_id}) ",
+        })
+        public void addRoleForUser(HashMap<String, Object> params) throws Exception;
 }

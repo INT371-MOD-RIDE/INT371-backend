@@ -40,6 +40,10 @@ public class UsersController extends BaseController {
     @Autowired
     private UsersRepository usersRepository;
 
+    private Integer passengerId = 1;
+    private Integer driverId = 2;
+    private Integer adminId = 3;
+
     // private OldOldUserRepository oldOldUserRepository;
 
     // @Autowired
@@ -105,7 +109,6 @@ public class UsersController extends BaseController {
         return res;
     }
 
-
     // createAccount
     @PostMapping("/sign-up")
     public APIResponseBean createAccount(HttpServletRequest request, @RequestBody UsersBean usersBean) {
@@ -115,7 +118,11 @@ public class UsersController extends BaseController {
             System.out.println("user-bean: " + usersBean);
             HashMap<String, Object> params = new HashMap<>();
             params.put("user_id", usersBean.getUser_id());
+            params.put("role_id", passengerId);
+            usersRepository.addRoleForUser(params);
             HashMap<String, Object> userDetail = usersRepository.getUserById(params);
+            List<String> rolesOfUser = usersRepository.getRolesById(params);
+            userDetail.put("roles", rolesOfUser);
             res.setData(userDetail);
         } catch (Exception e) {
             this.checkException(e, res);

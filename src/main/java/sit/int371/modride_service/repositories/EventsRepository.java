@@ -11,6 +11,7 @@ import org.apache.ibatis.annotations.Update;
 import org.apache.ibatis.annotations.Delete;
 
 import sit.int371.modride_service.beans.EventDetailBean;
+import sit.int371.modride_service.beans.EventMemberBean;
 import sit.int371.modride_service.beans.EventsBean;
 import sit.int371.modride_service.beans.UsersBean;
 
@@ -18,16 +19,18 @@ import sit.int371.modride_service.beans.UsersBean;
 public interface EventsRepository {
     @Select({
             // " SELECT event_id,user_id,event_name,event_detail, ",
-            // " start_point,dest_point,departure_time,seats,costs,create_date,update_date FROM events ",
+            // " start_point,dest_point,departure_time,seats,costs,create_date,update_date
+            // FROM events ",
             // " where status = 1 ",
             // " order by create_date desc ",
             " SELECT e.event_id,e.user_id,e.event_name,e.event_detail, ",
             " e.start_point,e.dest_point,e.departure_time,e.seats,e.costs,e.create_date,e.update_date ",
-            " ,concat(u.firstname, ' ', u.lastname) as fullname,u.profile_img_path,r.rate,r.total,f.fac_name ",
+            " ,concat(u.firstname, ' ', u.lastname) as fullname,u.profile_img_path,r.rate,r.total,f.faculty_name,b.branch_name ",
             " FROM events e ",
             " left join users u on e.user_id = u.user_id ",
             " left join ratings r on e.user_id = r.user_id ",
-            " left join faculties f on u.faculty_id = f.faculty_id ",
+            " left join branches b on u.branch_id = b.branch_id ",
+            " left join faculties f on b.faculty_id = f.faculty_id ",
             " where status = 1 ",
             " order by create_date desc ; "
     })
@@ -37,44 +40,56 @@ public interface EventsRepository {
     @Select({
             " SELECT e.event_id,e.user_id,e.event_name,e.event_detail, ",
             " e.start_point,e.dest_point,e.departure_time,e.seats,e.costs,e.create_date,e.update_date ",
-            " ,concat(u.firstname, ' ', u.lastname) as fullname,u.tel,u.profile_img_path,f.fac_name,f.branch ",
+            " ,concat(u.firstname, ' ', u.lastname) as fullname,u.tel,u.profile_img_path,f.faculty_name,b.branch_name ",
             " ,v.brand,v.model,v.vehicle_type,v.vehicle_color,v.license,v.car_img_path ",
             " FROM events e ",
             " left join users u on e.user_id = u.user_id ",
-            " left join faculties f on u.faculty_id = f.faculty_id ",
+            " left join branches b on u.branch_id = b.branch_id ",
+            " left join faculties f on b.faculty_id = f.faculty_id ",
             " left join vehicles v on e.vehicle_id = v.vehicle_id ",
-            " where event_id = #{event_id} "
+            " where event_id = #{event_id} ",
     })
 
-    public List<EventDetailBean> getEventsById(HashMap<String, Object> event_id) throws Exception;
+    public EventDetailBean getEventsById(HashMap<String, Object> event_id) throws Exception;
+
+    @Select({
+            " select m.members_id,m.event_id,m.user_id,r.role_name,f.faculty_name,b.branch_name from members m ",
+            " inner join users u on u.user_id = m.user_id ",
+            " inner join user_role ur on ur.user_id = u.user_id ",
+            " inner join roles r on r.role_id = ur.role_id ",
+            " inner join branches b on u.branch_id = b.branch_id ",
+            " inner join faculties f on b.faculty_id = f.faculty_id ",
+            " where event_id = #{event_id} ",
+    })
+    public List<EventMemberBean> getEventMembers(HashMap<String, Object> event_id) throws Exception;
 
     @Insert({
-        " INSERT INTO events(user_id,vehicle_id,event_name,event_detail,start_point,dest_point,departure_time,seats,costs,status,create_date,update_date) ",
-        " VALUES(#{user_id},#{vehicle_id},#{event_name},#{event_detail},#{start_point},#{dest_point},#{departure_time},#{seats},#{costs},1,sysdate(),sysdate())"
+            " INSERT INTO events(user_id,vehicle_id,event_name,event_detail,start_point,dest_point,departure_time,seats,costs,status,create_date,update_date) ",
+            " VALUES(#{user_id},#{vehicle_id},#{event_name},#{event_detail},#{start_point},#{dest_point},#{departure_time},#{seats},#{costs},1,sysdate(),sysdate())"
     })
     @Options(useGeneratedKeys = true, keyColumn = "event_id", keyProperty = "event_id")
     public void createEvents(EventsBean eventsBean) throws Exception;
 
     @Update({
-        " UPDATE events SET ",
-        " event_name = #{event_name}, ",
-        " vehicle_id = #{vehicle_id}, ",
-        " event_detail = #{event_detail}, ",
-        " start_point = #{start_point}, ",
-        " dest_point = #{dest_point}, ",
-        " departure_time = #{departure_time}, ",
-        " seats = #{seats}, ",
-        " costs = #{costs}, ",
-        " update_date = sysdate() ",
-        " WHERE event_id = #{event_id} "
+            " UPDATE events SET ",
+            " event_name = #{event_name}, ",
+            " vehicle_id = #{vehicle_id}, ",
+            " event_detail = #{event_detail}, ",
+            " start_point = #{start_point}, ",
+            " dest_point = #{dest_point}, ",
+            " departure_time = #{departure_time}, ",
+            " seats = #{seats}, ",
+            " costs = #{costs}, ",
+            " update_date = sysdate() ",
+            " WHERE event_id = #{event_id} "
     })
     public void editEvents(HashMap<String, Object> params) throws Exception;
 
     @Update({
-        " UPDATE events SET ",
-        " status = #{status}, ",
-        " update_date = sysdate() ",
-        " WHERE event_id = #{event_id} "
+            " UPDATE events SET ",
+            " status = #{status}, ",
+            " update_date = sysdate() ",
+            " WHERE event_id = #{event_id} "
     })
     public void editEventsStatus(HashMap<String, Object> params) throws Exception;
 

@@ -22,6 +22,7 @@ import com.azure.core.annotation.Post;
 
 import sit.int371.modride_service.beans.APIResponseBean;
 import sit.int371.modride_service.beans.EventDetailBean;
+import sit.int371.modride_service.beans.EventMemberBean;
 import sit.int371.modride_service.beans.EventsBean;
 import sit.int371.modride_service.beans.FriendsBean;
 import sit.int371.modride_service.beans.MutualFriendBean;
@@ -87,7 +88,9 @@ public class EventsController extends BaseController {
         HashMap<String, Object> params = new HashMap<>();
         params.put("event_id", id);
         try {
-            List<EventDetailBean> eventsBean = eventsRepository.getEventsById(params);
+            EventDetailBean eventsBean = eventsRepository.getEventsById(params);
+            List<EventMemberBean> members = eventsRepository.getEventMembers(params);
+            eventsBean.setMembers(members);
             res.setData(eventsBean);
         } catch (Exception e) {
             this.checkException(e, res);

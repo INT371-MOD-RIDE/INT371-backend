@@ -1,5 +1,7 @@
 package sit.int371.modride_service.beans;
 
+import java.util.List;
+
 import lombok.Data;
 
 @Data
@@ -19,12 +21,13 @@ public class EventDetailBean {
     private String fullname;
     private String tel;
     private String profile_img_path;
-    private String fac_name;
-    private String branch;
+    private String faculty_name;
+    private String branch_name;
     private String brand;
     private String model;
     private String vehicle_type;
     private String vehicle_color;
     private String license;
     private String car_img_path;
+    private List<EventMemberBean> members;
 }
