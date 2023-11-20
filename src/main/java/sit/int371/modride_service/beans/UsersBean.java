@@ -11,6 +11,7 @@ public class UsersBean {
     private String email;
     private String firstname;
     private String lastname;
+    private String fullname;
     private String tel;
     private String profile_img_path;
     private String faculty_name;
