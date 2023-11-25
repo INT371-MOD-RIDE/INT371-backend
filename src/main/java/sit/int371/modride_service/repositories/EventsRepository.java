@@ -53,13 +53,26 @@ public interface EventsRepository {
     public EventDetailBean getEventsById(HashMap<String, Object> event_id) throws Exception;
 
     @Select({
-            " select m.members_id,m.event_id,m.user_id,r.role_name,f.faculty_name,b.branch_name from members m ",
-            " inner join users u on u.user_id = m.user_id ",
-            " inner join user_role ur on ur.user_id = u.user_id ",
-            " inner join roles r on r.role_id = ur.role_id ",
-            " inner join branches b on u.branch_id = b.branch_id ",
-            " inner join faculties f on b.faculty_id = f.faculty_id ",
-            " where event_id = #{event_id} ",
+        //     " select m.members_id,m.event_id,m.user_id,r.role_name,f.faculty_name,b.branch_name from members m ",
+        //     " inner join users u on u.user_id = m.user_id ",
+        //     " inner join user_role ur on ur.user_id = u.user_id ",
+        //     " inner join roles r on r.role_id = ur.role_id ",
+        //     " inner join branches b on u.branch_id = b.branch_id ",
+        //     " inner join faculties f on b.faculty_id = f.faculty_id ",
+        //     " where event_id = #{event_id} ",
+        " SELECT m.members_id,m.event_id,m.user_id,concat(u.firstname, ' ', u.lastname) as fullname,f.faculty_name,b.branch_name,u.profile_img_path, ",
+        " CASE WHEN m.user_id = e.user_id THEN ra.total END AS total, ",
+        " CASE WHEN m.user_id = e.user_id THEN ra.rate END AS rate, ",
+        " CASE WHEN m.user_id = e.user_id THEN 'driver' ELSE 'passenger' END AS role_name ",
+        " FROM members m ",
+        " LEFT JOIN users u ON u.user_id = m.user_id ",
+        " LEFT JOIN user_role ur ON ur.user_id = u.user_id ",
+        " LEFT JOIN roles r ON r.role_id = ur.role_id ",
+        " LEFT JOIN branches b ON u.branch_id = b.branch_id ",
+        " LEFT JOIN faculties f ON b.faculty_id = f.faculty_id ",
+        " LEFT JOIN events e ON m.user_id = e.user_id AND m.event_id = e.event_id ",
+        " LEFT JOIN ratings ra ON m.user_id = ra.user_id ",
+        " WHERE m.event_id = #{event_id} ",
     })
     public List<EventMemberBean> getEventMembers(HashMap<String, Object> event_id) throws Exception;
 
