@@ -27,8 +27,8 @@ public interface FriendsRepository {
                         " left join friendships fs  ",
                         " 	on (u.user_id = fs.friend_id and fs.user_id = #{user_id}) ",
                         " where u.user_id != #{user_id} ",
-                        " order by b.branch_name = #{branch_name} desc, b.branch_name asc, ",
-                        " f.faculty_name = #{faculty_name} desc, f.faculty_name asc, u.firstname asc ",
+                        " order by f.faculty_name = #{faculty_name} desc, f.faculty_name asc, ",
+                        "  b.branch_name = #{branch_name} desc, b.branch_name asc,u.firstname asc ",
         })
         public List<UsersBean> friendListSuggestion(HashMap<String, Object> params) throws Exception;
 
