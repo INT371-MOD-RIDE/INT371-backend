@@ -108,4 +108,19 @@ public interface EventsRepository {
 
     @Delete("DELETE FROM events WHERE event_id = #{event_id}")
     public void deleteEvents(HashMap<String, Object> params) throws Exception;
+
+    @Insert({
+            " INSERT INTO members(event_id,user_id) ",
+            " VALUES(#{event_id},#{user_id}) "
+    })
+    @Options(useGeneratedKeys = true, keyColumn = "members_id", keyProperty = "members_id")
+    public void joinEvent(HashMap<String, Object> params) throws Exception;
+
+    @Select({
+        "select members_id from members where event_id = #{event_id}"
+    })
+    public List<Integer> getMembersId(HashMap<String, Object> params) throws Exception;
+
+    @Delete("DELETE FROM members WHERE members_id = #{members_id}")
+    public void deleteMembers(HashMap<String, Object> params) throws Exception;
 }
