@@ -20,6 +20,11 @@ public class UsersBean {
     private Integer friend_id;
     private String friend_status;
     private List<RolesBean> roles;
+    // check is it friend-together
+    // private Boolean isThisFriend;
+    // list for friendship
+    // private List<FriendsBean> friendShip;
+    private List<MutualFriendBean> mutualFriend;
 
 
 }

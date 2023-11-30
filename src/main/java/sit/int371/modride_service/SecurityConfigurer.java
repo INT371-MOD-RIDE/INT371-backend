@@ -66,12 +66,12 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable()
                 .authorizeRequests()
-                // socialNetwork
-                .antMatchers(HttpMethod.GET, "/api/v1/socialNetwork/**").permitAll()
-                .antMatchers(HttpMethod.POST, "/api/v1/socialNetwork/**").permitAll()
-                .antMatchers(HttpMethod.DELETE, "/api/v1/socialNetwork/**").permitAll()
-                .antMatchers(HttpMethod.PUT, "/api/v1/socialNetwork/**").permitAll()
-                .antMatchers(HttpMethod.OPTIONS, "/api/v1/socialNetwork/**").permitAll()
+                // friends
+                .antMatchers(HttpMethod.GET, "/api/v1/friends/**").permitAll()
+                .antMatchers(HttpMethod.POST, "/api/v1/friends/**").permitAll()
+                .antMatchers(HttpMethod.DELETE, "/api/v1/friends/**").permitAll()
+                .antMatchers(HttpMethod.PUT, "/api/v1/friends/**").permitAll()
+                .antMatchers(HttpMethod.OPTIONS, "/api/v1/friends/**").permitAll()
                 // users
                 .antMatchers(HttpMethod.GET, "/api/v1/users/**").permitAll()
                 .antMatchers(HttpMethod.POST, "/api/v1/users/**").permitAll()

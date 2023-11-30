@@ -26,11 +26,39 @@ public interface FriendsRepository {
                         " inner join faculties f on b.faculty_id = f.faculty_id ",
                         " left join friendships fs  ",
                         " 	on (u.user_id = fs.friend_id and fs.user_id = #{user_id}) ",
-                        " where u.user_id != #{user_id} ",
+                        " where (u.user_id != #{user_id} and fs.user_id is null) or (u.user_id != #{user_id} and fs.friend_status = 'pending') ",
                         " order by f.faculty_name = #{faculty_name} desc, f.faculty_name asc, ",
                         "  b.branch_name = #{branch_name} desc, b.branch_name asc,u.firstname asc ",
         })
-        public List<UsersBean> friendListSuggestion(HashMap<String, Object> params) throws Exception;
+        public List<UsersBean> friendListSuggestionSearch(HashMap<String, Object> params) throws Exception;
+
+        // หน้ารายการเพื่อน -- friend-list section ✅
+        @Select({
+                        " select u.user_id,f.faculty_id,u.email,u.firstname,u.lastname,concat(u.firstname, ' ', u.lastname) as fullname, ",
+                        " u.tel,u.profile_img_path,f.faculty_name,b.branch_name, ",
+                        " fs.friend_id,fs.friend_status ",
+                        " from users u  ",
+                        " inner join branches b on u.branch_id = b.branch_id ",
+                        " inner join faculties f on b.faculty_id = f.faculty_id ",
+                        " inner join friendships fs on fs.user_id = u.user_id ",
+                        " where u.user_id != #{user_id} and fs.friend_id = #{user_id} and fs.friend_status = 'accepted' ",
+                        " order by f.faculty_name = #{faculty_name} desc, f.faculty_name asc, u.firstname asc ",
+        })
+        public List<UsersBean> friendsList(HashMap<String, Object> params) throws Exception;
+
+        // คำขอเป็นเพื่อน -- friend-request ✅
+        @Select({
+                " select u.user_id,f.faculty_id,u.email,u.firstname,u.lastname,concat(u.firstname, ' ', u.lastname) as fullname, ",
+                " u.tel,u.profile_img_path,f.faculty_name,b.branch_name, ",
+                " fs.friend_id,fs.friend_status ",
+                " from users u  ",
+                " inner join branches b on u.branch_id = b.branch_id ",
+                " inner join faculties f on b.faculty_id = f.faculty_id ",
+                " inner join friendships fs on fs.user_id = u.user_id ",
+                " where u.user_id != #{user_id} and fs.friend_id = #{user_id} and fs.friend_status = 'pending' ",
+                " order by f.faculty_name = #{faculty_name} desc, f.faculty_name asc, u.firstname asc ",
+        })
+        public List<UsersBean> friendsRequest(HashMap<String, Object> params) throws Exception;
 
         // friendships-in-event
         // -- check ว่า driver เป็นเพื่อนกับเราหรือไม่
@@ -78,9 +106,9 @@ public interface FriendsRepository {
         // update friendships to "accepted"
         @Update({
                         " update friendships set friend_status = 'accepted' ",
-                        " where (user_id = #{user_id} and friend_id = #{friend_id}) or (user_id = #{friend_id} and friend_id = #{user_id}) "
+                        " where (user_id = #{friend_id} and friend_id = #{user_id}) "
         })
-        public void updateFriendship(HashMap<String, Object> params) throws Exception;
+        public void updateFriendship(FriendsBean bean) throws Exception;
 
         // delete friendships when "rejected"
         @Delete({
