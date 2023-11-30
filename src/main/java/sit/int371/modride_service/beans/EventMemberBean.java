@@ -10,4 +10,8 @@ public class EventMemberBean {
     private String role_name;
     private String faculty_name;
     private String branch_name;
+    private String fullname;
+    private String profile_img_path;
+    private Integer rate;
+    private Integer total;
 }

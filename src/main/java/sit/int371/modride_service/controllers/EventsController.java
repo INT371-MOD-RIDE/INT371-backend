@@ -167,10 +167,31 @@ public class EventsController extends BaseController {
         HashMap<String, Object> params = new HashMap<>();
         try {
             params.put("event_id", id);
+            List<Integer> members = eventsRepository.getMembersId(params);
+            for (Integer member : members) {
+                params.put("members_id", member);
+                eventsRepository.deleteMembers(params);
+            }
             eventsRepository.deleteEvents(params);
-            // res.setData(params);
-            res.setResponse_code("200");
-            res.setResponse_desc("Delete Success");
+            res.setData(params);
+            // res.setResponse_code("200");
+            // res.setResponse_desc("Delete Success");
+        } catch (Exception e) {
+            this.checkException(e, res);
+        }
+        return res;
+    }
+    @PostMapping("/joinEvent")
+    public APIResponseBean joinEvent(HttpServletRequest request,@RequestBody HashMap<String, Object> data)
+    {
+        APIResponseBean res = new APIResponseBean();
+        HashMap<String, Object> params = new HashMap<>();
+        try {
+            // params.put("user_id", request.getAttribute("user_id"));
+            params.put("user_id", 60);
+            params.put("event_id", data.get("event_id"));
+            eventsRepository.joinEvent(params);
+            res.setData(params);
         } catch (Exception e) {
             this.checkException(e, res);
         }
