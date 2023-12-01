@@ -188,9 +188,24 @@ public class EventsController extends BaseController {
         HashMap<String, Object> params = new HashMap<>();
         try {
             // params.put("user_id", request.getAttribute("user_id"));
-            params.put("user_id", 60);
+            params.put("user_id", 5);
             params.put("event_id", data.get("event_id"));
-            eventsRepository.joinEvent(params);
+            Integer seatAvailable = eventsRepository.getSeats(params);
+            Integer duplicateMember = eventsRepository.checkDuplicateMember(params);
+            if(seatAvailable == 0){
+                res.setResponse_code("400");
+                res.setResponse_desc("Seat is full");
+            }else{
+                if(duplicateMember == 0){
+                    params.put("seats", seatAvailable-1);
+                    eventsRepository.joinEvent(params);
+                    res.setResponse_code("200");
+                    res.setResponse_desc("success");
+                }else{
+                    res.setResponse_code("400");
+                    res.setResponse_desc("Member Already Join Event");
+                }
+            }
             res.setData(params);
         } catch (Exception e) {
             this.checkException(e, res);
