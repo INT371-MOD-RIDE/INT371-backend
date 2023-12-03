@@ -7,9 +7,11 @@ import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 import sit.int371.modride_service.beans.BranchesBean;
 import sit.int371.modride_service.beans.FacultiesBean;
+import sit.int371.modride_service.beans.FriendsBean;
 import sit.int371.modride_service.beans.UsersBean;
 
 @Mapper
@@ -18,44 +20,54 @@ public interface UsersRepository {
         public List<UsersBean> getAllUsers() throws Exception;
 
         @Select({
-                " select u.user_id,u.email,u.firstname,u.lastname,concat(u.firstname, ' ', u.lastname) as fullname,u.tel,u.profile_img_path,  ",
-                " f.faculty_name,b.branch_name from users u  ",
-                " inner join branches b on u.branch_id = b.branch_id ",
-                " inner join faculties f on b.faculty_id = f.faculty_id  ",
-                " where u.user_id = #{user_id} ",
+                        " select u.user_id,r.role_id,r.role_name,u.email,u.firstname,u.lastname,concat(u.firstname, ' ', u.lastname) as fullname,COALESCE(u.tel, '') AS tel,u.profile_img_path,  ",
+                        " f.faculty_name,b.branch_name from users u  ",
+                        " inner join branches b on u.branch_id = b.branch_id ",
+                        " inner join faculties f on b.faculty_id = f.faculty_id ",
+                        " inner join roles r on u.role_id = r.role_id ",
+                        " where u.user_id = #{user_id} ",
         })
-        public HashMap<String, Object> getUserById(HashMap<String, Object> params) throws Exception;
+        public UsersBean getUserById(UsersBean bean) throws Exception;
+
+        // @Select({
+        // " select r.role_name from users u ",
+        // " inner join user_role ur on u.user_id = ur.user_id ",
+        // " inner join roles r on ur.role_id = r.role_id ",
+        // " where u.user_id = #{user_id} "
+        // })
+        // public List<String> getRolesById(HashMap<String, Object> params) throws
+        // Exception;
 
         @Select({
-                        " select r.role_name from users u ",
-                        " inner join user_role ur on u.user_id = ur.user_id ",
-                        " inner join roles r on ur.role_id = r.role_id ",
-                        " where u.user_id = #{user_id} "
-        })
-        public List<String> getRolesById(HashMap<String, Object> params) throws Exception;
-        
-        @Select({
-                " select faculty_id,faculty_name from faculties; "
+                        " select faculty_id,faculty_name from faculties; "
         })
         public List<FacultiesBean> getFaculties() throws Exception;
 
         @Select({
-                " select branch_id,faculty_id,branch_name from branches "
+                        " select branch_id,faculty_id,branch_name from branches "
         })
         public List<BranchesBean> getBranches() throws Exception;
 
         // sign-up users account
         @Insert({
-                " insert into users(branch_id,email,firstname,lastname,tel,profile_img_path) ",
-                " values(#{branch_id},#{email},#{firstname},#{lastname},#{tel},#{profile_img_path}) ",
+                        " insert into users(branch_id,role_id,email,firstname,lastname,tel,profile_img_path) ",
+                        " values(#{branch_id},#{role_id},#{email},#{firstname},#{lastname},#{tel},#{profile_img_path}) ",
         })
         @Options(useGeneratedKeys = true, keyColumn = "user_id", keyProperty = "user_id")
         public void createAccount(UsersBean bean) throws Exception;
 
-        // add role of user from create-account
-        @Insert({
-                " insert into user_role(user_id,role_id) ",
-                " values(#{user_id},#{role_id}) ",
+        // // add role of user from create-account
+        // @Insert({
+        // " insert into user_role(user_id,role_id) ",
+        // " values(#{user_id},#{role_id}) ",
+        // })
+        // public void addRoleForUser(HashMap<String, Object> params) throws Exception;
+
+        // update user-account
+        @Update({
+                        " update users ",
+                        " set role_id = #{role_id}, tel = #{tel} ",
+                        " where user_id = #{user_id} ",
         })
-        public void addRoleForUser(HashMap<String, Object> params) throws Exception;
+        public void updateUserAccount(UsersBean bean) throws Exception;
 }

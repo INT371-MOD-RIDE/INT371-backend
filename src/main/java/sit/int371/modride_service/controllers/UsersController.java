@@ -68,14 +68,12 @@ public class UsersController extends BaseController {
 
     // Get user-by-id
     @GetMapping("/get/{user_id}")
-    public APIResponseBean getUserById(HttpServletRequest request, @PathVariable String user_id) {
+    public APIResponseBean getUserById(HttpServletRequest request, @PathVariable Integer user_id) {
         APIResponseBean res = new APIResponseBean();
         try {
-            HashMap<String, Object> params = new HashMap<>();
-            params.put("user_id", user_id);
-            HashMap<String, Object> user = usersRepository.getUserById(params);
-            List<String> rolesOfUser = usersRepository.getRolesById(params);
-            user.put("roles", rolesOfUser);
+            UsersBean userBean = new UsersBean();
+            userBean.setUser_id(user_id);
+            UsersBean user = usersRepository.getUserById(userBean);
             res.setData(user);
         } catch (Exception e) {
             this.checkException(e, res);
@@ -114,16 +112,23 @@ public class UsersController extends BaseController {
     public APIResponseBean createAccount(HttpServletRequest request, @RequestBody UsersBean usersBean) {
         APIResponseBean res = new APIResponseBean();
         try {
+            usersBean.setRole_id(passengerId);
             usersRepository.createAccount(usersBean);
-            System.out.println("user-bean: " + usersBean);
-            HashMap<String, Object> params = new HashMap<>();
-            params.put("user_id", usersBean.getUser_id());
-            params.put("role_id", passengerId);
-            usersRepository.addRoleForUser(params);
-            HashMap<String, Object> userDetail = usersRepository.getUserById(params);
-            List<String> rolesOfUser = usersRepository.getRolesById(params);
-            userDetail.put("roles", rolesOfUser);
+            UsersBean userDetail = usersRepository.getUserById(usersBean);
             res.setData(userDetail);
+        } catch (Exception e) {
+            this.checkException(e, res);
+        }
+        return res;
+    }
+
+    // updateAccount
+    @PutMapping("/update")
+    public APIResponseBean updateUserAccount(HttpServletRequest request, @RequestBody UsersBean usersBean) {
+        APIResponseBean res = new APIResponseBean();
+        try {
+            usersRepository.updateUserAccount(usersBean);
+            res.setData(usersBean);
         } catch (Exception e) {
             this.checkException(e, res);
         }
