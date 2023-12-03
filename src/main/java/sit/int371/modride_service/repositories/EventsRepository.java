@@ -41,7 +41,7 @@ public interface EventsRepository {
             " SELECT e.event_id,e.user_id,e.event_name,e.event_detail, ",
             " e.start_point,e.dest_point,e.departure_time,e.seats,e.costs,e.create_date,e.update_date ",
             " ,concat(u.firstname, ' ', u.lastname) as fullname,u.tel,u.profile_img_path,f.faculty_name,b.branch_name ",
-            " ,v.brand,v.model,v.vehicle_type,v.vehicle_color,v.license,v.car_img_path ",
+            " ,v.brand,v.model,v.vehicle_type,v.vehicle_color,v.license,v.car_img_path,v.vehicle_id ",
             " FROM events e ",
             " left join users u on e.user_id = u.user_id ",
             " left join branches b on u.branch_id = b.branch_id ",
@@ -63,11 +63,11 @@ public interface EventsRepository {
         " SELECT m.members_id,m.event_id,m.user_id,concat(u.firstname, ' ', u.lastname) as fullname,f.faculty_name,b.branch_name,u.profile_img_path, ",
         " CASE WHEN m.user_id = e.user_id THEN ra.total END AS total, ",
         " CASE WHEN m.user_id = e.user_id THEN ra.rate END AS rate, ",
-        " CASE WHEN m.user_id = e.user_id THEN 'driver' ELSE 'passenger' END AS role_name ",
+        " r.role_name",
         " FROM members m ",
         " LEFT JOIN users u ON u.user_id = m.user_id ",
-        " LEFT JOIN user_role ur ON ur.user_id = u.user_id ",
-        " LEFT JOIN roles r ON r.role_id = ur.role_id ",
+        // " LEFT JOIN roles ur ON ur.user_id = u.user_id ",
+        " LEFT JOIN roles r ON r.role_id = u.role_id ",
         " LEFT JOIN branches b ON u.branch_id = b.branch_id ",
         " LEFT JOIN faculties f ON b.faculty_id = f.faculty_id ",
         " LEFT JOIN events e ON m.user_id = e.user_id AND m.event_id = e.event_id ",
@@ -123,4 +123,24 @@ public interface EventsRepository {
 
     @Delete("DELETE FROM members WHERE members_id = #{members_id}")
     public void deleteMembers(HashMap<String, Object> params) throws Exception;
+
+    @Select({
+        "select seats from events where event_id = #{event_id}"
+    })
+    public Integer getSeats(HashMap<String, Object> params) throws Exception;
+
+    @Update({
+        " UPDATE events SET ",
+        " seats = #{join_seat}, ",
+        " update_date = sysdate() ",
+        " WHERE event_id = #{event_id} "
+    })
+    public void editSeats(HashMap<String, Object> params) throws Exception;
+
+    @Select({
+        "select count(members_id) from members ",
+       " where event_id = #{event_id} ",
+       " and user_id = #{user_id} "
+    })
+    public Integer checkDuplicateMember(HashMap<String, Object> params) throws Exception;
 }

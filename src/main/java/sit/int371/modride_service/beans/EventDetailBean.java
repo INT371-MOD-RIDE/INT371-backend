@@ -23,6 +23,7 @@ public class EventDetailBean {
     private String profile_img_path;
     private String faculty_name;
     private String branch_name;
+    private Integer vehicle_id;
     private String brand;
     private String model;
     private String vehicle_type;
