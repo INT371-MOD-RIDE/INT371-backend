@@ -44,8 +44,6 @@ public class UsersController extends BaseController {
     private Integer driverId = 2;
     private Integer adminId = 3;
 
-    // private OldOldUserRepository oldOldUserRepository;
-
     // @Autowired
     // private JwtUtility jwtUtility;
     //
@@ -74,6 +72,22 @@ public class UsersController extends BaseController {
             UsersBean userBean = new UsersBean();
             userBean.setUser_id(user_id);
             UsersBean user = usersRepository.getUserById(userBean);
+            res.setData(user);
+        } catch (Exception e) {
+            this.checkException(e, res);
+        }
+        return res;
+    }
+
+    // Get user-by-email (เป็นการให้ login เพื่อเข้าใช้แบบ mockup เฉยๆ)
+    @GetMapping("/getByEmail")
+    public APIResponseBean getUserByEmail(HttpServletRequest request,
+            @RequestParam(name = "email", required = false) String email) {
+        APIResponseBean res = new APIResponseBean();
+        try {
+            UsersBean usersBean = new UsersBean();
+            usersBean.setEmail(email);
+            UsersBean user = usersRepository.getUserByEmail(usersBean);
             res.setData(user);
         } catch (Exception e) {
             this.checkException(e, res);
