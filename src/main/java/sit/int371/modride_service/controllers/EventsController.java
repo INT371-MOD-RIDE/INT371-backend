@@ -21,6 +21,7 @@ import com.azure.core.annotation.Delete;
 import com.azure.core.annotation.Post;
 
 import sit.int371.modride_service.beans.APIResponseBean;
+import sit.int371.modride_service.beans.ChatBean;
 import sit.int371.modride_service.beans.EventDetailBean;
 import sit.int371.modride_service.beans.EventMemberBean;
 import sit.int371.modride_service.beans.EventsBean;
@@ -239,6 +240,21 @@ public class EventsController extends BaseController {
             params.put("user_id", id);
             List<VehiclesBean> vehicles = eventsRepository.getVehicles(params);
             res.setData(vehicles);
+        } catch (Exception e) {
+            this.checkException(e, res);
+        }
+        return res;
+    }
+    //For chat
+    @GetMapping("/getChatRoom/{id}")
+    public APIResponseBean getChatRoom(HttpServletRequest request,@PathVariable Integer id){
+        APIResponseBean res = new APIResponseBean();
+        HashMap<String, Object> params = new HashMap<>();
+        try {
+            // params.put("user_id", request.getAttribute("user_id"));
+            params.put("user_id", id);
+            List<ChatBean> events = eventsRepository.getChatRoom(params);
+            res.setData(events);
         } catch (Exception e) {
             this.checkException(e, res);
         }

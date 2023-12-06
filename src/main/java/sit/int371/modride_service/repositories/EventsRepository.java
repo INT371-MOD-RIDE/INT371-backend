@@ -10,6 +10,7 @@ import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 import org.apache.ibatis.annotations.Delete;
 
+import sit.int371.modride_service.beans.ChatBean;
 import sit.int371.modride_service.beans.EventDetailBean;
 import sit.int371.modride_service.beans.EventMemberBean;
 import sit.int371.modride_service.beans.EventsBean;
@@ -152,4 +153,15 @@ public interface EventsRepository {
        " where user_id = #{user_id} "
     })
     public List<VehiclesBean> getVehicles(HashMap<String, Object> params) throws Exception;
+
+    //For chat
+    @Select({
+        " select e.event_id,e.event_name,m.user_id,concat(u.firstname,' ',u.lastname) as fullname,u.profile_img_path ",
+        " from events e ",
+        " left join members m on e.event_id=m.event_id ",
+        " left join users u on m.user_id=u.user_id ",
+        " where u.user_id = #{user_id} ",
+        " order by e.create_date desc "
+    })
+    public List<ChatBean> getChatRoom(HashMap<String, Object> params) throws Exception;
 }
