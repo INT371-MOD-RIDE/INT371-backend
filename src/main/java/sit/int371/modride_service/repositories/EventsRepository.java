@@ -98,7 +98,7 @@ public interface EventsRepository {
             " update_date = sysdate() ",
             " WHERE event_id = #{event_id} "
     })
-    public void editEvents(HashMap<String, Object> params) throws Exception;
+    public void editEvents(EventDetailBean bean) throws Exception;
 
     @Update({
             " UPDATE events SET ",

@@ -131,21 +131,30 @@ public class EventsController extends BaseController {
 
     @PutMapping("/edit/{id}")
     public APIResponseBean editEvents(HttpServletRequest request,@PathVariable Integer id,
-    @RequestBody HashMap<String, Object> data)
+    @RequestBody EventDetailBean bean)
     {
         APIResponseBean res = new APIResponseBean();
         HashMap<String, Object> params = new HashMap<>();
         try {
-            params.put("event_id", id);
-            params.put("event_name", data.get("event_name"));
-            params.put("event_detail", data.get("event_detail"));
-            params.put("start_point", data.get("start_point"));
-            params.put("dest_point", data.get("dest_point"));
-            params.put("departure_time", data.get("departure_time"));
-            params.put("vehicle_id", data.get("vehicle_id"));
-            params.put("seats", data.get("seats"));
-            params.put("costs", data.get("costs"));
-            eventsRepository.editEvents(params);
+            // params.put("event_id", id);
+            // params.put("event_name", data.get("event_name"));
+            // params.put("event_detail", data.get("event_detail"));
+            // params.put("start_point", data.get("start_point"));
+            // params.put("dest_point", data.get("dest_point"));
+            // params.put("departure_time", data.get("departure_time"));
+            // params.put("vehicle_id", data.get("vehicle_id"));
+            // params.put("seats", data.get("seats"));
+            // params.put("costs", data.get("costs"));
+            eventsRepository.editEvents(bean);
+            params.put("vehicle_id", bean.getVehicle_id());
+            params.put("seats", bean.getSeats());
+            params.put("brand", bean.getBrand());
+            params.put("model", bean.getModel());
+            params.put("vehicle_type", bean.getVehicle_type());
+            params.put("vehicle_color", bean.getVehicle_color());
+            params.put("license", bean.getLicense());
+            params.put("car_img_path", bean.getCar_img_path());
+            vehiclesRepository.editVehicles(params);
             res.setData(params);
         } catch (Exception e) {
             this.checkException(e, res);
