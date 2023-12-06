@@ -29,6 +29,17 @@ public interface UsersRepository {
         })
         public UsersBean getUserById(UsersBean bean) throws Exception;
 
+        // getUserByEmail (เป็นการให้ login เพื่อเข้าใช้แบบ mockup เฉยๆ)
+        @Select({
+                        " select u.user_id,r.role_id,r.role_name,u.email,u.firstname,u.lastname,concat(u.firstname, ' ', u.lastname) as fullname,COALESCE(u.tel, '') AS tel,u.profile_img_path,  ",
+                        " f.faculty_name,b.branch_name from users u  ",
+                        " inner join branches b on u.branch_id = b.branch_id ",
+                        " inner join faculties f on b.faculty_id = f.faculty_id ",
+                        " inner join roles r on u.role_id = r.role_id ",
+                        " where u.email = #{email} ",
+        })
+        public UsersBean getUserByEmail(UsersBean bean) throws Exception;
+
         // @Select({
         // " select r.role_name from users u ",
         // " inner join user_role ur on u.user_id = ur.user_id ",
