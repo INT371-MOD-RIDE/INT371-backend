@@ -14,6 +14,7 @@ import sit.int371.modride_service.beans.EventDetailBean;
 import sit.int371.modride_service.beans.EventMemberBean;
 import sit.int371.modride_service.beans.EventsBean;
 import sit.int371.modride_service.beans.UsersBean;
+import sit.int371.modride_service.beans.VehiclesBean;
 
 @Mapper
 public interface EventsRepository {
@@ -63,7 +64,8 @@ public interface EventsRepository {
         " SELECT m.members_id,m.event_id,m.user_id,concat(u.firstname, ' ', u.lastname) as fullname,f.faculty_name,b.branch_name,u.profile_img_path, ",
         " CASE WHEN m.user_id = e.user_id THEN ra.total END AS total, ",
         " CASE WHEN m.user_id = e.user_id THEN ra.rate END AS rate, ",
-        " r.role_name",
+        // " r.role_name",
+        " CASE WHEN m.user_id = e.user_id THEN 'driver' ELSE 'passenger' END AS role_name ",
         " FROM members m ",
         " LEFT JOIN users u ON u.user_id = m.user_id ",
         // " LEFT JOIN roles ur ON ur.user_id = u.user_id ",
@@ -81,7 +83,7 @@ public interface EventsRepository {
             " VALUES(#{user_id},#{vehicle_id},#{event_name},#{event_detail},#{start_point},#{dest_point},#{departure_time},#{seats},#{costs},1,sysdate(),sysdate())"
     })
     @Options(useGeneratedKeys = true, keyColumn = "event_id", keyProperty = "event_id")
-    public void createEvents(EventsBean eventsBean) throws Exception;
+    public void createEvents(EventDetailBean eventsBean) throws Exception;
 
     @Update({
             " UPDATE events SET ",
@@ -143,4 +145,11 @@ public interface EventsRepository {
        " and user_id = #{user_id} "
     })
     public Integer checkDuplicateMember(HashMap<String, Object> params) throws Exception;
+
+    @Select({
+        " select vehicle_id,concat(brand,' ',model) as car_name,license,car_img_path ",
+       " from vehicles ",
+       " where user_id = #{user_id} "
+    })
+    public List<VehiclesBean> getVehicles(HashMap<String, Object> params) throws Exception;
 }

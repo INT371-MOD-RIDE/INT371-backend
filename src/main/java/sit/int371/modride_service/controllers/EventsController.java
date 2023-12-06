@@ -27,10 +27,12 @@ import sit.int371.modride_service.beans.EventsBean;
 import sit.int371.modride_service.beans.FriendsBean;
 import sit.int371.modride_service.beans.MutualFriendBean;
 import sit.int371.modride_service.beans.UsersBean;
+import sit.int371.modride_service.beans.VehiclesBean;
 import sit.int371.modride_service.dtos.ChangeDTO;
 import sit.int371.modride_service.repositories.EventsRepository;
 import sit.int371.modride_service.repositories.FriendsRepository;
 import sit.int371.modride_service.repositories.UsersRepository;
+import sit.int371.modride_service.repositories.VehiclesRepository;
 
 @RestController
 @RequestMapping("/api/v1/events")
@@ -39,6 +41,8 @@ public class EventsController extends BaseController {
     private EventsRepository eventsRepository;
     @Autowired
     private FriendsRepository friendsRepository;
+    @Autowired  
+    private VehiclesRepository vehiclesRepository;
 
     // Get all-users
     @GetMapping("/get")
@@ -100,19 +104,24 @@ public class EventsController extends BaseController {
 
     @PostMapping("/post")
     public APIResponseBean createEvents(HttpServletRequest request, 
-    @RequestBody EventsBean bean) {
+    @RequestBody EventDetailBean bean) {
         APIResponseBean res = new APIResponseBean();
-        // HashMap<String, Object> params = new HashMap<>();
+        HashMap<String, Object> params = new HashMap<>();
         try {
-            // params.put("user_id", data.get("user_id"));
-            // params.put("event_name", data.get("event_name"));
-            // params.put("event_detail", data.get("event_detail"));
-            // params.put("start_point", data.get("start_point"));
-            // params.put("dest_point", data.get("dest_point"));
-            // params.put("departure_time", data.get("departure_time"));
-            // params.put("seats", data.get("seats"));
-            // params.put("costs", data.get("costs"));
+            params.put("user_id", bean.getUser_id());
+            params.put("brand", bean.getBrand());
+            params.put("model", bean.getModel());
+            params.put("vehicle_type", bean.getVehicle_type());
+            params.put("vehicle_color", bean.getVehicle_color());
+            params.put("license", bean.getLicense());
+            params.put("car_img_path", bean.getCar_img_path());
+            vehiclesRepository.createVehicles(params);
+            params.put("vehicle_id", params.get("vehicle_id"));
+            // bean.setVehicle_id(params.get("vehicle_id"));
+            bean.setVehicle_id(Integer.parseInt(params.get("vehicle_id").toString()));
             eventsRepository.createEvents(bean);
+            params.put("event_id", bean.getEvent_id());
+            eventsRepository.joinEvent(params);
             res.setData(bean);
         } catch (Exception e) {
             this.checkException(e, res);
@@ -188,7 +197,7 @@ public class EventsController extends BaseController {
         HashMap<String, Object> params = new HashMap<>();
         try {
             // params.put("user_id", request.getAttribute("user_id"));
-            params.put("user_id", 5);
+            params.put("user_id", data.get("user_id"));
             params.put("event_id", data.get("event_id"));
             Integer seatAvailable = eventsRepository.getSeats(params);
             Integer duplicateMember = eventsRepository.checkDuplicateMember(params);
@@ -207,6 +216,20 @@ public class EventsController extends BaseController {
                 }
             }
             res.setData(params);
+        } catch (Exception e) {
+            this.checkException(e, res);
+        }
+        return res;
+    }
+    @GetMapping("/getVehicle/{id}")
+    public APIResponseBean getVehicle(HttpServletRequest request,@PathVariable Integer id){
+        APIResponseBean res = new APIResponseBean();
+        HashMap<String, Object> params = new HashMap<>();
+        try {
+            // params.put("user_id", request.getAttribute("user_id"));
+            params.put("user_id", id);
+            List<VehiclesBean> vehicles = eventsRepository.getVehicles(params);
+            res.setData(vehicles);
         } catch (Exception e) {
             this.checkException(e, res);
         }
