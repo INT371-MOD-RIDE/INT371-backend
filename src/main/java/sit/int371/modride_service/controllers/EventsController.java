@@ -88,13 +88,37 @@ public class EventsController extends BaseController {
 
     @GetMapping("/get/{id}")
     public APIResponseBean getEventsById(HttpServletRequest request, 
-    @PathVariable Integer id) {
+    @PathVariable Integer id,@RequestParam(name = "user_id", required = false) Integer user_id) {
         APIResponseBean res = new APIResponseBean();
         HashMap<String, Object> params = new HashMap<>();
         params.put("event_id", id);
+        // params.put("user_id", user_id);
         try {
             EventDetailBean eventsBean = eventsRepository.getEventsById(params);
             List<EventMemberBean> members = eventsRepository.getEventMembers(params);
+            for (EventMemberBean memberBean : members) {
+            FriendsBean friendsBean = new FriendsBean();
+            friendsBean.setUser_id(user_id);
+                friendsBean.setFriend_id(memberBean.getUser_id());
+                List<FriendsBean> checkFriendShip = friendsRepository.checkFriendshipForEvent(friendsBean);
+                System.out.println("checkFriendship: " + checkFriendShip);
+                if (!checkFriendShip.isEmpty()) {
+                    System.out.println("เป็นเพื่อนกัน");
+                    memberBean.setIsThisFriend(true);
+                    memberBean.setFriendShip(checkFriendShip);
+
+                } else {
+                    // ไม่ได้เป็นเพื่อนกัน ให้หา mutual friend
+                    memberBean.setIsThisFriend(false);
+                    List<MutualFriendBean> checkMutualFriend = friendsRepository.checkMutualFriend(friendsBean);
+                    if (!checkMutualFriend.isEmpty()) {
+                        memberBean.setMutualFriend(checkMutualFriend);
+                    } else {
+                        memberBean.setMutualFriend(null);
+                    }
+
+                }
+            }
             eventsBean.setMembers(members);
             res.setData(eventsBean);
         } catch (Exception e) {

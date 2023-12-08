@@ -1,5 +1,7 @@
 package sit.int371.modride_service.beans;
 
+import java.util.List;
+
 import lombok.Data;
 
 @Data
@@ -14,4 +16,9 @@ public class EventMemberBean {
     private String profile_img_path;
     private Integer rate;
     private Integer total;
+
+    private Boolean isThisFriend;
+    // list for friendship
+    private List<FriendsBean> friendShip;
+    private List<MutualFriendBean> mutualFriend;
 }
