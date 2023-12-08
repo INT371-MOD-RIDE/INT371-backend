@@ -20,12 +20,12 @@ public interface UsersRepository {
         public List<UsersBean> getAllUsers() throws Exception;
 
         @Select({
-                        " select u.user_id,r.role_id,r.role_name,u.email,u.firstname,u.lastname,concat(u.firstname, ' ', u.lastname) as fullname,COALESCE(u.tel, '') AS tel,u.profile_img_path,  ",
-                        " f.faculty_name,b.branch_name from users u  ",
-                        " inner join branches b on u.branch_id = b.branch_id ",
-                        " inner join faculties f on b.faculty_id = f.faculty_id ",
-                        " inner join roles r on u.role_id = r.role_id ",
-                        " where u.user_id = #{user_id} ",
+                " select u.user_id,r.role_id,r.role_name,u.email,u.firstname,u.lastname,concat(u.firstname, ' ', u.lastname) as fullname,COALESCE(u.tel, '') AS tel,u.other_contact,u.contact_info,u.profile_img_path, ",
+                " f.faculty_name,b.branch_name from users u  ",
+                " inner join branches b on u.branch_id = b.branch_id ",
+                " inner join faculties f on b.faculty_id = f.faculty_id ",
+                " inner join roles r on u.role_id = r.role_id ",
+                " where u.user_id = #{user_id} ",
         })
         public UsersBean getUserById(UsersBean bean) throws Exception;
 
@@ -61,8 +61,8 @@ public interface UsersRepository {
 
         // sign-up users account
         @Insert({
-                        " insert into users(branch_id,role_id,email,firstname,lastname,tel,profile_img_path) ",
-                        " values(#{branch_id},#{role_id},#{email},#{firstname},#{lastname},#{tel},#{profile_img_path}) ",
+                        " insert into users(branch_id,role_id,email,firstname,lastname,tel,other_contact,contact_info) ",
+                        " values(#{branch_id},#{role_id},#{email},#{firstname},#{lastname},#{tel},#{other_contact},#{contact_info}) ",
         })
         @Options(useGeneratedKeys = true, keyColumn = "user_id", keyProperty = "user_id")
         public void createAccount(UsersBean bean) throws Exception;
@@ -77,7 +77,7 @@ public interface UsersRepository {
         // update user-account
         @Update({
                         " update users ",
-                        " set role_id = #{role_id}, tel = #{tel} ",
+                        " set role_id = #{role_id}, tel = #{tel}, other_contact = #{other_contact}, contact_info = #{contact_info} ",
                         " where user_id = #{user_id} ",
         })
         public void updateUserAccount(UsersBean bean) throws Exception;
