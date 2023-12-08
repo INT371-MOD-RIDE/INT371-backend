@@ -148,9 +148,11 @@ public class EventsController extends BaseController {
                 params.put("vehicle_id", params.get("vehicle_id"));
                 // bean.setVehicle_id(params.get("vehicle_id"));
                 bean.setVehicle_id(Integer.parseInt(params.get("vehicle_id").toString()));
+                // bean.setCar_img_path("/images/car/" + params.get("vehicle_id").toString() + ".jpg");
             }else{
                 System.out.println("vehicle_id not null");
                 bean.setVehicle_id(vehicle_id);
+                // bean.setCar_img_path("/images/car/" + vehicle_id + ".jpg");
             }
             // vehiclesRepository.createVehicles(params);
             // params.put("vehicle_id", params.get("vehicle_id"));

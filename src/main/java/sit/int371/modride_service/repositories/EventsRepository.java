@@ -44,7 +44,7 @@ public interface EventsRepository {
     @Select({
             " SELECT e.event_id,e.user_id,e.event_name,e.event_detail, ",
             " e.start_point,e.dest_point,e.departure_time,e.seats,e.costs,e.create_date,e.update_date ",
-            " ,concat(u.firstname, ' ', u.lastname) as fullname,u.tel,u.profile_img_path,f.faculty_name,b.branch_name ",
+            " ,concat(u.firstname, ' ', u.lastname) as fullname,u.email,u.tel,u.other_contact,u.contact_info,u.profile_img_path,f.faculty_name,b.branch_name ",
             " ,v.brand,v.model,v.vehicle_type,v.vehicle_color,v.license,v.car_img_path,v.vehicle_id ",
             " FROM events e ",
             " left join users u on e.user_id = u.user_id ",
