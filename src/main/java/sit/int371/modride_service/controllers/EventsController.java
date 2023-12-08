@@ -129,7 +129,7 @@ public class EventsController extends BaseController {
 
     @PostMapping("/post")
     public APIResponseBean createEvents(HttpServletRequest request, 
-    @RequestBody EventDetailBean bean) {
+    @RequestBody EventDetailBean bean) throws Exception {
         APIResponseBean res = new APIResponseBean();
         HashMap<String, Object> params = new HashMap<>();
         try {
@@ -140,15 +140,33 @@ public class EventsController extends BaseController {
             params.put("vehicle_color", bean.getVehicle_color());
             params.put("license", bean.getLicense());
             params.put("car_img_path", bean.getCar_img_path());
-            vehiclesRepository.createVehicles(params);
-            params.put("vehicle_id", params.get("vehicle_id"));
+            System.out.println("getVehiclesByLicense" + params.get("license"));
+            Integer vehicle_id = vehiclesRepository.getVehiclesByLicense(params);
+            if(vehicle_id == null){
+                System.out.println("vehicle_id is null");
+                vehiclesRepository.createVehicles(params);
+                params.put("vehicle_id", params.get("vehicle_id"));
+                // bean.setVehicle_id(params.get("vehicle_id"));
+                bean.setVehicle_id(Integer.parseInt(params.get("vehicle_id").toString()));
+            }else{
+                System.out.println("vehicle_id not null");
+                bean.setVehicle_id(vehicle_id);
+            }
+            // vehiclesRepository.createVehicles(params);
+            // params.put("vehicle_id", params.get("vehicle_id"));
             // bean.setVehicle_id(params.get("vehicle_id"));
-            bean.setVehicle_id(Integer.parseInt(params.get("vehicle_id").toString()));
             eventsRepository.createEvents(bean);
             params.put("event_id", bean.getEvent_id());
             eventsRepository.joinEvent(params);
             res.setData(bean);
         } catch (Exception e) {
+            if(params.get("vehicle_id") != null){
+                params.put("vehicle_id", params.get("vehicle_id"));
+                vehiclesRepository.deleteVehicles(params);
+            }
+            // bean.setVehicle_id(Integer.parseInt(params.get("vehicle_id").toString()));
+            // vehiclesRepository.deleteVehicles(params);
+            // System.out.println("deleting vehicle_id: " + params.get("vehicle_id"));
             this.checkException(e, res);
         }
         return res;
@@ -170,6 +188,7 @@ public class EventsController extends BaseController {
             // params.put("vehicle_id", data.get("vehicle_id"));
             // params.put("seats", data.get("seats"));
             // params.put("costs", data.get("costs"));
+            bean.setEvent_id(id);
             eventsRepository.editEvents(bean);
             params.put("vehicle_id", bean.getVehicle_id());
             params.put("seats", bean.getSeats());

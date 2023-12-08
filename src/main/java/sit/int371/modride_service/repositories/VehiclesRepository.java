@@ -24,10 +24,22 @@ public interface VehiclesRepository {
     })
     @Options(useGeneratedKeys = true, keyColumn = "vehicle_id", keyProperty = "vehicle_id")
     // public void createVehicles(VehiclesBean vehiclesBean) throws Exception;
-    public void createVehicles(HashMap<String, Object> vehiclesBean) throws Exception;
+    public void createVehicles(HashMap<String, Object> params) throws Exception;
     @Update({
         " update vehicles set brand = #{brand},model = #{model},vehicle_type = #{vehicle_type},vehicle_color = #{vehicle_color},license = #{license},car_img_path = #{car_img_path} ",
         " where vehicle_id = #{vehicle_id} "
     })
-    public void editVehicles(HashMap<String, Object> vehiclesBean) throws Exception;
+    public void editVehicles(HashMap<String, Object> params) throws Exception;
+    @Delete({
+        " delete from vehicles where vehicle_id = #{vehicle_id} "
+    })
+    public void deleteVehicles(HashMap<String, Object> params) throws Exception;
+    @Select({
+        " select vehicle_id from vehicles where user_id = #{user_id} "
+    })
+    public Integer getVehicleIdByUserId(HashMap<String, Object> params) throws Exception;
+    @Select({
+        " select vehicle_id from vehicles where license = #{license} "
+    })
+    public Integer getVehiclesByLicense(HashMap<String, Object> params) throws Exception;
 }

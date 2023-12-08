@@ -8,6 +8,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
+import org.apache.ibatis.annotations.UpdateProvider;
 import org.apache.ibatis.annotations.Delete;
 
 import sit.int371.modride_service.beans.ChatBean;
@@ -16,6 +17,7 @@ import sit.int371.modride_service.beans.EventMemberBean;
 import sit.int371.modride_service.beans.EventsBean;
 import sit.int371.modride_service.beans.UsersBean;
 import sit.int371.modride_service.beans.VehiclesBean;
+import sit.int371.modride_service.provider.EventsSqlProvider;
 
 @Mapper
 public interface EventsRepository {
@@ -86,19 +88,20 @@ public interface EventsRepository {
     @Options(useGeneratedKeys = true, keyColumn = "event_id", keyProperty = "event_id")
     public void createEvents(EventDetailBean eventsBean) throws Exception;
 
-    @Update({
-            " UPDATE events SET ",
-            " event_name = #{event_name}, ",
-            " vehicle_id = #{vehicle_id}, ",
-            " event_detail = #{event_detail}, ",
-            " start_point = #{start_point}, ",
-            " dest_point = #{dest_point}, ",
-            " departure_time = #{departure_time}, ",
-            " seats = #{seats}, ",
-            " costs = #{costs}, ",
-            " update_date = sysdate() ",
-            " WHERE event_id = #{event_id} "
-    })
+    // @Update({
+    //         " UPDATE events SET ",
+    //         " event_name = #{event_name}, ",
+    //         " vehicle_id = #{vehicle_id}, ",
+    //         " event_detail = #{event_detail}, ",
+    //         " start_point = #{start_point}, ",
+    //         " dest_point = #{dest_point}, ",
+    //         " departure_time = #{departure_time}, ",
+    //         " seats = #{seats}, ",
+    //         " costs = #{costs}, ",
+    //         " update_date = sysdate() ",
+    //         " WHERE event_id = #{event_id} "
+    // })
+    @UpdateProvider(type = EventsSqlProvider.class, method = "updateEvents")
     public void editEvents(EventDetailBean bean) throws Exception;
 
     @Update({
