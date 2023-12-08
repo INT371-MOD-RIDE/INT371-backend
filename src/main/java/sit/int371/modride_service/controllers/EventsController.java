@@ -170,6 +170,7 @@ public class EventsController extends BaseController {
             // params.put("vehicle_id", data.get("vehicle_id"));
             // params.put("seats", data.get("seats"));
             // params.put("costs", data.get("costs"));
+            bean.setEvent_id(id);
             eventsRepository.editEvents(bean);
             params.put("vehicle_id", bean.getVehicle_id());
             params.put("seats", bean.getSeats());
