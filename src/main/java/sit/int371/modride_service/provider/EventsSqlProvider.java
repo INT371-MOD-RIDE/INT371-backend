@@ -17,6 +17,25 @@ public class EventsSqlProvider {
             sql.SET("vehicle_id = #{vehicle_id}");
         }
 
+        if (bean.getEvent_detail()!= null) {
+            sql.SET("event_detail = #{event_detail}");
+        }
+        if (bean.getStart_point()!= null) {
+            sql.SET("start_point = #{start_point}");
+        }
+        if (bean.getDest_point()!= null) {
+            sql.SET("dest_point = #{dest_point}");
+        }
+        if (bean.getDeparture_time()!= null) {
+            sql.SET("departure_time = #{departure_time}");
+        }
+        if (bean.getSeats()!= null) {
+            sql.SET("seats = #{seats}");
+        }
+        if (bean.getCosts()!= null) {
+            sql.SET("costs = #{costs}");
+        }
+        
         // Add similar conditional statements for other fields
 
         sql.SET("update_date = sysdate()");

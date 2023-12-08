@@ -88,19 +88,19 @@ public interface EventsRepository {
     @Options(useGeneratedKeys = true, keyColumn = "event_id", keyProperty = "event_id")
     public void createEvents(EventDetailBean eventsBean) throws Exception;
 
-    @Update({
-            " UPDATE events SET ",
-            " event_name = #{event_name}, ",
-            " vehicle_id = #{vehicle_id}, ",
-            " event_detail = #{event_detail}, ",
-            " start_point = #{start_point}, ",
-            " dest_point = #{dest_point}, ",
-            " departure_time = #{departure_time}, ",
-            " seats = #{seats}, ",
-            " costs = #{costs}, ",
-            " update_date = sysdate() ",
-            " WHERE event_id = #{event_id} "
-    })
+    // @Update({
+    //         " UPDATE events SET ",
+    //         " event_name = #{event_name}, ",
+    //         " vehicle_id = #{vehicle_id}, ",
+    //         " event_detail = #{event_detail}, ",
+    //         " start_point = #{start_point}, ",
+    //         " dest_point = #{dest_point}, ",
+    //         " departure_time = #{departure_time}, ",
+    //         " seats = #{seats}, ",
+    //         " costs = #{costs}, ",
+    //         " update_date = sysdate() ",
+    //         " WHERE event_id = #{event_id} "
+    // })
     @UpdateProvider(type = EventsSqlProvider.class, method = "updateEvents")
     public void editEvents(EventDetailBean bean) throws Exception;
 
