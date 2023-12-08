@@ -9,7 +9,7 @@ public class EventsSqlProvider {
         SQL sql = new SQL();
         sql.UPDATE("events");
 
-        if (bean.getEvent_name() != null) {
+        if (bean.getEvent_name() != null || bean.getEvent_name() != "") {
             sql.SET("event_name = #{event_name}");
         }
 
@@ -20,16 +20,16 @@ public class EventsSqlProvider {
         if (bean.getEvent_detail()!= null) {
             sql.SET("event_detail = #{event_detail}");
         }
-        if (bean.getStart_point()!= null) {
+        if (bean.getStart_point()!= null || bean.getStart_point() != "") {
             sql.SET("start_point = #{start_point}");
         }
-        if (bean.getDest_point()!= null) {
+        if (bean.getDest_point()!= null || bean.getDest_point() != "") {
             sql.SET("dest_point = #{dest_point}");
         }
-        if (bean.getDeparture_time()!= null) {
+        if (bean.getDeparture_time()!= null || bean.getDeparture_time() != "") {
             sql.SET("departure_time = #{departure_time}");
         }
-        if (bean.getSeats()!= null) {
+        if (bean.getSeats()!= null || bean.getSeats() != 0) {
             sql.SET("seats = #{seats}");
         }
         if (bean.getCosts()!= null) {
