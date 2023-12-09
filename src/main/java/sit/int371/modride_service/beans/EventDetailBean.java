@@ -62,10 +62,6 @@ public class EventDetailBean {
     public void setLicense(String license) {
         this.license = trimIfNotNull(license);
     }
-    // public void setCar_img_path(String car_img_path) {
-    //     this.car_img_path = trimIfNotNull(car_img_path);
-    // }
-
 
 
     private String trimIfNotNull(String value) {

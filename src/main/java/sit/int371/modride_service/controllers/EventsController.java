@@ -191,6 +191,7 @@ public class EventsController extends BaseController {
             // params.put("seats", data.get("seats"));
             // params.put("costs", data.get("costs"));
             bean.setEvent_id(id);
+            System.out.println("editbean: " + bean);
             eventsRepository.editEvents(bean);
             params.put("vehicle_id", bean.getVehicle_id());
             params.put("seats", bean.getSeats());
@@ -201,7 +202,7 @@ public class EventsController extends BaseController {
             params.put("license", bean.getLicense());
             params.put("car_img_path", bean.getCar_img_path());
             vehiclesRepository.editVehicles(params);
-            res.setData(params);
+            res.setData(bean);
         } catch (Exception e) {
             this.checkException(e, res);
         }
