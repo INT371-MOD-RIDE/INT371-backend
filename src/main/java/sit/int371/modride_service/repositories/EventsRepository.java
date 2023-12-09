@@ -8,12 +8,16 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
+import org.apache.ibatis.annotations.UpdateProvider;
 import org.apache.ibatis.annotations.Delete;
 
+import sit.int371.modride_service.beans.ChatBean;
 import sit.int371.modride_service.beans.EventDetailBean;
 import sit.int371.modride_service.beans.EventMemberBean;
 import sit.int371.modride_service.beans.EventsBean;
 import sit.int371.modride_service.beans.UsersBean;
+import sit.int371.modride_service.beans.VehiclesBean;
+import sit.int371.modride_service.provider.EventsSqlProvider;
 
 @Mapper
 public interface EventsRepository {
@@ -40,7 +44,7 @@ public interface EventsRepository {
     @Select({
             " SELECT e.event_id,e.user_id,e.event_name,e.event_detail, ",
             " e.start_point,e.dest_point,e.departure_time,e.seats,e.costs,e.create_date,e.update_date ",
-            " ,concat(u.firstname, ' ', u.lastname) as fullname,u.tel,u.profile_img_path,f.faculty_name,b.branch_name ",
+            " ,concat(u.firstname, ' ', u.lastname) as fullname,u.email,u.tel,u.other_contact,u.contact_info,u.profile_img_path,f.faculty_name,b.branch_name ",
             " ,v.brand,v.model,v.vehicle_type,v.vehicle_color,v.license,v.car_img_path,v.vehicle_id ",
             " FROM events e ",
             " left join users u on e.user_id = u.user_id ",
@@ -63,7 +67,8 @@ public interface EventsRepository {
         " SELECT m.members_id,m.event_id,m.user_id,concat(u.firstname, ' ', u.lastname) as fullname,f.faculty_name,b.branch_name,u.profile_img_path, ",
         " CASE WHEN m.user_id = e.user_id THEN ra.total END AS total, ",
         " CASE WHEN m.user_id = e.user_id THEN ra.rate END AS rate, ",
-        " r.role_name",
+        // " r.role_name",
+        " CASE WHEN m.user_id = e.user_id THEN 'driver' ELSE 'passenger' END AS role_name ",
         " FROM members m ",
         " LEFT JOIN users u ON u.user_id = m.user_id ",
         // " LEFT JOIN roles ur ON ur.user_id = u.user_id ",
@@ -81,22 +86,23 @@ public interface EventsRepository {
             " VALUES(#{user_id},#{vehicle_id},#{event_name},#{event_detail},#{start_point},#{dest_point},#{departure_time},#{seats},#{costs},1,sysdate(),sysdate())"
     })
     @Options(useGeneratedKeys = true, keyColumn = "event_id", keyProperty = "event_id")
-    public void createEvents(EventsBean eventsBean) throws Exception;
+    public void createEvents(EventDetailBean eventsBean) throws Exception;
 
-    @Update({
-            " UPDATE events SET ",
-            " event_name = #{event_name}, ",
-            " vehicle_id = #{vehicle_id}, ",
-            " event_detail = #{event_detail}, ",
-            " start_point = #{start_point}, ",
-            " dest_point = #{dest_point}, ",
-            " departure_time = #{departure_time}, ",
-            " seats = #{seats}, ",
-            " costs = #{costs}, ",
-            " update_date = sysdate() ",
-            " WHERE event_id = #{event_id} "
-    })
-    public void editEvents(HashMap<String, Object> params) throws Exception;
+    // @Update({
+    //         " UPDATE events SET ",
+    //         " event_name = #{event_name}, ",
+    //         " vehicle_id = #{vehicle_id}, ",
+    //         " event_detail = #{event_detail}, ",
+    //         " start_point = #{start_point}, ",
+    //         " dest_point = #{dest_point}, ",
+    //         " departure_time = #{departure_time}, ",
+    //         " seats = #{seats}, ",
+    //         " costs = #{costs}, ",
+    //         " update_date = sysdate() ",
+    //         " WHERE event_id = #{event_id} "
+    // })
+    @UpdateProvider(type = EventsSqlProvider.class, method = "updateEvents")
+    public void editEvents(EventDetailBean bean) throws Exception;
 
     @Update({
             " UPDATE events SET ",
@@ -143,4 +149,22 @@ public interface EventsRepository {
        " and user_id = #{user_id} "
     })
     public Integer checkDuplicateMember(HashMap<String, Object> params) throws Exception;
+
+    @Select({
+        " select vehicle_id,concat(brand,' ',model) as car_name,license,car_img_path ",
+       " from vehicles ",
+       " where user_id = #{user_id} "
+    })
+    public List<VehiclesBean> getVehicles(HashMap<String, Object> params) throws Exception;
+
+    //For chat
+    @Select({
+        " select e.event_id,e.event_name,m.user_id,concat(u.firstname,' ',u.lastname) as fullname,u.profile_img_path ",
+        " from events e ",
+        " left join members m on e.event_id=m.event_id ",
+        " left join users u on m.user_id=u.user_id ",
+        " where u.user_id = #{user_id} ",
+        " order by e.create_date desc "
+    })
+    public List<ChatBean> getChatRoom(HashMap<String, Object> params) throws Exception;
 }
