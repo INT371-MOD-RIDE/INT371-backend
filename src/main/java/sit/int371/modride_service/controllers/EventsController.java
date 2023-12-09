@@ -262,7 +262,7 @@ public class EventsController extends BaseController {
                 res.setResponse_desc("Seat is full");
             }else{
                 if(duplicateMember == 0){
-                    params.put("seats", seatAvailable-1);
+                    params.put("join_seat", seatAvailable-1);
                     eventsRepository.joinEvent(params);
                     eventsRepository.editSeats(params);
                     res.setResponse_code("200");
