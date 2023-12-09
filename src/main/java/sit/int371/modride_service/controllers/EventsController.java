@@ -263,6 +263,7 @@ public class EventsController extends BaseController {
                 if(duplicateMember == 0){
                     params.put("seats", seatAvailable-1);
                     eventsRepository.joinEvent(params);
+                    eventsRepository.editSeats(params);
                     res.setResponse_code("200");
                     res.setResponse_desc("success");
                 }else{
