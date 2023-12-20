@@ -292,6 +292,8 @@ public class EventsController extends BaseController {
         }
         return res;
     }
+
+
     //For chat
     @GetMapping("/getChatRoom/{id}")
     public APIResponseBean getChatRoom(HttpServletRequest request,@PathVariable Integer id){
@@ -301,6 +303,20 @@ public class EventsController extends BaseController {
             // params.put("user_id", request.getAttribute("user_id"));
             params.put("user_id", id);
             List<ChatBean> events = eventsRepository.getChatRoom(params);
+            res.setData(events);
+        } catch (Exception e) {
+            this.checkException(e, res);
+        }
+        return res;
+    }
+    @GetMapping("/getChatRoomMember/{id}")
+    public APIResponseBean getChatRoomMember(HttpServletRequest request,@PathVariable Integer id){
+        APIResponseBean res = new APIResponseBean();
+        HashMap<String, Object> params = new HashMap<>();
+        try {
+            // params.put("user_id", request.getAttribute("user_id"));
+            params.put("event_id", id);
+            List<ChatBean> events = eventsRepository.getChatRoomMember(params);
             res.setData(events);
         } catch (Exception e) {
             this.checkException(e, res);

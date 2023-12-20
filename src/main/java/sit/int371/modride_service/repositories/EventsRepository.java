@@ -167,4 +167,14 @@ public interface EventsRepository {
         " order by e.create_date desc "
     })
     public List<ChatBean> getChatRoom(HashMap<String, Object> params) throws Exception;
+
+     @Select({
+        " select e.event_id,e.event_name,m.user_id,concat(u.firstname,' ',u.lastname) as fullname,u.profile_img_path ",
+        " from events e ",
+        " left join members m on e.event_id=m.event_id ",
+        " left join users u on m.user_id=u.user_id ",
+        " where e.event_id = #{event_id} ",
+        " order by e.create_date desc "
+    })
+    public List<ChatBean> getChatRoomMember(HashMap<String, Object> params) throws Exception;
 }
