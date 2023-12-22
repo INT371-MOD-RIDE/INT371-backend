@@ -6,6 +6,8 @@ import lombok.Data;
 public class ChatBean {
     private Integer event_id;
     private String event_name;
+    private Integer member_count;
+    private Integer status;
     private Integer user_id;
     private String fullname;
     private String profile_img_path;
