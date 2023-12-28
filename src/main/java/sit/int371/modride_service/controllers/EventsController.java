@@ -139,6 +139,7 @@ public class EventsController extends BaseController {
             params.put("vehicle_type", bean.getVehicle_type());
             params.put("vehicle_color", bean.getVehicle_color());
             params.put("license", bean.getLicense());
+            params.put("seats", bean.getSeats());
             params.put("car_img_path", bean.getCar_img_path());
             System.out.println("getVehiclesByLicense" + params.get("license"));
             Integer vehicle_id = vehiclesRepository.getVehiclesByLicense(params);
@@ -159,6 +160,7 @@ public class EventsController extends BaseController {
             // bean.setVehicle_id(params.get("vehicle_id"));
             eventsRepository.createEvents(bean);
             params.put("event_id", bean.getEvent_id());
+            eventsRepository.createEventLocation(bean);
             eventsRepository.joinEvent(params);
             res.setData(bean);
         } catch (Exception e) {

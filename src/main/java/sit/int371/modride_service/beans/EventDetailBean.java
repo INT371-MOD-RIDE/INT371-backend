@@ -12,6 +12,8 @@ public class EventDetailBean {
     private String event_detail;
     private String start_point;
     private String dest_point;
+    private String start_name;
+    private String dest_name;
     private String departure_time;
     private Integer seats;
     private Integer costs;
@@ -43,6 +45,12 @@ public class EventDetailBean {
     }
     public void setDest_point(String dest_point) {
         this.dest_point = trimIfNotNull(dest_point);
+    }
+    public void setStartName(String start_name) {
+        this.start_name = trimIfNotNull(start_name);
+    }
+    public void setDestName(String dest_name) {
+        this.dest_name = trimIfNotNull(dest_name);
     }
     public void setDeparture_time(String departure_time) {
         this.departure_time = trimIfNotNull(departure_time);

@@ -19,8 +19,8 @@ import sit.int371.modride_service.beans.VehiclesBean;
 @Mapper
 public interface VehiclesRepository {
     @Insert({
-        " insert into vehicles (user_id,brand,model,vehicle_type,vehicle_color,license,car_img_path) ",
-        " values (#{user_id},#{brand},#{model},#{vehicle_type},#{vehicle_color},#{license},#{car_img_path}) "
+        " insert into vehicles (user_id,brand,model,vehicle_type,vehicle_color,license,seats,car_img_path) ",
+        " values (#{user_id},#{brand},#{model},#{vehicle_type},#{vehicle_color},#{license},#{seats},#{car_img_path}) "
     })
     @Options(useGeneratedKeys = true, keyColumn = "vehicle_id", keyProperty = "vehicle_id")
     // public void createVehicles(VehiclesBean vehiclesBean) throws Exception;
