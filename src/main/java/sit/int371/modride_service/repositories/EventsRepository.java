@@ -172,14 +172,20 @@ public interface EventsRepository {
 
     // For chat
     @Select({
-            " select e.event_id,e.event_name,m.user_id,concat(u.firstname,' ',u.lastname) as fullname,u.profile_img_path ",
-            " from events e ",
-            " left join members m on e.event_id=m.event_id ",
-            " left join users u on m.user_id=u.user_id ",
-            " where u.user_id = #{user_id} ",
-            " order by e.create_date desc "
+        " select e.event_id,e.event_name,e.status,m.user_id,concat(u.firstname,' ',u.lastname) as fullname,u.profile_img_path ",
+        " from events e ",
+        " left join members m on e.event_id=m.event_id ",
+        " left join users u on m.user_id=u.user_id ",
+        " where u.user_id = #{user_id} ",
+        " order by e.create_date desc "
     })
     public List<ChatBean> getChatRoom(HashMap<String, Object> params) throws Exception;
+    @Select({
+        " select count(members_id) ",
+        " from members ",
+        " where event_id= #{event_id} "
+    })
+    public Integer getMemberCount(HashMap<String, Object> params) throws Exception;
 
     @Select({
             " select e.event_id,e.event_name,m.user_id,concat(u.firstname,' ',u.lastname) as fullname,u.profile_img_path ",

@@ -305,6 +305,15 @@ public class EventsController extends BaseController {
             // params.put("user_id", request.getAttribute("user_id"));
             params.put("user_id", id);
             List<ChatBean> events = eventsRepository.getChatRoom(params);
+            events.forEach(event -> {
+                params.put("event_id", event.getEvent_id());
+                try {
+                    Integer members = eventsRepository.getMemberCount(params);
+                    event.setMember_count(members);
+                } catch (Exception e) {
+                    this.checkException(e, res);
+                }
+            });
             res.setData(events);
         } catch (Exception e) {
             this.checkException(e, res);
