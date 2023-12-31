@@ -28,7 +28,7 @@ public interface EventsRepository {
             // " where status = 1 ",
             // " order by create_date desc ",
             " SELECT e.event_id,e.user_id,e.event_name,e.event_detail, ",
-			" e.departure_time,e.seats,e.costs,e.create_date,e.update_date ",
+            " e.departure_time,e.seats,e.costs,e.create_date,e.update_date ",
             " ,concat(u.firstname, ' ', u.lastname) as fullname,u.profile_img_path,r.rate,r.total,f.faculty_name,b.branch_name ",
             " ,case when el.start_name is null then el.start_point else el.start_name end as start_point  ",
             " ,case when el.dest_name is null then el.dest_point else el.dest_name end as dest_point ",
@@ -45,18 +45,18 @@ public interface EventsRepository {
     public List<EventsBean> getAllEvents() throws Exception;
 
     @Select({
-        " SELECT e.event_id,e.user_id,e.event_name,e.event_detail, ",
-        " e.departure_time,e.seats,e.costs,e.create_date,e.update_date ",
-        " ,concat(u.firstname, ' ', u.lastname) as fullname,u.email,u.tel,u.other_contact,u.contact_info,u.profile_img_path,f.faculty_name,b.branch_name ",
-        " ,v.brand,v.model,v.vehicle_type,v.vehicle_color,v.license,v.car_img_path,v.vehicle_id ",
-        " ,el.start_point,el.dest_point ",
-        " FROM events e ",
-        " left join users u on e.user_id = u.user_id ",
-        " left join branches b on u.branch_id = b.branch_id ",
-        " left join faculties f on b.faculty_id = f.faculty_id ",
-        " left join vehicles v on e.vehicle_id = v.vehicle_id ",
-        " left join event_location el on el.event_id = e.event_id  ",
-        " where e.event_id = #{event_id} ",
+            " SELECT e.event_id,e.user_id,e.event_name,e.event_detail, ",
+            " e.departure_time,e.seats,e.costs,e.create_date,e.update_date ",
+            " ,concat(u.firstname, ' ', u.lastname) as fullname,u.email,u.tel,u.other_contact,u.contact_info,u.profile_img_path,f.faculty_name,b.branch_name ",
+            " ,v.brand,v.model,v.vehicle_type,v.vehicle_color,v.license,v.car_img_path,v.vehicle_id ",
+            " ,el.start_point,el.dest_point ",
+            " FROM events e ",
+            " left join users u on e.user_id = u.user_id ",
+            " left join branches b on u.branch_id = b.branch_id ",
+            " left join faculties f on b.faculty_id = f.faculty_id ",
+            " left join vehicles v on e.vehicle_id = v.vehicle_id ",
+            " left join event_location el on el.event_id = e.event_id  ",
+            " where e.event_id = #{event_id} ",
     })
 
     public EventDetailBean getEventsById(HashMap<String, Object> event_id) throws Exception;
@@ -190,4 +190,11 @@ public interface EventsRepository {
             " order by e.create_date desc "
     })
     public List<ChatBean> getChatRoomMember(HashMap<String, Object> params) throws Exception;
+
+    @Select({
+            " select count(members_id) ",
+            " from members ",
+            " where event_id= #{event_id} "
+    })
+    public Integer getMemberCount(HashMap<String, Object> params) throws Exception;
 }
