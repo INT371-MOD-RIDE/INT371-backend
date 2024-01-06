@@ -27,7 +27,7 @@ public interface EventsRepository {
             // FROM events ",
             // " where status = 1 ",
             // " order by create_date desc ",
-            " SELECT e.event_id,e.user_id,e.event_name,e.event_detail, ",
+            " SELECT e.event_id,e.user_id,e.event_name,e.status,e.event_detail, ",
             " e.departure_time,e.seats,e.costs,e.create_date,e.update_date ",
             " ,concat(u.firstname, ' ', u.lastname) as fullname,u.profile_img_path,r.rate,r.total,f.faculty_name,b.branch_name ",
             " ,case when el.start_name is null then el.start_point else el.start_name end as start_point  ",
@@ -38,7 +38,7 @@ public interface EventsRepository {
             " left join branches b on u.branch_id = b.branch_id ",
             " left join faculties f on b.faculty_id = f.faculty_id ",
             " left join event_location el on el.event_id = e.event_id ",
-            " where status = 1 ",
+        //     " where status = 1 ",
             " order by create_date desc ",
     })
 

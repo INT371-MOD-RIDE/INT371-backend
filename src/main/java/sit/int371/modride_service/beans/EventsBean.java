@@ -12,6 +12,7 @@ public class EventsBean {
     private Integer event_id;
     private Integer user_id;
     private String event_name;
+    private Integer status;
     private String event_detail;
     private String start_point;
     private String dest_point;
