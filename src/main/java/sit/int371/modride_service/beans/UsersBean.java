@@ -11,8 +11,8 @@ public class UsersBean {
     private String role_name;
     private Integer branch_id;
     private String email;
-    private String firstname;
-    private String lastname;
+    // private String firstname;
+    // private String lastname;
     private String fullname;
     private String tel;
     private String other_contact;

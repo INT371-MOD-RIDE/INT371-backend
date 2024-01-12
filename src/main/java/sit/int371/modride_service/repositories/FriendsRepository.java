@@ -18,7 +18,7 @@ public interface FriendsRepository {
 
         // หน้าการแนะนำเพื่อน -- query clear ✅
         @Select({
-                        " select u.user_id,f.faculty_id,u.email,u.firstname,u.lastname,concat(u.firstname, ' ', u.lastname) as fullname, ",
+                        " select u.user_id,f.faculty_id,u.email,u.fullname, ",
                         " u.tel,u.profile_img_path,f.faculty_name,b.branch_name, ",
                         " fs.user_id as my_id,fs.friend_id,fs.friend_status ",
                         " from users u  ",
@@ -28,13 +28,13 @@ public interface FriendsRepository {
                         " 	on (u.user_id = fs.friend_id and fs.user_id = #{user_id}) ",
                         " where (u.user_id != #{user_id} and fs.user_id is null) or (u.user_id != #{user_id} and fs.friend_status = 'pending') ",
                         " order by f.faculty_name = #{faculty_name} desc, f.faculty_name asc, ",
-                        "  b.branch_name = #{branch_name} desc, b.branch_name asc,u.firstname asc ",
+                        "  b.branch_name = #{branch_name} desc, b.branch_name asc,u.fullname asc ",
         })
         public List<UsersBean> friendListSuggestionSearch(HashMap<String, Object> params) throws Exception;
 
         // หน้ารายการเพื่อน -- friend-list section ✅
         @Select({
-                        " select u.user_id,f.faculty_id,u.email,u.firstname,u.lastname,concat(u.firstname, ' ', u.lastname) as fullname, ",
+                        " select u.user_id,f.faculty_id,u.email,u.fullname, ",
                         " u.tel,u.profile_img_path,f.faculty_name,b.branch_name, ",
                         " fs.friend_id,fs.friend_status ",
                         " from users u  ",
@@ -42,13 +42,13 @@ public interface FriendsRepository {
                         " inner join faculties f on b.faculty_id = f.faculty_id ",
                         " inner join friendships fs on fs.user_id = u.user_id ",
                         " where u.user_id != #{user_id} and fs.friend_id = #{user_id} and fs.friend_status = 'accepted' ",
-                        " order by f.faculty_name = #{faculty_name} desc, f.faculty_name asc, u.firstname asc ",
+                        " order by f.faculty_name = #{faculty_name} desc, f.faculty_name asc, u.fullname asc ",
         })
         public List<UsersBean> friendsList(HashMap<String, Object> params) throws Exception;
 
         // คำขอเป็นเพื่อน -- friend-request ✅
         @Select({
-                " select u.user_id,f.faculty_id,u.email,u.firstname,u.lastname,concat(u.firstname, ' ', u.lastname) as fullname, ",
+                " select u.user_id,f.faculty_id,u.email,u.fullname, ",
                 " u.tel,u.profile_img_path,f.faculty_name,b.branch_name, ",
                 " fs.friend_id,fs.friend_status ",
                 " from users u  ",
@@ -56,7 +56,7 @@ public interface FriendsRepository {
                 " inner join faculties f on b.faculty_id = f.faculty_id ",
                 " inner join friendships fs on fs.user_id = u.user_id ",
                 " where u.user_id != #{user_id} and fs.friend_id = #{user_id} and fs.friend_status = 'pending' ",
-                " order by f.faculty_name = #{faculty_name} desc, f.faculty_name asc, u.firstname asc ",
+                " order by f.faculty_name = #{faculty_name} desc, f.faculty_name asc, u.fullname asc ",
         })
         public List<UsersBean> friendsRequest(HashMap<String, Object> params) throws Exception;
 
@@ -75,7 +75,7 @@ public interface FriendsRepository {
         // -- sub queries ชุดที่สอง user_id ของ driver
         // -- สุดท้ายจะได้ออกมาเป็น mutual friend ของกันและกัน (หากมี)
         @Select({
-                        " select u.user_id,u.email,u.firstname,u.lastname from users u ",
+                        " select u.user_id,u.email,u.fullname from users u ",
                         " inner join  ",
                         "         (select friend_id from friendships  ",
                         "     where user_id = #{user_id} and friend_status = 'accepted') as a on u.user_id = a.friend_id ",
@@ -87,7 +87,7 @@ public interface FriendsRepository {
 
         // --------------------------------------------
         @Select({
-                        " select u.user_id,u.firstname,f.friend_id,f.friend_status ",
+                        " select u.user_id,u.fullname,f.friend_id,f.friend_status ",
                         " from friendships f inner join users u on f.user_id = u.user_id ",
                         " where u.user_id = #{user_id} ",
                         " order by u.user_id "

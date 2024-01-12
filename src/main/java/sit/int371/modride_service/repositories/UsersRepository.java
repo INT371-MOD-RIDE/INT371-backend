@@ -16,11 +16,11 @@ import sit.int371.modride_service.beans.UsersBean;
 
 @Mapper
 public interface UsersRepository {
-        @Select("SELECT u.user_id,u.branch_id,u.email,u.firstname,u.lastname FROM users u")
+        @Select("SELECT u.user_id,u.branch_id,u.email,u.fullname FROM users u")
         public List<UsersBean> getAllUsers() throws Exception;
 
         @Select({
-                " select u.user_id,r.role_id,r.role_name,u.email,u.firstname,u.lastname,concat(u.firstname, ' ', u.lastname) as fullname,COALESCE(u.tel, '') AS tel,u.other_contact,u.contact_info,u.profile_img_path, ",
+                " select u.user_id,r.role_id,r.role_name,u.email,u.fullname,COALESCE(u.tel, '') AS tel,u.other_contact,u.contact_info,u.profile_img_path, ",
                 " f.faculty_name,b.branch_name from users u  ",
                 " inner join branches b on u.branch_id = b.branch_id ",
                 " inner join faculties f on b.faculty_id = f.faculty_id ",
@@ -31,7 +31,7 @@ public interface UsersRepository {
 
         // getUserByEmail (เป็นการให้ login เพื่อเข้าใช้แบบ mockup เฉยๆ)
         @Select({
-                        " select u.user_id,r.role_id,r.role_name,u.email,u.firstname,u.lastname,concat(u.firstname, ' ', u.lastname) as fullname,COALESCE(u.tel, '') AS tel,u.profile_img_path,  ",
+                        " select u.user_id,r.role_id,r.role_name,u.email,u.fullname,COALESCE(u.tel, '') AS tel,u.profile_img_path,  ",
                         " f.faculty_name,b.branch_name from users u  ",
                         " inner join branches b on u.branch_id = b.branch_id ",
                         " inner join faculties f on b.faculty_id = f.faculty_id ",
@@ -61,8 +61,8 @@ public interface UsersRepository {
 
         // sign-up users account
         @Insert({
-                        " insert into users(branch_id,role_id,email,firstname,lastname,tel,other_contact,contact_info) ",
-                        " values(#{branch_id},#{role_id},#{email},#{firstname},#{lastname},#{tel},#{other_contact},#{contact_info}) ",
+                        " insert into users(branch_id,role_id,email,fullname,tel,other_contact,contact_info) ",
+                        " values(#{branch_id},#{role_id},#{email},#{fullname},#{tel},#{other_contact},#{contact_info}) ",
         })
         @Options(useGeneratedKeys = true, keyColumn = "user_id", keyProperty = "user_id")
         public void createAccount(UsersBean bean) throws Exception;
