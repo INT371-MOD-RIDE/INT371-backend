@@ -79,7 +79,6 @@ public class UsersController extends BaseController {
         return res;
     }
 
-    // Get user-by-email (เป็นการให้ login เพื่อเข้าใช้แบบ mockup เฉยๆ)
     @GetMapping("/getByEmail")
     public APIResponseBean getUserByEmail(HttpServletRequest request,
             @RequestParam(name = "email", required = false) String email) {
@@ -94,6 +93,8 @@ public class UsersController extends BaseController {
         }
         return res;
     }
+
+    
 
     // Get faculties
     @GetMapping("/getFaculties")
