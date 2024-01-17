@@ -60,12 +60,12 @@ public interface UsersRepository {
         // Exception;
 
         @Select({
-                        " select faculty_id,faculty_name from faculties; "
+                        " select faculty_id,faculty_name from faculties order by faculty_name asc ; "
         })
         public List<FacultiesBean> getFaculties() throws Exception;
 
         @Select({
-                        " select branch_id,faculty_id,branch_name from branches "
+                        " select branch_id,faculty_id,branch_name from branches order by branch_name asc "
         })
         public List<BranchesBean> getBranches() throws Exception;
 

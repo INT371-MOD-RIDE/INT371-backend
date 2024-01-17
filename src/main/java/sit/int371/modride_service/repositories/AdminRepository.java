@@ -22,7 +22,7 @@ public interface AdminRepository {
                         " inner join branches b on b.branch_id = u.branch_id ",
                         " inner join faculties f on f.faculty_id = b.faculty_id ",
                         " inner join roles r on r.role_id = u.role_id ",
-                        " order by u.fullname asc ",
+                        " order by f.faculty_name asc, b.branch_name asc ",
         })
         public List<UsersBean> getAllUsers() throws Exception;
 
