@@ -142,6 +142,7 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.PUT, "/api/users/**").permitAll()
                 .antMatchers(HttpMethod.DELETE, "/api/users/**").permitAll()
 
+
                 // privilege endpoint
                 // for post-user by admin
                 // .antMatchers(HttpMethod.POST,"/api/users").hasAuthority("admin")

@@ -197,4 +197,21 @@ public interface EventsRepository {
             " where event_id= #{event_id} "
     })
     public Integer getMemberCount(HashMap<String, Object> params) throws Exception;
+    @Select({
+            " SELECT m.members_id,m.event_id,m.user_id,concat(u.firstname, ' ', u.lastname) as fullname,f.faculty_name,b.branch_name,u.profile_img_path, ",
+            " CASE WHEN m.user_id = e.user_id THEN ra.total END AS total, ",
+            " CASE WHEN m.user_id = e.user_id THEN ra.rate END AS rate, ",
+            " CASE WHEN m.user_id = e.user_id THEN 'driver' ELSE 'passenger' END AS role_name, ",
+            " r.role_name as role_check ",
+            " FROM members m ",
+            " LEFT JOIN users u ON u.user_id = m.user_id ",
+            // " LEFT JOIN roles ur ON ur.user_id = u.user_id ",
+            " LEFT JOIN roles r ON r.role_id = u.role_id ",
+            " LEFT JOIN branches b ON u.branch_id = b.branch_id ",
+            " LEFT JOIN faculties f ON b.faculty_id = f.faculty_id ",
+            " LEFT JOIN events e ON m.user_id = e.user_id AND m.event_id = e.event_id ",
+            " LEFT JOIN ratings ra ON m.user_id = ra.user_id ",
+            " WHERE m.event_id = #{event_id} ",
+    })
+    public List<EventMemberBean> getRequestMembers(HashMap<String, Object> event_id) throws Exception;
 }
