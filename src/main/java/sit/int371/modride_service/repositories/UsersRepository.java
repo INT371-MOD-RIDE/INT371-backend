@@ -16,11 +16,11 @@ import sit.int371.modride_service.beans.UsersBean;
 
 @Mapper
 public interface UsersRepository {
-        @Select("SELECT u.user_id,u.branch_id,u.email,u.firstname,u.lastname FROM users u")
+        @Select("SELECT u.user_id,u.branch_id,u.email,u.fullname FROM users u")
         public List<UsersBean> getAllUsers() throws Exception;
 
         @Select({
-                " select u.user_id,r.role_id,r.role_name,u.email,u.firstname,u.lastname,concat(u.firstname, ' ', u.lastname) as fullname,COALESCE(u.tel, '') AS tel,u.other_contact,u.contact_info,u.profile_img_path, ",
+                " select u.user_id,r.role_id,r.role_name,u.email,u.fullname,COALESCE(u.tel, '') AS tel,u.other_contact,u.contact_info,u.profile_img_path, ",
                 " f.faculty_name,b.branch_name from users u  ",
                 " inner join branches b on u.branch_id = b.branch_id ",
                 " inner join faculties f on b.faculty_id = f.faculty_id ",
@@ -31,7 +31,7 @@ public interface UsersRepository {
 
         // getUserByEmail (เป็นการให้ login เพื่อเข้าใช้แบบ mockup เฉยๆ)
         @Select({
-                        " select u.user_id,r.role_id,r.role_name,u.email,u.firstname,u.lastname,concat(u.firstname, ' ', u.lastname) as fullname,COALESCE(u.tel, '') AS tel,u.profile_img_path,  ",
+                        " select u.user_id,r.role_id,r.role_name,u.email,u.fullname,COALESCE(u.tel, '') AS tel,u.profile_img_path,  ",
                         " f.faculty_name,b.branch_name from users u  ",
                         " inner join branches b on u.branch_id = b.branch_id ",
                         " inner join faculties f on b.faculty_id = f.faculty_id ",
@@ -39,6 +39,16 @@ public interface UsersRepository {
                         " where u.email = #{email} ",
         })
         public UsersBean getUserByEmail(UsersBean bean) throws Exception;
+
+        // @Select({
+        //         " select u.user_id,r.role_id,r.role_name,u.email,u.fullname,COALESCE(u.tel, '') AS tel,u.profile_img_path,  ",
+        //         " f.faculty_name,b.branch_name from users u  ",
+        //         " inner join branches b on u.branch_id = b.branch_id ",
+        //         " inner join faculties f on b.faculty_id = f.faculty_id ",
+        //         " inner join roles r on u.role_id = r.role_id ",
+        //         " where u.fullname = #{fullname} and u.password = #{password}  ",
+        // })
+        // public UsersBean getAdminUser(HashMap<String,String> param) throws Exception;
 
         // @Select({
         // " select r.role_name from users u ",
@@ -50,19 +60,19 @@ public interface UsersRepository {
         // Exception;
 
         @Select({
-                        " select faculty_id,faculty_name from faculties; "
+                        " select faculty_id,faculty_name from faculties order by faculty_name asc ; "
         })
         public List<FacultiesBean> getFaculties() throws Exception;
 
         @Select({
-                        " select branch_id,faculty_id,branch_name from branches "
+                        " select branch_id,faculty_id,branch_name from branches order by branch_name asc "
         })
         public List<BranchesBean> getBranches() throws Exception;
 
         // sign-up users account
         @Insert({
-                        " insert into users(branch_id,role_id,email,firstname,lastname,tel,other_contact,contact_info) ",
-                        " values(#{branch_id},#{role_id},#{email},#{firstname},#{lastname},#{tel},#{other_contact},#{contact_info}) ",
+                        " insert into users(branch_id,role_id,email,fullname,tel,other_contact,contact_info) ",
+                        " values(#{branch_id},#{role_id},#{email},#{fullname},#{tel},#{other_contact},#{contact_info}) ",
         })
         @Options(useGeneratedKeys = true, keyColumn = "user_id", keyProperty = "user_id")
         public void createAccount(UsersBean bean) throws Exception;
