@@ -161,6 +161,7 @@ public class EventsController extends BaseController {
             eventsRepository.createEvents(bean);
             params.put("event_id", bean.getEvent_id());
             eventsRepository.createEventLocation(bean);
+            params.put("status",1);
             eventsRepository.joinEvent(params);
             res.setData(bean);
         } catch (Exception e) {
@@ -239,6 +240,7 @@ public class EventsController extends BaseController {
                 params.put("members_id", member);
                 eventsRepository.deleteMembers(params);
             }
+            eventsRepository.deleteLocation(params);
             eventsRepository.deleteEvents(params);
             res.setData(params);
             // res.setResponse_code("200");
@@ -257,6 +259,7 @@ public class EventsController extends BaseController {
             // params.put("user_id", request.getAttribute("user_id"));
             params.put("user_id", data.get("user_id"));
             params.put("event_id", data.get("event_id"));
+            params.put("status", 0);
             Integer seatAvailable = eventsRepository.getSeats(params);
             Integer duplicateMember = eventsRepository.checkDuplicateMember(params);
             if(seatAvailable == 0){

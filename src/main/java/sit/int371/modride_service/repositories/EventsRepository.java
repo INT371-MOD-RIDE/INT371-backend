@@ -28,7 +28,7 @@ public interface EventsRepository {
                         // " where status = 1 ",
                         // " order by create_date desc ",
                         " SELECT e.event_id,e.user_id,e.event_name,e.event_detail, ",
-                        " e.departure_time,e.seats,e.costs,e.create_date,e.update_date ",
+                        " e.departure_time,e.seats,e.costs,e.status,e.create_date,e.update_date ",
                         " ,u.fullname,u.profile_img_path,r.rate,r.total,f.faculty_name,b.branch_name ",
                         " ,case when el.start_name is null then el.start_point else el.start_name end as start_point  ",
                         " ,case when el.dest_name is null then el.dest_point else el.dest_name end as dest_point ",
@@ -38,7 +38,7 @@ public interface EventsRepository {
                         " left join branches b on u.branch_id = b.branch_id ",
                         " left join faculties f on b.faculty_id = f.faculty_id ",
                         " left join event_location el on el.event_id = e.event_id ",
-                        " where status = 1 ",
+                        // " where status = 1 ",
                         " order by create_date desc ",
         })
 
@@ -84,7 +84,8 @@ public interface EventsRepository {
                         " LEFT JOIN faculties f ON b.faculty_id = f.faculty_id ",
                         " LEFT JOIN events e ON m.user_id = e.user_id AND m.event_id = e.event_id ",
                         " LEFT JOIN ratings ra ON m.user_id = ra.user_id ",
-                        " WHERE m.event_id = #{event_id} ",
+                        " WHERE m.event_id = #{event_id} " ,
+                        " And m.status = 1 ",
         })
         public List<EventMemberBean> getEventMembers(HashMap<String, Object> event_id) throws Exception;
 
@@ -128,9 +129,12 @@ public interface EventsRepository {
         @Delete("DELETE FROM events WHERE event_id = #{event_id}")
         public void deleteEvents(HashMap<String, Object> params) throws Exception;
 
+        @Delete("DELETE FROM event_location WHERE event_id = #{event_id}")
+        public void deleteLocation(HashMap<String, Object> params) throws Exception;
+
         @Insert({
-                        " INSERT INTO members(event_id,user_id) ",
-                        " VALUES(#{event_id},#{user_id}) "
+                        " INSERT INTO members(event_id,user_id,status) ",
+                        " VALUES(#{event_id},#{user_id},#{status}) "
         })
         @Options(useGeneratedKeys = true, keyColumn = "members_id", keyProperty = "members_id")
         public void joinEvent(HashMap<String, Object> params) throws Exception;
@@ -172,11 +176,12 @@ public interface EventsRepository {
 
         // For chat
         @Select({
-                        " select e.event_id,e.event_name,m.user_id,u.fullname,u.profile_img_path ",
+                        " select e.event_id,e.event_name,m.user_id,u.fullname,u.profile_img_path,m.status ",
                         " from events e ",
                         " left join members m on e.event_id=m.event_id ",
                         " left join users u on m.user_id=u.user_id ",
                         " where u.user_id = #{user_id} ",
+                        // " and m.status = 1 ",
                         " order by e.create_date desc "
         })
         public List<ChatBean> getChatRoom(HashMap<String, Object> params) throws Exception;
@@ -187,6 +192,7 @@ public interface EventsRepository {
                         " left join members m on e.event_id=m.event_id ",
                         " left join users u on m.user_id=u.user_id ",
                         " where e.event_id = #{event_id} ",
+                        " and m.status = 1 ",
                         " order by e.create_date desc "
         })
         public List<ChatBean> getChatRoomMember(HashMap<String, Object> params) throws Exception;
@@ -194,11 +200,12 @@ public interface EventsRepository {
     @Select({
             " select count(members_id) ",
             " from members ",
-            " where event_id= #{event_id} "
+            " where event_id= #{event_id} ",
+            " and status = 1 ",
     })
     public Integer getMemberCount(HashMap<String, Object> params) throws Exception;
     @Select({
-            " SELECT m.members_id,m.event_id,m.user_id,concat(u.firstname, ' ', u.lastname) as fullname,f.faculty_name,b.branch_name,u.profile_img_path, ",
+            " SELECT m.members_id,m.event_id,m.user_id,u.fullname,f.faculty_name,b.branch_name,u.profile_img_path, ",
             " CASE WHEN m.user_id = e.user_id THEN ra.total END AS total, ",
             " CASE WHEN m.user_id = e.user_id THEN ra.rate END AS rate, ",
             " CASE WHEN m.user_id = e.user_id THEN 'driver' ELSE 'passenger' END AS role_name, ",
@@ -212,6 +219,7 @@ public interface EventsRepository {
             " LEFT JOIN events e ON m.user_id = e.user_id AND m.event_id = e.event_id ",
             " LEFT JOIN ratings ra ON m.user_id = ra.user_id ",
             " WHERE m.event_id = #{event_id} ",
+            " And m.status = 0 ",
     })
     public List<EventMemberBean> getRequestMembers(HashMap<String, Object> event_id) throws Exception;
 }
