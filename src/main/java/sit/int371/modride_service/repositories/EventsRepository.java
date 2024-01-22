@@ -12,6 +12,7 @@ import org.apache.ibatis.annotations.UpdateProvider;
 import org.apache.ibatis.annotations.Delete;
 
 import sit.int371.modride_service.beans.ChatBean;
+import sit.int371.modride_service.beans.DeniedRequestBean;
 import sit.int371.modride_service.beans.EventDetailBean;
 import sit.int371.modride_service.beans.EventMemberBean;
 import sit.int371.modride_service.beans.EventsBean;
@@ -176,7 +177,7 @@ public interface EventsRepository {
 
         // For chat
         @Select({
-                        " select e.event_id,e.event_name,m.user_id,u.fullname,u.profile_img_path,m.status ",
+                        " select e.event_id,e.event_name,e.status,e.user_id,u.fullname,u.profile_img_path,m.members_id,m.status as reqestStatus",
                         " from events e ",
                         " left join members m on e.event_id=m.event_id ",
                         " left join users u on m.user_id=u.user_id ",
@@ -222,4 +223,23 @@ public interface EventsRepository {
             " And m.status = 0 ",
     })
     public List<EventMemberBean> getRequestMembers(HashMap<String, Object> event_id) throws Exception;
+    @Update({
+        " UPDATE members SET ",
+        " status = #{status}, ",
+        " detail = if( status = 2,#{detail},null) ",
+        " WHERE members_id = #{members_id} "
+    })
+    public void responseRequest(HashMap<String, Object> params) throws Exception;
+    @Select({
+        " SELECT e.event_id,e.user_id,u.fullname,u.role_id,f.faculty_name,b.branch_name,u.profile_img_path, ",
+        " ra.total,ra.rate,m.detail ",
+        " FROM members m ",
+        " LEFT JOIN events e ON e.event_id = m.event_id ",
+        " LEFT JOIN users u ON e.user_id = u.user_id ",
+        " LEFT JOIN branches b ON u.branch_id = b.branch_id ",
+        " LEFT JOIN faculties f ON b.faculty_id = f.faculty_id ",
+        " LEFT JOIN ratings ra ON u.user_id = ra.user_id ",
+        " WHERE m.members_id = #{members_id} ",
+        })
+     public List<DeniedRequestBean> getDeniedDetail(HashMap<String, Object> params) throws Exception;
 }

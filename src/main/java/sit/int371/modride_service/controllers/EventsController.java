@@ -22,6 +22,7 @@ import com.azure.core.annotation.Post;
 
 import sit.int371.modride_service.beans.APIResponseBean;
 import sit.int371.modride_service.beans.ChatBean;
+import sit.int371.modride_service.beans.DeniedRequestBean;
 import sit.int371.modride_service.beans.EventDetailBean;
 import sit.int371.modride_service.beans.EventMemberBean;
 import sit.int371.modride_service.beans.EventsBean;
@@ -372,6 +373,79 @@ public class EventsController extends BaseController {
             }
             // List<ChatBean> events = eventsRepository.getChatRoomMember(params);
             res.setData(members);
+        } catch (Exception e) {
+            this.checkException(e, res);
+        }
+        return res;
+    }
+    @PutMapping("/responseRequest/{id}")
+    public APIResponseBean responseRequest(HttpServletRequest request,@PathVariable Integer id,
+    @RequestBody HashMap<String, Object> data)
+    {
+        APIResponseBean res = new APIResponseBean();
+        HashMap<String, Object> params = new HashMap<>();
+        try {
+            params.put("members_id", id);
+            // params.put("user_id", data.get("user_id"));
+            params.put("status", data.get("status"));
+            params.put("detail", data.get("detail"));
+            System.out.println("params: " + params);
+            eventsRepository.responseRequest(params);
+            res.setData(params);
+        } catch (Exception e) {
+            this.checkException(e, res);
+        }
+        return res;
+    }
+    @DeleteMapping("/cancelRequest/{id}")
+    public APIResponseBean deleteMember(HttpServletRequest request,@PathVariable Integer id)
+    {
+        APIResponseBean res = new APIResponseBean();
+        HashMap<String, Object> params = new HashMap<>();
+        try {
+            params.put("members_id", id);
+            eventsRepository.deleteMembers(params);
+            res.setData(params);
+            // res.setResponse_code("200");
+            // res.setResponse_desc("Delete Success");
+        } catch (Exception e) {
+            this.checkException(e, res);
+        }
+        return res;
+    }
+    @GetMapping("/getDeniedDetail")
+    public APIResponseBean getDeniedDetail(HttpServletRequest request,
+    @RequestParam(name = "user_id", required = false) Integer user_id,
+    @RequestParam(name = "members_id", required = false) Integer members_id){
+        APIResponseBean res = new APIResponseBean();
+        HashMap<String, Object> params = new HashMap<>();
+        try {
+            params.put("members_id", members_id);
+            List<DeniedRequestBean> owner = eventsRepository.getDeniedDetail(params);
+            for (DeniedRequestBean deniedRequestBeanBean : owner) {
+            FriendsBean friendsBean = new FriendsBean();
+            friendsBean.setUser_id(user_id);
+                friendsBean.setFriend_id(deniedRequestBeanBean.getUser_id());
+                List<FriendsBean> checkFriendShip = friendsRepository.checkFriendshipForEvent(friendsBean);
+                System.out.println("checkFriendship: " + checkFriendShip);
+                if (!checkFriendShip.isEmpty()) {
+                    System.out.println("เป็นเพื่อนกัน");
+                    deniedRequestBeanBean.setIsThisFriend(true);
+                    deniedRequestBeanBean.setFriendShip(checkFriendShip);
+
+                } else {
+                    // ไม่ได้เป็นเพื่อนกัน ให้หา mutual friend
+                    deniedRequestBeanBean.setIsThisFriend(false);
+                    List<MutualFriendBean> checkMutualFriend = friendsRepository.checkMutualFriend(friendsBean);
+                    if (!checkMutualFriend.isEmpty()) {
+                        deniedRequestBeanBean.setMutualFriend(checkMutualFriend);
+                    } else {
+                        deniedRequestBeanBean.setMutualFriend(null);
+                    }
+
+                }
+            }
+            res.setData(owner);
         } catch (Exception e) {
             this.checkException(e, res);
         }
