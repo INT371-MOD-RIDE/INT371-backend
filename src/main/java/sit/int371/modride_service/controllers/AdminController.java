@@ -57,6 +57,20 @@ public class AdminController extends BaseController {
         return res;
     }
 
+    // users-detail
+    @GetMapping("/getUser/{user_id}")
+    public APIResponseBean getUserDetail(HttpServletRequest request, @PathVariable Integer user_id) {
+        APIResponseBean res = new APIResponseBean();
+        try {
+            System.out.println("user-detail");
+            UsersBean users = adminRepository.getUserDetail(user_id);
+            res.setData(users);
+        } catch (Exception e) {
+            this.checkException(e, res);
+        }
+        return res;
+    }
+
     @GetMapping("/adminLogin")
     public APIResponseBean adminLogin(HttpServletRequest request,
             @RequestParam(name = "fullname", required = false) String fullname,
@@ -71,6 +85,40 @@ public class AdminController extends BaseController {
             userParam.put("password", password);
             UsersBean user = adminRepository.getAdminUser(userParam);
             res.setData(user);
+        } catch (Exception e) {
+            this.checkException(e, res);
+        }
+        return res;
+    }
+
+    // updateAccount
+    @PutMapping("/updateUser")
+    public APIResponseBean updateUserAccount(HttpServletRequest request, @RequestBody UsersBean usersBean) {
+        APIResponseBean res = new APIResponseBean();
+        try {
+            adminRepository.updateUserByAdmin(usersBean);
+            usersBean = adminRepository.getUserDetail(usersBean.getUser_id());
+            res.setData(usersBean);
+        } catch (Exception e) {
+            this.checkException(e, res);
+        }
+        return res;
+    }
+
+    // delete-user
+    @DeleteMapping("/deleteUser/{user_id}")
+    public APIResponseBean deleteUser(HttpServletRequest request,@PathVariable Integer user_id)
+    {
+        APIResponseBean res = new APIResponseBean();
+        try {
+            adminRepository.deleteRatingOfUserId(user_id);
+            adminRepository.deleteMemberOfUserId(user_id);
+            adminRepository.deleteEventsOfUserId(user_id);
+            adminRepository.deleteFriendshipsOfUserId(user_id);
+            adminRepository.deleteVehiclesOfUserId(user_id);
+            adminRepository.deleteUser(user_id);
+            // res.setResponse_code("200");
+            // res.setResponse_desc("Delete Success");
         } catch (Exception e) {
             this.checkException(e, res);
         }
