@@ -161,6 +161,7 @@ public class EventsController extends BaseController {
             eventsRepository.createEvents(bean);
             params.put("event_id", bean.getEvent_id());
             eventsRepository.createEventLocation(bean);
+            params.put("status",1);
             eventsRepository.joinEvent(params);
             res.setData(bean);
         } catch (Exception e) {
@@ -239,6 +240,7 @@ public class EventsController extends BaseController {
                 params.put("members_id", member);
                 eventsRepository.deleteMembers(params);
             }
+            eventsRepository.deleteLocation(params);
             eventsRepository.deleteEvents(params);
             res.setData(params);
             // res.setResponse_code("200");
@@ -257,6 +259,7 @@ public class EventsController extends BaseController {
             // params.put("user_id", request.getAttribute("user_id"));
             params.put("user_id", data.get("user_id"));
             params.put("event_id", data.get("event_id"));
+            params.put("status", 0);
             Integer seatAvailable = eventsRepository.getSeats(params);
             Integer duplicateMember = eventsRepository.checkDuplicateMember(params);
             if(seatAvailable == 0){
@@ -329,6 +332,46 @@ public class EventsController extends BaseController {
             params.put("event_id", id);
             List<ChatBean> events = eventsRepository.getChatRoomMember(params);
             res.setData(events);
+        } catch (Exception e) {
+            this.checkException(e, res);
+        }
+        return res;
+    }
+    @GetMapping("/getRequest")
+    public APIResponseBean getRequest(HttpServletRequest request,
+    @RequestParam(name = "user_id", required = false) Integer user_id,
+    @RequestParam(name = "event_id", required = false) Integer event_id){
+        APIResponseBean res = new APIResponseBean();
+        HashMap<String, Object> params = new HashMap<>();
+        try {
+            // params.put("user_id", request.getAttribute("user_id"));
+            params.put("event_id", event_id);
+            List<EventMemberBean> members = eventsRepository.getRequestMembers(params);
+            for (EventMemberBean memberBean : members) {
+            FriendsBean friendsBean = new FriendsBean();
+            friendsBean.setUser_id(user_id);
+                friendsBean.setFriend_id(memberBean.getUser_id());
+                List<FriendsBean> checkFriendShip = friendsRepository.checkFriendshipForEvent(friendsBean);
+                System.out.println("checkFriendship: " + checkFriendShip);
+                if (!checkFriendShip.isEmpty()) {
+                    System.out.println("เป็นเพื่อนกัน");
+                    memberBean.setIsThisFriend(true);
+                    memberBean.setFriendShip(checkFriendShip);
+
+                } else {
+                    // ไม่ได้เป็นเพื่อนกัน ให้หา mutual friend
+                    memberBean.setIsThisFriend(false);
+                    List<MutualFriendBean> checkMutualFriend = friendsRepository.checkMutualFriend(friendsBean);
+                    if (!checkMutualFriend.isEmpty()) {
+                        memberBean.setMutualFriend(checkMutualFriend);
+                    } else {
+                        memberBean.setMutualFriend(null);
+                    }
+
+                }
+            }
+            // List<ChatBean> events = eventsRepository.getChatRoomMember(params);
+            res.setData(members);
         } catch (Exception e) {
             this.checkException(e, res);
         }
