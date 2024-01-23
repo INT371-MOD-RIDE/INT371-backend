@@ -13,7 +13,7 @@ import sit.int371.modride_service.beans.UsersBean;
 @Mapper
 public interface AdminRepository {
         @Select({
-                        " select u.user_id,u.profile_img_path, u.fullname, u.email, u.tel  ",
+                        " select u.user_id, u.profile_img_path, u.fullname, u.email, u.tel  ",
                         " , f.faculty_name, b.branch_name, u.other_contact ",
                         " , u.contact_info, r.role_id, r.role_name ",
                         " , case when r.role_name = 'passenger' then 'ผู้โดยสาร' ",
@@ -88,6 +88,11 @@ public interface AdminRepository {
                         " DELETE FROM vehicles WHERE user_id = #{user_id}; ",
         })
         public void deleteVehiclesOfUserId(Integer user_id) throws Exception;
+
+        @Delete({
+                        " DELETE FROM user_report WHERE report_to = #{user_id} or reporter_id = #{user_id} "
+        })
+        public void deleteUserReport(Integer user_id) throws Exception;
 
         @Delete({
                         " DELETE FROM users WHERE user_id = #{user_id}; ",
