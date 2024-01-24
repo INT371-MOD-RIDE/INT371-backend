@@ -3,6 +3,7 @@ package sit.int371.modride_service.controllers;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -35,6 +36,10 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/users")
 public class UsersController extends BaseController {
+
+    @Value("${upload_path}")
+    public String upload_uri;
+
     @Autowired
     private UserService userService;
     @Autowired

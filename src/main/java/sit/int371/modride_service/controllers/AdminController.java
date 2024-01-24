@@ -50,6 +50,7 @@ public class AdminController extends BaseController {
         try {
             System.out.println("getAll-users");
             List<UsersBean> usersList = adminRepository.getAllUsers();
+            System.out.println("user-list: "+usersList);
             res.setData(usersList);
         } catch (Exception e) {
             this.checkException(e, res);
@@ -116,6 +117,7 @@ public class AdminController extends BaseController {
             adminRepository.deleteEventsOfUserId(user_id);
             adminRepository.deleteFriendshipsOfUserId(user_id);
             adminRepository.deleteVehiclesOfUserId(user_id);
+            adminRepository.deleteUserReport(user_id);
             adminRepository.deleteUser(user_id);
             // res.setResponse_code("200");
             // res.setResponse_desc("Delete Success");
