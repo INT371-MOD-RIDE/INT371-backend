@@ -182,7 +182,7 @@ public interface EventsRepository {
                         " left join members m on e.event_id=m.event_id ",
                         " left join users u on m.user_id=u.user_id ",
                         " where u.user_id = #{user_id} ",
-                        // " and m.status = 1 ",
+                        " and m.status != 3 ",
                         " order by e.create_date desc "
         })
         public List<ChatBean> getChatRoom(HashMap<String, Object> params) throws Exception;
