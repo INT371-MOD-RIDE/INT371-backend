@@ -2,6 +2,8 @@ package sit.int371.modride_service.beans;
 
 import java.util.List;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import lombok.*;
 
 @Data
@@ -30,5 +32,4 @@ public class UsersBean {
     // list for friendship
     // private List<FriendsBean> friendShip;
     private List<MutualFriendBean> mutualFriend;
-
 }
