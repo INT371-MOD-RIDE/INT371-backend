@@ -13,7 +13,7 @@ import sit.int371.modride_service.beans.UsersBean;
 @Mapper
 public interface AdminRepository {
         @Select({
-                        " select u.user_id, u.profile_img_path, u.fullname, u.email, u.tel  ",
+                        " select u.user_id, u.fullname, u.email, u.tel  ",
                         " , f.faculty_name, b.branch_name, u.other_contact ",
                         " , u.contact_info, r.role_id, r.role_name ",
                         " , case when r.role_name = 'passenger' then 'ผู้โดยสาร' ",
@@ -29,7 +29,7 @@ public interface AdminRepository {
         public List<UsersBean> getAllUsers() throws Exception;
 
         @Select({
-                        " select u.user_id,u.profile_img_path, u.fullname, u.email, u.tel  ",
+                        " select u.user_id, u.fullname, u.email, u.tel  ",
                         " , f.faculty_id, f.faculty_name, b.branch_id, b.branch_name, u.other_contact ",
                         " , u.contact_info, r.role_id, r.role_name ",
                         " , case when r.role_name = 'passenger' then 'ผู้โดยสาร' ",
@@ -45,7 +45,7 @@ public interface AdminRepository {
         public UsersBean getUserDetail(Integer userId) throws Exception;
 
         @Select({
-                        " select u.user_id,r.role_id,r.role_name,u.email,u.fullname,COALESCE(u.tel, '') AS tel,u.profile_img_path,  ",
+                        " select u.user_id,r.role_id,r.role_name,u.email,u.fullname,COALESCE(u.tel, '') AS tel,  ",
                         " f.faculty_name,b.branch_name from users u  ",
                         " inner join branches b on u.branch_id = b.branch_id ",
                         " inner join faculties f on b.faculty_id = f.faculty_id ",
