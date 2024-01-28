@@ -188,7 +188,8 @@ public interface EventsRepository {
         public List<ChatBean> getChatRoom(HashMap<String, Object> params) throws Exception;
 
         @Select({
-                        " select e.event_id,e.event_name,m.user_id,u.fullname,u.profile_img_path ",
+                        " select e.event_id,e.event_name,m.user_id,u.fullname,u.profile_img_path,e.user_id as owner,e.status ",
+                        // " CASE WHEN e.user_id = m.user_id THEN 'owner' END as owner ",
                         " from events e ",
                         " left join members m on e.event_id=m.event_id ",
                         " left join users u on m.user_id=u.user_id ",

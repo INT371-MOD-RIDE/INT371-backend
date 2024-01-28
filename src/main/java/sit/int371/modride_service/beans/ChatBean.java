@@ -13,4 +13,5 @@ public class ChatBean {
     private Integer user_id;
     private String fullname;
     private String profile_img_path;
+    private Integer owner;
 }
