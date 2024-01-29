@@ -37,9 +37,6 @@ import java.util.List;
 @RequestMapping("/api/v1/users")
 public class UsersController extends BaseController {
 
-    @Value("${upload_path}")
-    public String upload_uri;
-
     @Autowired
     private UserService userService;
     @Autowired
