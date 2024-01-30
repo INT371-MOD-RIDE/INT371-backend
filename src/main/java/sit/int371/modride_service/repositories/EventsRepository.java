@@ -246,4 +246,12 @@ public interface EventsRepository {
         " WHERE m.members_id = #{members_id} ",
         })
      public List<DeniedRequestBean> getDeniedDetail(HashMap<String, Object> params) throws Exception;
+
+     @Select({
+        " select e.user_id,u.fullname,u.role_id,e.event_id,e.event_name,e.status ",
+        " from events e ",
+        " left join users u on e.user_id = u.user_id ",
+        " where e.event_id = #{event_id} ",
+     })
+     public HashMap<String, Object> getEventDriver(HashMap<String, Object> params) throws Exception;
 }

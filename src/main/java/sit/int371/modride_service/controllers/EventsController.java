@@ -451,4 +451,18 @@ public class EventsController extends BaseController {
         }
         return res;
     }
+    @GetMapping("/getEventDriver")
+    public APIResponseBean getEventDriver(HttpServletRequest request,
+    @RequestParam(name = "event_id", required = false) Integer event_id){
+        APIResponseBean res = new APIResponseBean();
+        HashMap<String, Object> params = new HashMap<>();
+        try {
+            params.put("event_id", event_id);
+            HashMap<String, Object> owner = eventsRepository.getEventDriver(params);
+            res.setData(owner);
+        } catch (Exception e) {
+            this.checkException(e, res);
+        }
+        return res;
+    }
 }
