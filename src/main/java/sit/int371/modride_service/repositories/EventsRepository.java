@@ -177,7 +177,7 @@ public interface EventsRepository {
 
         // For chat
         @Select({
-                        " select e.event_id,e.event_name,e.status,e.user_id,u.fullname,u.profile_img_path,m.members_id,m.status as reqestStatus",
+                        " select e.event_id,e.event_name,e.status,e.user_id,u.fullname,m.members_id,m.status as reqestStatus",
                         " from events e ",
                         " left join members m on e.event_id=m.event_id ",
                         " left join users u on m.user_id=u.user_id ",
@@ -188,7 +188,7 @@ public interface EventsRepository {
         public List<ChatBean> getChatRoom(HashMap<String, Object> params) throws Exception;
 
         @Select({
-                        " select e.event_id,e.event_name,m.user_id,u.fullname,u.profile_img_path,e.user_id as owner,e.status ",
+                        " select e.event_id,e.event_name,m.user_id,u.fullname,e.user_id as owner,e.status ",
                         // " CASE WHEN e.user_id = m.user_id THEN 'owner' END as owner ",
                         " from events e ",
                         " left join members m on e.event_id=m.event_id ",
@@ -232,7 +232,7 @@ public interface EventsRepository {
     })
     public void responseRequest(HashMap<String, Object> params) throws Exception;
     @Select({
-        " SELECT e.event_id,e.user_id,u.fullname,u.role_id,f.faculty_name,b.branch_name,u.profile_img_path, ",
+        " SELECT e.event_id,e.user_id,u.fullname,u.role_id,f.faculty_name,b.branch_name, ",
         " ra.total,ra.rate,m.detail ",
         " FROM members m ",
         " LEFT JOIN events e ON e.event_id = m.event_id ",
