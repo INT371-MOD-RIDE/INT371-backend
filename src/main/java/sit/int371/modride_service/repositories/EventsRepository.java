@@ -16,6 +16,7 @@ import sit.int371.modride_service.beans.DeniedRequestBean;
 import sit.int371.modride_service.beans.EventDetailBean;
 import sit.int371.modride_service.beans.EventMemberBean;
 import sit.int371.modride_service.beans.EventsBean;
+import sit.int371.modride_service.beans.RatingBean;
 import sit.int371.modride_service.beans.UsersBean;
 import sit.int371.modride_service.beans.VehiclesBean;
 import sit.int371.modride_service.provider.EventsSqlProvider;
@@ -30,7 +31,7 @@ public interface EventsRepository {
                         // " order by create_date desc ",
                         " SELECT e.event_id,e.user_id,e.event_name,e.event_detail, ",
                         " e.departure_time,e.seats,e.costs,e.status,e.create_date,e.update_date ",
-                        " ,u.fullname,r.rate,r.total,f.faculty_name,b.branch_name ",
+                        " ,u.fullname,r.rating_point as rate,r.rating_amount as total,f.faculty_name,b.branch_name ",
                         " ,case when el.start_name is null then el.start_point else el.start_name end as start_point  ",
                         " ,case when el.dest_name is null then el.dest_point else el.dest_name end as dest_point ",
                         " FROM events e ",
@@ -73,8 +74,8 @@ public interface EventsRepository {
                         // " inner join faculties f on b.faculty_id = f.faculty_id ",
                         // " where event_id = #{event_id} ",
                         " SELECT m.members_id,m.event_id,m.user_id,u.fullname,f.faculty_name,b.branch_name, ",
-                        " CASE WHEN m.user_id = e.user_id THEN ra.total END AS total, ",
-                        " CASE WHEN m.user_id = e.user_id THEN ra.rate END AS rate, ",
+                        " CASE WHEN m.user_id = e.user_id THEN ra.rating_amount END AS total, ",
+                        " CASE WHEN m.user_id = e.user_id THEN ra.rating_point END AS rate, ",
                         " CASE WHEN m.user_id = e.user_id THEN 'driver' ELSE 'passenger' END AS role_name, ",
                         " r.role_name as role_check ",
                         " FROM members m ",
@@ -210,8 +211,8 @@ public interface EventsRepository {
     public Integer getMemberCount(HashMap<String, Object> params) throws Exception;
     @Select({
             " SELECT m.members_id,m.event_id,m.user_id,u.fullname,f.faculty_name,b.branch_name, ",
-            " CASE WHEN m.user_id = e.user_id THEN ra.total END AS total, ",
-            " CASE WHEN m.user_id = e.user_id THEN ra.rate END AS rate, ",
+            " CASE WHEN m.user_id = e.user_id THEN ra.rating_amount END AS total, ",
+            " CASE WHEN m.user_id = e.user_id THEN ra.rating_point END AS rate, ",
             " CASE WHEN m.user_id = e.user_id THEN 'driver' ELSE 'passenger' END AS role_name, ",
             " r.role_name as role_check ",
             " FROM members m ",
@@ -236,7 +237,7 @@ public interface EventsRepository {
     @Select({
         // " SELECT e.event_id,e.user_id,u.fullname,u.role_id,f.faculty_name,b.branch_name,u.profile_img_path, ",
         " SELECT e.event_id,e.user_id,u.fullname,u.role_id,f.faculty_name,b.branch_name, ",
-        " ra.total,ra.rate,m.detail ",
+        " ra.rating_amount as total,ra.rating_point as rate,m.detail ",
         " FROM members m ",
         " LEFT JOIN events e ON e.event_id = m.event_id ",
         " LEFT JOIN users u ON e.user_id = u.user_id ",
@@ -248,10 +249,40 @@ public interface EventsRepository {
      public List<DeniedRequestBean> getDeniedDetail(HashMap<String, Object> params) throws Exception;
 
      @Select({
-        " select e.user_id,u.fullname,u.role_id,e.event_id,e.event_name,e.status ",
+        " select e.user_id,u.fullname,u.role_id,e.event_id,e.event_name,e.status,ra.rating_id ",
         " from events e ",
         " left join users u on e.user_id = u.user_id ",
+        " left join ratings ra on e.user_id = ra.user_id ",
         " where e.event_id = #{event_id} ",
      })
      public HashMap<String, Object> getEventDriver(HashMap<String, Object> params) throws Exception;
+
+     @Insert({
+        " INSERT INTO ratings(user_id,rating_point,rating_amount) ",
+        " VALUES(#{user_id},#{rating_point},#{rating_amount}) "
+     })
+     @Options(useGeneratedKeys = true, keyColumn = "rating_id", keyProperty = "rating_id")
+     public void ratingDriver(RatingBean bean) throws Exception;
+
+     @Select({
+        " select count(rating_id) ",
+        " from ratings ",
+        " where user_id = #{user_id} "
+        })
+     public Integer findRating(RatingBean bean) throws Exception;
+
+     @Select({
+        " select rating_point,rating_amount ",
+        " from ratings ",
+        " where user_id = #{user_id} "
+     })
+     public HashMap<String, Object> getRating(RatingBean bean) throws Exception;
+
+     @Update({
+        " UPDATE ratings SET ",
+        " rating_point = #{rating_point}, ",
+        " rating_amount = #{rating_amount} ",
+        " WHERE user_id = #{user_id} "
+     })
+     public void updateRating(RatingBean bean) throws Exception;
 }

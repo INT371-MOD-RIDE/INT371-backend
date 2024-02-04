@@ -28,6 +28,7 @@ import sit.int371.modride_service.beans.EventMemberBean;
 import sit.int371.modride_service.beans.EventsBean;
 import sit.int371.modride_service.beans.FriendsBean;
 import sit.int371.modride_service.beans.MutualFriendBean;
+import sit.int371.modride_service.beans.RatingBean;
 import sit.int371.modride_service.beans.UsersBean;
 import sit.int371.modride_service.beans.VehiclesBean;
 import sit.int371.modride_service.dtos.ChangeDTO;
@@ -460,6 +461,29 @@ public class EventsController extends BaseController {
             params.put("event_id", event_id);
             HashMap<String, Object> owner = eventsRepository.getEventDriver(params);
             res.setData(owner);
+        } catch (Exception e) {
+            this.checkException(e, res);
+        }
+        return res;
+    }
+    @PostMapping("/ratingDriver")
+    public APIResponseBean ratingDriver(HttpServletRequest request,@RequestBody RatingBean data)
+    {
+        APIResponseBean res = new APIResponseBean();
+        // HashMap<String, Object> params = new HashMap<>();
+        try {
+            Integer countRating = eventsRepository.findRating(data);
+            System.out.println("countRating: " + countRating);
+            if(countRating > 0){
+                HashMap<String, Object> rating = eventsRepository.getRating(data);
+                data.setRating_point(Integer.parseInt(rating.get("rating_point").toString())+data.getRating_point());
+                data.setRating_amount(Integer.parseInt(rating.get("rating_amount").toString())+1);
+                eventsRepository.updateRating(data);
+            }else{
+            data.setRating_amount(1);
+            eventsRepository.ratingDriver(data);   
+            }
+            res.setData(data);
         } catch (Exception e) {
             this.checkException(e, res);
         }
