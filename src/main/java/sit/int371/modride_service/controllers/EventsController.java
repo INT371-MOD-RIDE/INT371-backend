@@ -135,6 +135,8 @@ public class EventsController extends BaseController {
         APIResponseBean res = new APIResponseBean();
         HashMap<String, Object> params = new HashMap<>();
         try {
+            // bean.setVehicle_id(57);
+            // bean.setLicense_plate("กก-1111");
             params.put("user_id", bean.getUser_id());
             params.put("brand", bean.getBrand());
             params.put("model", bean.getModel());
@@ -143,9 +145,10 @@ public class EventsController extends BaseController {
             params.put("license_plate", bean.getLicense_plate());
             params.put("seats", bean.getSeats());
             params.put("car_img_path", bean.getCar_img_path());
-            params.put("vehicle_id", 57);
-            // System.out.println("getVehiclesByLicense" + params.get("license_plate"));
-            // Integer vehicle_id = vehiclesRepository.getVehiclesByLicense(params);
+            // params.put("vehicle_id", bean.getVehicle_id());
+            System.out.println("getVehiclesByLicense" + params.get("license_plate"));
+            Integer vehicle_id = vehiclesRepository.getVehiclesByLicense(params);
+            bean.setVehicle_id(vehicle_id);
             // if(vehicle_id == null){
             //     System.out.println("vehicle_id is null");
             //     vehiclesRepository.createVehicles(params);
