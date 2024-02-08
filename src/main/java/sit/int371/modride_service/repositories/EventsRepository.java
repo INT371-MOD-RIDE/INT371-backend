@@ -50,7 +50,7 @@ public interface EventsRepository {
                         " SELECT e.event_id,e.user_id,e.event_name,e.event_detail, ",
                         " e.departure_time,e.seats,e.costs,e.create_date,e.update_date ",
                         " ,u.fullname,u.email,u.tel,u.other_contact,u.contact_info,f.faculty_name,b.branch_name ",
-                        " ,v.brand,v.model,v.vehicle_type,v.vehicle_color,v.license,v.car_img_path,v.vehicle_id ",
+                        " ,v.brand,v.model,v.vehicle_type,v.vehicle_color,v.license_plate,v.car_img_path,v.vehicle_id ",
                         " ,el.start_point,el.dest_point ",
                         " FROM events e ",
                         " left join users u on e.user_id = u.user_id ",
@@ -92,8 +92,8 @@ public interface EventsRepository {
         public List<EventMemberBean> getEventMembers(HashMap<String, Object> event_id) throws Exception;
 
         @Insert({
-                        " INSERT INTO events(user_id,vehicle_id,event_name,event_detail,departure_time,seats,costs,status,create_date,update_date) ",
-                        " VALUES(#{user_id},#{vehicle_id},#{event_name},#{event_detail},#{departure_time},#{seats},#{costs},1,sysdate(),sysdate())"
+                        " INSERT INTO events(user_id,vehicle_id,event_name,event_detail,departure_time,seats,costs,status,create_date,update_date,cost_type) ",
+                        " VALUES(#{user_id},#{vehicle_id},#{event_name},#{event_detail},#{departure_time},#{seats},#{costs},1,sysdate(),sysdate(),#{cost_type})"
         })
         @Options(useGeneratedKeys = true, keyColumn = "event_id", keyProperty = "event_id")
         public void createEvents(EventDetailBean eventsBean) throws Exception;
@@ -170,7 +170,7 @@ public interface EventsRepository {
         public Integer checkDuplicateMember(HashMap<String, Object> params) throws Exception;
 
         @Select({
-                        " select vehicle_id,concat(brand,' ',model) as car_name,license,car_img_path ",
+                        " select vehicle_id,concat(brand,' ',model) as car_name,license_plate,car_img_path ",
                         " from vehicles ",
                         " where user_id = #{user_id} "
         })

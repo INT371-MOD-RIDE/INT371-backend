@@ -17,6 +17,7 @@ public class EventDetailBean {
     private String departure_time;
     private Integer seats;
     private Integer costs;
+    private Integer cost_type;
     // private Integer status;
     private String create_date;
     private String update_date;
@@ -33,46 +34,46 @@ public class EventDetailBean {
     private String model;
     private String vehicle_type;
     private String vehicle_color;
-    private String license;
+    private String license_plate;
     private String car_img_path;
     private List<EventMemberBean> members;
 
-    public void setEvent_name(String event_name) {
-        this.event_name = trimIfNotNull(event_name);
-    }
-    public void setStart_point(String start_point) {
-        this.start_point = trimIfNotNull(start_point);
-    }
-    public void setDest_point(String dest_point) {
-        this.dest_point = trimIfNotNull(dest_point);
-    }
-    public void setStartName(String start_name) {
-        this.start_name = trimIfNotNull(start_name);
-    }
-    public void setDestName(String dest_name) {
-        this.dest_name = trimIfNotNull(dest_name);
-    }
-    public void setDeparture_time(String departure_time) {
-        this.departure_time = trimIfNotNull(departure_time);
-    }
-    public void setBrand(String brand) {
-        this.brand = trimIfNotNull(brand);
-    }
-    public void setModel(String model) {
-        this.model = trimIfNotNull(model);
-    }
-    public void setVehicle_type(String vehicle_type) {
-        this.vehicle_type = trimIfNotNull(vehicle_type);
-    }
-    public void setVehicle_color(String vehicle_color) {
-        this.vehicle_color = trimIfNotNull(vehicle_color);
-    }
-    public void setLicense(String license) {
-        this.license = trimIfNotNull(license);
-    }
+    // public void setEvent_name(String event_name) {
+    //     this.event_name = trimIfNotNull(event_name);
+    // }
+    // public void setStart_point(String start_point) {
+    //     this.start_point = trimIfNotNull(start_point);
+    // }
+    // public void setDest_point(String dest_point) {
+    //     this.dest_point = trimIfNotNull(dest_point);
+    // }
+    // public void setStartName(String start_name) {
+    //     this.start_name = trimIfNotNull(start_name);
+    // }
+    // public void setDestName(String dest_name) {
+    //     this.dest_name = trimIfNotNull(dest_name);
+    // }
+    // public void setDeparture_time(String departure_time) {
+    //     this.departure_time = trimIfNotNull(departure_time);
+    // }
+    // public void setBrand(String brand) {
+    //     this.brand = trimIfNotNull(brand);
+    // }
+    // public void setModel(String model) {
+    //     this.model = trimIfNotNull(model);
+    // }
+    // public void setVehicle_type(String vehicle_type) {
+    //     this.vehicle_type = trimIfNotNull(vehicle_type);
+    // }
+    // public void setVehicle_color(String vehicle_color) {
+    //     this.vehicle_color = trimIfNotNull(vehicle_color);
+    // }
+    // public void setLicense(String license) {
+    //     this.license_plate = trimIfNotNull(license);
+    // }
 
 
-    private String trimIfNotNull(String value) {
-        return (value != null) ? value.trim() : null;
-    }
+    // private String trimIfNotNull(String value) {
+    //     return (value != null) ? value.trim() : null;
+    // }
 }

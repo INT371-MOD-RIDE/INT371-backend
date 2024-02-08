@@ -39,7 +39,7 @@ public interface VehiclesRepository {
     })
     public Integer getVehicleIdByUserId(HashMap<String, Object> params) throws Exception;
     @Select({
-        " select vehicle_id from vehicles where license = #{license} "
+        " select vehicle_id from vehicles where license_plate = #{license_plate} "
     })
     public Integer getVehiclesByLicense(HashMap<String, Object> params) throws Exception;
 }

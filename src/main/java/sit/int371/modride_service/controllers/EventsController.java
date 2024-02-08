@@ -140,23 +140,24 @@ public class EventsController extends BaseController {
             params.put("model", bean.getModel());
             params.put("vehicle_type", bean.getVehicle_type());
             params.put("vehicle_color", bean.getVehicle_color());
-            params.put("license", bean.getLicense());
+            params.put("license_plate", bean.getLicense_plate());
             params.put("seats", bean.getSeats());
             params.put("car_img_path", bean.getCar_img_path());
-            System.out.println("getVehiclesByLicense" + params.get("license"));
-            Integer vehicle_id = vehiclesRepository.getVehiclesByLicense(params);
-            if(vehicle_id == null){
-                System.out.println("vehicle_id is null");
-                vehiclesRepository.createVehicles(params);
-                params.put("vehicle_id", params.get("vehicle_id"));
-                // bean.setVehicle_id(params.get("vehicle_id"));
-                bean.setVehicle_id(Integer.parseInt(params.get("vehicle_id").toString()));
-                // bean.setCar_img_path("/images/car/" + params.get("vehicle_id").toString() + ".jpg");
-            }else{
-                System.out.println("vehicle_id not null");
-                bean.setVehicle_id(vehicle_id);
-                // bean.setCar_img_path("/images/car/" + vehicle_id + ".jpg");
-            }
+            params.put("vehicle_id", 57);
+            // System.out.println("getVehiclesByLicense" + params.get("license_plate"));
+            // Integer vehicle_id = vehiclesRepository.getVehiclesByLicense(params);
+            // if(vehicle_id == null){
+            //     System.out.println("vehicle_id is null");
+            //     vehiclesRepository.createVehicles(params);
+            //     params.put("vehicle_id", params.get("vehicle_id"));
+            //     // bean.setVehicle_id(params.get("vehicle_id"));
+            //     bean.setVehicle_id(Integer.parseInt(params.get("vehicle_id").toString()));
+            //     // bean.setCar_img_path("/images/car/" + params.get("vehicle_id").toString() + ".jpg");
+            // }else{
+            //     System.out.println("vehicle_id not null");
+            //     bean.setVehicle_id(vehicle_id);
+            //     // bean.setCar_img_path("/images/car/" + vehicle_id + ".jpg");
+            // }
             // vehiclesRepository.createVehicles(params);
             // params.put("vehicle_id", params.get("vehicle_id"));
             // bean.setVehicle_id(params.get("vehicle_id"));
@@ -204,7 +205,7 @@ public class EventsController extends BaseController {
             params.put("model", bean.getModel());
             params.put("vehicle_type", bean.getVehicle_type());
             params.put("vehicle_color", bean.getVehicle_color());
-            params.put("license", bean.getLicense());
+            params.put("license_plate", bean.getLicense_plate());
             params.put("car_img_path", bean.getCar_img_path());
             vehiclesRepository.editVehicles(params);
             res.setData(bean);
