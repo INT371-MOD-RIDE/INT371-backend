@@ -17,6 +17,7 @@ import org.springframework.web.server.ResponseStatusException;
 import sit.int371.modride_service.beans.APIResponseBean;
 import sit.int371.modride_service.beans.BranchesBean;
 import sit.int371.modride_service.beans.FacultiesBean;
+import sit.int371.modride_service.beans.ReportUserBean;
 import sit.int371.modride_service.beans.RolesBean;
 import sit.int371.modride_service.beans.UsersBean;
 //import sit.int371.modride_service.dtos.NewUserDTO;
@@ -212,5 +213,28 @@ public class UsersController extends BaseController {
         userService.sendMail(SendMailDTO);
         throw new ResponseStatusException(HttpStatus.OK, "Send email complete");
     }
-
+    @GetMapping("/getReportUser")
+    public APIResponseBean getReportUser(HttpServletRequest request, @RequestParam(name = "user_id", required = false) Integer user_id){
+        APIResponseBean res = new APIResponseBean();
+        HashMap<String, Object> params = new HashMap<>();
+        try {
+            params.put("user_id", user_id);
+            UsersBean reportUser = usersRepository.getReportUser(params);
+            res.setData(reportUser);
+        } catch (Exception e) {
+            this.checkException(e, res);
+        }
+        return res;
+    }
+    @PostMapping("/reportUser")
+    public APIResponseBean reportUser(HttpServletRequest request, @RequestBody ReportUserBean bean){
+        APIResponseBean res = new APIResponseBean();
+        try {
+            usersRepository.reportUser(bean);
+            res.setData(bean);
+        } catch (Exception e) {
+            this.checkException(e, res);
+        }
+        return res;
+    }
 }

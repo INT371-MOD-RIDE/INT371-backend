@@ -12,6 +12,7 @@ import org.apache.ibatis.annotations.Update;
 import sit.int371.modride_service.beans.BranchesBean;
 import sit.int371.modride_service.beans.FacultiesBean;
 import sit.int371.modride_service.beans.FriendsBean;
+import sit.int371.modride_service.beans.ReportUserBean;
 import sit.int371.modride_service.beans.UsersBean;
 
 @Mapper
@@ -92,4 +93,16 @@ public interface UsersRepository {
                         " where user_id = #{user_id} ",
         })
         public void updateUserAccount(UsersBean bean) throws Exception;
+
+        @Select({
+                " select user_id,fullname from users where user_id = #{user_id}"
+        })
+        public UsersBean getReportUser(HashMap<String, Object> params) throws Exception;
+
+        @Insert({
+                " insert into user_report(report_to,reporter_id,report_datetime,report_type,description) ",
+                " values(#{report_to},#{reporter_id},sysdate(),#{report_type},#{description}) "
+        })
+        @Options(useGeneratedKeys = true, keyColumn = "report_id", keyProperty = "report_id")
+        public void reportUser(ReportUserBean bean) throws Exception;
 }
