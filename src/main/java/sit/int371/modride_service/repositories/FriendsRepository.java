@@ -21,11 +21,13 @@ public interface FriendsRepository {
                         " select u.user_id,f.faculty_id,u.email,u.fullname, ",
                         " u.tel,f.faculty_name,b.branch_name, ",
                         " fs.user_id as my_id,fs.friend_id,fs.friend_status ",
+                        " ,uf.profile_img_name,uf.download_url ",
                         " from users u  ",
                         " inner join branches b on u.branch_id = b.branch_id ",
                         " inner join faculties f on b.faculty_id = f.faculty_id ",
                         " left join friendships fs  ",
                         " 	on (u.user_id = fs.friend_id and fs.user_id = #{user_id}) ",
+                        " left join users_files uf on uf.owner_id = u.user_id ",
                         " where (u.user_id != #{user_id} and fs.user_id is null) or (u.user_id != #{user_id} and fs.friend_status = 'pending') ",
                         " order by f.faculty_name = #{faculty_name} desc, f.faculty_name asc, ",
                         "  b.branch_name = #{branch_name} desc, b.branch_name asc,u.fullname asc ",
@@ -37,10 +39,12 @@ public interface FriendsRepository {
                         " select u.user_id,f.faculty_id,u.email,u.fullname, ",
                         " u.tel,f.faculty_name,b.branch_name, ",
                         " fs.friend_id,fs.friend_status ",
+                        " ,uf.profile_img_name,uf.download_url ",
                         " from users u  ",
                         " inner join branches b on u.branch_id = b.branch_id ",
                         " inner join faculties f on b.faculty_id = f.faculty_id ",
                         " inner join friendships fs on fs.user_id = u.user_id ",
+                        " left join users_files uf on uf.owner_id = u.user_id ",
                         " where u.user_id != #{user_id} and fs.friend_id = #{user_id} and fs.friend_status = 'accepted' ",
                         " order by f.faculty_name = #{faculty_name} desc, f.faculty_name asc, u.fullname asc ",
         })
@@ -48,15 +52,17 @@ public interface FriendsRepository {
 
         // คำขอเป็นเพื่อน -- friend-request ✅
         @Select({
-                " select u.user_id,f.faculty_id,u.email,u.fullname, ",
-                " u.tel,f.faculty_name,b.branch_name, ",
-                " fs.friend_id,fs.friend_status ",
-                " from users u  ",
-                " inner join branches b on u.branch_id = b.branch_id ",
-                " inner join faculties f on b.faculty_id = f.faculty_id ",
-                " inner join friendships fs on fs.user_id = u.user_id ",
-                " where u.user_id != #{user_id} and fs.friend_id = #{user_id} and fs.friend_status = 'pending' ",
-                " order by f.faculty_name = #{faculty_name} desc, f.faculty_name asc, u.fullname asc ",
+                        " select u.user_id,f.faculty_id,u.email,u.fullname, ",
+                        " u.tel,f.faculty_name,b.branch_name, ",
+                        " fs.friend_id,fs.friend_status ",
+                        " ,uf.profile_img_name,uf.download_url ",
+                        " from users u  ",
+                        " inner join branches b on u.branch_id = b.branch_id ",
+                        " inner join faculties f on b.faculty_id = f.faculty_id ",
+                        " inner join friendships fs on fs.user_id = u.user_id ",
+                        " left join users_files uf on uf.owner_id = u.user_id ",
+                        " where u.user_id != #{user_id} and fs.friend_id = #{user_id} and fs.friend_status = 'pending' ",
+                        " order by f.faculty_name = #{faculty_name} desc, f.faculty_name asc, u.fullname asc ",
         })
         public List<UsersBean> friendsRequest(HashMap<String, Object> params) throws Exception;
 
@@ -75,15 +81,17 @@ public interface FriendsRepository {
         // -- sub queries ชุดที่สอง user_id ของ driver
         // -- สุดท้ายจะได้ออกมาเป็น mutual friend ของกันและกัน (หากมี)
         @Select({
-                        " select u.user_id,u.email,u.fullname from users u ",
+                        " select u.user_id,u.email,u.fullname,uf.profile_img_name,uf.download_url from users u ",
                         " inner join  ",
                         "         (select friend_id from friendships  ",
                         "     where user_id = #{user_id} and friend_status = 'accepted') as a on u.user_id = a.friend_id ",
                         " inner join  ",
                         "         (select friend_id from friendships  ",
-                        "     where user_id = #{friend_id} and friend_status = 'accepted') as b on u.user_id = b.friend_id "
+                        "     where user_id = #{friend_id} and friend_status = 'accepted') as b on u.user_id = b.friend_id ",
+                        " left join users_files uf on uf.owner_id = u.user_id ",
+                        " where u.user_id = #{user_id} ",
         })
-        public List<MutualFriendBean> checkMutualFriend(FriendsBean bean) throws Exception;
+        public List<MutualFriendBean> getMutualFriend(FriendsBean bean) throws Exception;
 
         // --------------------------------------------
         @Select({
