@@ -18,10 +18,13 @@ import sit.int371.modride_service.beans.BranchesBean;
 import sit.int371.modride_service.beans.FacultiesBean;
 import sit.int371.modride_service.beans.RolesBean;
 import sit.int371.modride_service.beans.UsersBean;
+import sit.int371.modride_service.beans.driver_profile.DriverProfileBean;
+import sit.int371.modride_service.beans.driver_profile.LicensesBean;
 //import sit.int371.modride_service.dtos.NewUserDTO;
 import sit.int371.modride_service.dtos.*;
 import sit.int371.modride_service.entities.User;
 import sit.int371.modride_service.repositories.AdminRepository;
+import sit.int371.modride_service.repositories.DriverRegisterRepository;
 import sit.int371.modride_service.repositories.OldUserRepository;
 import sit.int371.modride_service.repositories.UsersRepository;
 import sit.int371.modride_service.services.UserService;
@@ -38,6 +41,8 @@ import java.util.List;
 public class AdminController extends BaseController {
     @Autowired
     private AdminRepository adminRepository;
+    @Autowired
+    private DriverRegisterRepository driverRegisterRepository;
 
     private Integer passengerId = 1;
     private Integer driverId = 2;
@@ -50,7 +55,7 @@ public class AdminController extends BaseController {
         try {
             System.out.println("getAll-users");
             List<UsersBean> usersList = adminRepository.getAllUsers();
-            System.out.println("user-list: "+usersList);
+            System.out.println("user-list: " + usersList);
             res.setData(usersList);
         } catch (Exception e) {
             this.checkException(e, res);
@@ -75,13 +80,12 @@ public class AdminController extends BaseController {
     @GetMapping("/adminLogin")
     public APIResponseBean adminLogin(HttpServletRequest request,
             @RequestParam(name = "fullname", required = false) String fullname,
-            @RequestParam(name = "password", required = false) String password
-            ) {
+            @RequestParam(name = "password", required = false) String password) {
         APIResponseBean res = new APIResponseBean();
         try {
             // UsersBean usersBean = new UsersBean();
             // usersBean.setFullname(fullname);
-            HashMap<String,String> userParam = new HashMap<>();
+            HashMap<String, String> userParam = new HashMap<>();
             userParam.put("fullname", fullname);
             userParam.put("password", password);
             UsersBean user = adminRepository.getAdminUser(userParam);
@@ -106,10 +110,25 @@ public class AdminController extends BaseController {
         return res;
     }
 
+    // adminApproval
+    @PutMapping("/adminApproval")
+    public APIResponseBean adminApproval(HttpServletRequest request, @RequestBody LicensesBean bean) {
+        APIResponseBean res = new APIResponseBean();
+        try {
+            adminRepository.updateLicenseAppStatus(bean);
+            DriverProfileBean driverProfileBean = new DriverProfileBean();
+            driverProfileBean
+                    .setLicenseDetail(driverRegisterRepository.getLicenseDetail(bean.getUser_id()));
+            res.setData(driverProfileBean);
+        } catch (Exception e) {
+            this.checkException(e, res);
+        }
+        return res;
+    }
+
     // delete-user
     @DeleteMapping("/deleteUser/{user_id}")
-    public APIResponseBean deleteUser(HttpServletRequest request,@PathVariable Integer user_id)
-    {
+    public APIResponseBean deleteUser(HttpServletRequest request, @PathVariable Integer user_id) {
         APIResponseBean res = new APIResponseBean();
         try {
             adminRepository.deleteRatingOfUserId(user_id);

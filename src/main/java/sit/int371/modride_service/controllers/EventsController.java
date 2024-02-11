@@ -203,15 +203,14 @@ public class EventsController extends BaseController {
             bean.setEvent_id(id);
             System.out.println("editbean: " + bean);
             eventsRepository.editEvents(bean);
-            params.put("vehicle_id", bean.getVehicle_id());
-            params.put("seats", bean.getSeats());
-            params.put("brand", bean.getBrand());
-            params.put("model", bean.getModel());
-            params.put("vehicle_type", bean.getVehicle_type());
-            params.put("vehicle_color", bean.getVehicle_color());
-            params.put("license_plate", bean.getLicense_plate());
-            params.put("car_img_path", bean.getCar_img_path());
-            vehiclesRepository.editVehicles(params);
+            // params.put("vehicle_id", bean.getVehicle_id());
+            // params.put("seats", bean.getSeats());
+            // params.put("brand", bean.getBrand());
+            // params.put("model", bean.getModel());
+            // params.put("vehicle_type", bean.getVehicle_type());
+            // params.put("vehicle_color", bean.getVehicle_color());
+            // params.put("license_plate", bean.getLicense_plate());
+            // vehiclesRepository.editVehicles(params);
             res.setData(bean);
         } catch (Exception e) {
             this.checkException(e, res);

@@ -25,7 +25,8 @@ public class EventsBean {
     private String update_date;
     private String fullname;
     private String tel;
-    private String profile_img_path;
+    private String profile_img_name;
+    private String download_url;
     private String rate;
     private String total;
     private String faculty_name;    
