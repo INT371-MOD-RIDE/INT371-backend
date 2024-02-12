@@ -72,7 +72,7 @@ public class EventsController extends BaseController {
                 } else {
                     // ไม่ได้เป็นเพื่อนกัน ให้หา mutual friend
                     eventsBean.setIsThisFriend(false);
-                    List<MutualFriendBean> checkMutualFriend = friendsRepository.checkMutualFriend(friendsBean);
+                    List<MutualFriendBean> checkMutualFriend = friendsRepository.getMutualFriend(friendsBean);
                     if (!checkMutualFriend.isEmpty()) {
                         eventsBean.setMutualFriend(checkMutualFriend);
                     } else {
@@ -112,7 +112,7 @@ public class EventsController extends BaseController {
                 } else {
                     // ไม่ได้เป็นเพื่อนกัน ให้หา mutual friend
                     memberBean.setIsThisFriend(false);
-                    List<MutualFriendBean> checkMutualFriend = friendsRepository.checkMutualFriend(friendsBean);
+                    List<MutualFriendBean> checkMutualFriend = friendsRepository.getMutualFriend(friendsBean);
                     if (!checkMutualFriend.isEmpty()) {
                         memberBean.setMutualFriend(checkMutualFriend);
                     } else {
@@ -135,20 +135,21 @@ public class EventsController extends BaseController {
         APIResponseBean res = new APIResponseBean();
         HashMap<String, Object> params = new HashMap<>();
         try {
+            System.out.println("vehicle_id: "+bean);
             // bean.setVehicle_id(57);
             // bean.setLicense_plate("กก-1111");
             params.put("user_id", bean.getUser_id());
-            params.put("brand", bean.getBrand());
-            params.put("model", bean.getModel());
-            params.put("vehicle_type", bean.getVehicle_type());
-            params.put("vehicle_color", bean.getVehicle_color());
-            params.put("license_plate", bean.getLicense_plate());
-            params.put("seats", bean.getSeats());
-            params.put("car_img_path", bean.getCar_img_path());
+            // params.put("brand", bean.getBrand());
+            // params.put("model", bean.getModel());
+            // params.put("vehicle_type", bean.getVehicle_type());
+            // params.put("vehicle_color", bean.getVehicle_color());
+            // params.put("license_plate", bean.getLicense_plate());
+            // params.put("seats", bean.getSeats());
+            // params.put("car_img_path", bean.getCar_img_path());
             // params.put("vehicle_id", bean.getVehicle_id());
-            System.out.println("getVehiclesByLicense" + params.get("license_plate"));
-            Integer vehicle_id = vehiclesRepository.getVehiclesByLicense(params);
-            bean.setVehicle_id(vehicle_id);
+            // System.out.println("getVehiclesByLicense" + params.get("license_plate"));
+            // Integer vehicle_id = vehiclesRepository.getVehiclesByLicense(params);
+            // bean.setVehicle_id(vehicle_id);
             // if(vehicle_id == null){
             //     System.out.println("vehicle_id is null");
             //     vehiclesRepository.createVehicles(params);
@@ -202,15 +203,14 @@ public class EventsController extends BaseController {
             bean.setEvent_id(id);
             System.out.println("editbean: " + bean);
             eventsRepository.editEvents(bean);
-            params.put("vehicle_id", bean.getVehicle_id());
-            params.put("seats", bean.getSeats());
-            params.put("brand", bean.getBrand());
-            params.put("model", bean.getModel());
-            params.put("vehicle_type", bean.getVehicle_type());
-            params.put("vehicle_color", bean.getVehicle_color());
-            params.put("license_plate", bean.getLicense_plate());
-            params.put("car_img_path", bean.getCar_img_path());
-            vehiclesRepository.editVehicles(params);
+            // params.put("vehicle_id", bean.getVehicle_id());
+            // params.put("seats", bean.getSeats());
+            // params.put("brand", bean.getBrand());
+            // params.put("model", bean.getModel());
+            // params.put("vehicle_type", bean.getVehicle_type());
+            // params.put("vehicle_color", bean.getVehicle_color());
+            // params.put("license_plate", bean.getLicense_plate());
+            // vehiclesRepository.editVehicles(params);
             res.setData(bean);
         } catch (Exception e) {
             this.checkException(e, res);
@@ -367,7 +367,7 @@ public class EventsController extends BaseController {
                 } else {
                     // ไม่ได้เป็นเพื่อนกัน ให้หา mutual friend
                     memberBean.setIsThisFriend(false);
-                    List<MutualFriendBean> checkMutualFriend = friendsRepository.checkMutualFriend(friendsBean);
+                    List<MutualFriendBean> checkMutualFriend = friendsRepository.getMutualFriend(friendsBean);
                     if (!checkMutualFriend.isEmpty()) {
                         memberBean.setMutualFriend(checkMutualFriend);
                     } else {
@@ -441,7 +441,7 @@ public class EventsController extends BaseController {
                 } else {
                     // ไม่ได้เป็นเพื่อนกัน ให้หา mutual friend
                     deniedRequestBeanBean.setIsThisFriend(false);
-                    List<MutualFriendBean> checkMutualFriend = friendsRepository.checkMutualFriend(friendsBean);
+                    List<MutualFriendBean> checkMutualFriend = friendsRepository.getMutualFriend(friendsBean);
                     if (!checkMutualFriend.isEmpty()) {
                         deniedRequestBeanBean.setMutualFriend(checkMutualFriend);
                     } else {

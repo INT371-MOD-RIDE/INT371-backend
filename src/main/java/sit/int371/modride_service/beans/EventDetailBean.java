@@ -69,6 +69,6 @@ public class EventDetailBean {
     private String vehicle_type;
     private String vehicle_color;
     private String license_plate;
-    private String car_img_path;
+    private String vehicle_download;
     private List<EventMemberBean> members;
 }

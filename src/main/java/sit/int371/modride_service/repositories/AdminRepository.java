@@ -9,6 +9,8 @@ import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
 import sit.int371.modride_service.beans.UsersBean;
+import sit.int371.modride_service.beans.driver_profile.DriverProfileBean;
+import sit.int371.modride_service.beans.driver_profile.LicensesBean;
 
 @Mapper
 public interface AdminRepository {
@@ -20,10 +22,12 @@ public interface AdminRepository {
                         " when r.role_name = 'driver' then 'ผู้ขับขี่' ",
                         " else 'ผู้ดูแลระบบ' ",
                         " end as role_name_th ",
+                        " ,uf.profile_img_name,uf.download_url ",
                         " from users u ",
                         " inner join branches b on b.branch_id = u.branch_id ",
                         " inner join faculties f on f.faculty_id = b.faculty_id ",
                         " inner join roles r on r.role_id = u.role_id ",
+                        " left join users_files uf on uf.owner_id = u.user_id ",
                         " order by f.faculty_name asc, b.branch_name asc, u.fullname asc ",
         })
         public List<UsersBean> getAllUsers() throws Exception;
@@ -36,10 +40,12 @@ public interface AdminRepository {
                         " when r.role_name = 'driver' then 'ผู้ขับขี่' ",
                         " else 'ผู้ดูแลระบบ' ",
                         " end as role_name_th ",
+                        " ,uf.profile_img_name,uf.download_url ",
                         " from users u ",
                         " inner join branches b on b.branch_id = u.branch_id ",
                         " inner join faculties f on f.faculty_id = b.faculty_id ",
                         " inner join roles r on r.role_id = u.role_id ",
+                        " left join users_files uf on uf.owner_id = u.user_id ",
                         " where u.user_id = #{user_id} ",
         })
         public UsersBean getUserDetail(Integer userId) throws Exception;
@@ -61,6 +67,16 @@ public interface AdminRepository {
                         " where user_id = #{user_id} ",
         })
         public void updateUserByAdmin(UsersBean bean) throws Exception;
+
+        // update license-approval by admin
+        @Update({
+                " update license_approval_status ",
+                " set approval_status = #{approval_status}, ",
+                " denied_detail = #{denied_detail}, ",
+                " timestamp = sysdate() ",
+                " where license_id = #{license_id} ",
+        })
+        public void updateLicenseAppStatus(LicensesBean bean) throws Exception;
 
         // delete-user-process (repo มันเยอะ เพราะต้องแยก delete)
         // ---------------------------------------------------------------------------

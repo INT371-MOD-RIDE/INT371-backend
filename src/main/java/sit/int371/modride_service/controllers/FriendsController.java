@@ -53,7 +53,7 @@ public class FriendsController extends BaseController {
                     FriendsBean friendsBean = new FriendsBean();
                     friendsBean.setUser_id(user_id);
                     friendsBean.setFriend_id(usersBean.getUser_id());
-                    List<MutualFriendBean> mutualFriend = friendsRepository.checkMutualFriend(friendsBean);
+                    List<MutualFriendBean> mutualFriend = friendsRepository.getMutualFriend(friendsBean);
                     usersBean.setMutualFriend(mutualFriend);
                 }
             }
@@ -81,8 +81,8 @@ public class FriendsController extends BaseController {
                 FriendsBean friendsBean = new FriendsBean();
                 friendsBean.setUser_id(user_id);
                 friendsBean.setFriend_id(usersBean.getUser_id());
-                List<MutualFriendBean> checkMutualFriend = friendsRepository.checkMutualFriend(friendsBean);
-                usersBean.setMutualFriend(checkMutualFriend);
+                List<MutualFriendBean> getMutualFriend = friendsRepository.getMutualFriend(friendsBean);
+                usersBean.setMutualFriend(getMutualFriend);
             }
             res.setData(friendList);
         } catch (Exception e) {
@@ -108,8 +108,8 @@ public class FriendsController extends BaseController {
                 FriendsBean friendsBean = new FriendsBean();
                 friendsBean.setUser_id(user_id);
                 friendsBean.setFriend_id(usersBean.getUser_id());
-                List<MutualFriendBean> checkMutualFriend = friendsRepository.checkMutualFriend(friendsBean);
-                usersBean.setMutualFriend(checkMutualFriend);
+                List<MutualFriendBean> getMutualFriend = friendsRepository.getMutualFriend(friendsBean);
+                usersBean.setMutualFriend(getMutualFriend);
             }
             res.setData(friendRequestList);
         } catch (Exception e) {

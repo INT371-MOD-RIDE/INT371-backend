@@ -14,7 +14,7 @@ public class EventMemberBean {
     private String faculty_name;
     private String branch_name;
     private String fullname;
-    private String profile_img_path;
+    private String download_url;
     private Integer rate;
     private Integer total;
 
