@@ -81,7 +81,7 @@ public interface EventsRepository {
                   " CASE WHEN m.user_id = e.user_id THEN ra.rating_point END AS rate, ",
                   " CASE WHEN m.user_id = e.user_id THEN 'driver' ELSE 'passenger' END AS role_name, ",
                   " r.role_name as role_check ",
-                  " ,uf.profile_img_name,uf.download_url ",
+                  " ,uf.profile_img_name,uf.download_url ,m.status",
                   " FROM members m ",
                   " LEFT JOIN users u ON u.user_id = m.user_id ",
                   // " LEFT JOIN roles ur ON ur.user_id = u.user_id ",
@@ -92,7 +92,7 @@ public interface EventsRepository {
                   " LEFT JOIN ratings ra ON m.user_id = ra.user_id ",
                   " left join users_files uf on uf.owner_id = u.user_id ",
                   " WHERE m.event_id = #{event_id} ",
-                  " And m.status = 1 ",
+                  " And m.status = 1",
       })
       public List<EventMemberBean> getEventMembers(HashMap<String, Object> event_id) throws Exception;
 
@@ -306,4 +306,14 @@ public interface EventsRepository {
                   " WHERE user_id = #{user_id} "
       })
       public void updateRating(RatingBean bean) throws Exception;
+
+      @Select({
+            "select members_id from members where event_id = #{event_id} and user_id = #{user_id}"
+      })
+      public Integer getMemberId(HashMap<String, Object> params) throws Exception;
+
+      @Select({
+            "select status from members where event_id = #{event_id} and user_id = #{user_id}"
+      })
+      public Integer getMemberStatus(HashMap<String, Object> params) throws Exception;
 }

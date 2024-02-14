@@ -52,7 +52,7 @@ public class EventDetailBean {
     // @NotBlank
     // @NotNull
     private Integer cost_type;
-    // private Integer status;
+    private Integer status;
     private String create_date;
     private String update_date;
     private String fullname;

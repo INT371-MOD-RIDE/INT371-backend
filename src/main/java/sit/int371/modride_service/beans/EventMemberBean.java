@@ -17,6 +17,7 @@ public class EventMemberBean {
     private String download_url;
     private Integer rate;
     private Integer total;
+    private Integer status;
 
     private Boolean isThisFriend;
     // list for friendship
