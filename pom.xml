@@ -59,8 +59,14 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-validation</artifactId>
-            <version>2.7.5</version>
+            <version>3.1.0</version>
         </dependency>
+                <!-- https://mvnrepository.com/artifact/javax.validation/validation-api -->
+        <!-- <dependency>
+            <groupId>javax.validation</groupId>
+            <artifactId>validation-api</artifactId>
+            <version>2.0.1.Final</version>
+        </dependency> -->
         <!-- https://mvnrepository.com/artifact/de.mkammerer/argon2-jvm -->
         <dependency>
             <groupId>de.mkammerer</groupId>
@@ -89,6 +95,7 @@
             <artifactId>spring-boot-configuration-processor</artifactId>
             <optional>true</optional>
         </dependency>
+
         <!-- https://mvnrepository.com/artifact/org.springframework.security/spring-security-jwt -->
         <dependency>
             <groupId>org.springframework.security</groupId>
