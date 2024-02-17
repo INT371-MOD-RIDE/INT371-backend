@@ -100,6 +100,8 @@ public interface EventsRepository {
                   " left join users_files uf on uf.owner_id = u.user_id ",
                   " WHERE m.event_id = #{event_id} ",
                   " And m.status = 1",
+                  " OR m.event_id = #{event_id} ",
+                  " And m.status = 4 "
       })
       public List<EventMemberBean> getEventMembers(HashMap<String, Object> event_id) throws Exception;
 
@@ -219,7 +221,7 @@ public interface EventsRepository {
                   // " select
                   // e.event_id,e.event_name,m.user_id,u.fullname,u.profile_img_path,e.user_id as
                   // owner,e.status ",
-                  " select e.event_id,e.event_name,m.user_id,u.fullname,uf.download_url,e.user_id as owner,m.status,m.members_id  ",
+                  " select e.event_id,e.event_name,e.status,m.user_id,u.fullname,uf.download_url,e.user_id as owner,m.status as reqStatus,m.members_id  ",
                   // " CASE WHEN e.user_id = m.user_id THEN 'owner' END as owner ",
                   " from events e ",
                   " left join members m on e.event_id=m.event_id ",

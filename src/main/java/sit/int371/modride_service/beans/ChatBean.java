@@ -7,6 +7,7 @@ public class ChatBean {
     private Integer event_id;
     private String event_name;
     private Integer status;
+    private Integer reqStatus;
     private Integer member_count;
     private Integer members_id;
     private Integer reqestStatus;
