@@ -185,6 +185,7 @@ public class EventsController extends BaseController {
             // vehiclesRepository.createVehicles(params);
             // params.put("vehicle_id", params.get("vehicle_id"));
             // bean.setVehicle_id(params.get("vehicle_id"));
+            bean.setSeats(bean.getSeats() - 1);
             eventsRepository.createEvents(bean);
             params.put("event_id", bean.getEvent_id());
             eventsRepository.createEventLocation(bean);
