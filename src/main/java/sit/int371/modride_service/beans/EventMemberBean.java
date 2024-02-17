@@ -18,6 +18,7 @@ public class EventMemberBean {
     private Integer rate;
     private Integer total;
     private Integer status;
+    private Integer seats;
 
     private Boolean isThisFriend;
     // list for friendship

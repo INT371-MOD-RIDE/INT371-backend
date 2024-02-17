@@ -148,7 +148,7 @@ public class FriendsController extends BaseController {
             System.out.println("cancel by: " + bean);
             friendsRepository.cancelFriend(bean);
             // res.setData(params);
-            res.setResponse_code("200");
+            res.setResponse_code(200);
             res.setResponse_desc("Cancel-Friend Success");
         } catch (Exception e) {
             this.checkException(e, res);

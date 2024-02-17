@@ -214,11 +214,12 @@ public interface EventsRepository {
                   // " select
                   // e.event_id,e.event_name,m.user_id,u.fullname,u.profile_img_path,e.user_id as
                   // owner,e.status ",
-                  " select e.event_id,e.event_name,m.user_id,u.fullname,e.user_id as owner,m.status,m.members_id  ",
+                  " select e.event_id,e.event_name,m.user_id,u.fullname,uf.download_url,e.user_id as owner,m.status,m.members_id  ",
                   // " CASE WHEN e.user_id = m.user_id THEN 'owner' END as owner ",
                   " from events e ",
                   " left join members m on e.event_id=m.event_id ",
                   " left join users u on m.user_id=u.user_id ",
+                  " left join users_files uf on uf.owner_id = u.user_id ",
                   " where e.event_id = #{event_id} ",
                   " and m.status = 1 or m.status = 4",
                   " order by e.create_date desc "
@@ -234,7 +235,7 @@ public interface EventsRepository {
       public Integer getMemberCount(HashMap<String, Object> params) throws Exception;
 
       @Select({
-                  " SELECT m.members_id,m.event_id,m.user_id,u.fullname,f.faculty_name,b.branch_name, ",
+                  " SELECT m.members_id,m.event_id,e.seats,m.user_id,u.fullname,f.faculty_name,b.branch_name, ",
                   " CASE WHEN m.user_id = e.user_id THEN ra.rating_amount END AS total, ",
                   " CASE WHEN m.user_id = e.user_id THEN ",
                   " CASE WHEN ROUND(ra.rating_point / ra.rating_amount, 1) * 10 % 10 = 0 THEN ROUND(ra.rating_point / ra.rating_amount, 0) ",
@@ -247,7 +248,7 @@ public interface EventsRepository {
                   " LEFT JOIN roles r ON r.role_id = u.role_id ",
                   " LEFT JOIN branches b ON u.branch_id = b.branch_id ",
                   " LEFT JOIN faculties f ON b.faculty_id = f.faculty_id ",
-                  " LEFT JOIN events e ON m.user_id = e.user_id AND m.event_id = e.event_id ",
+                  " LEFT JOIN events e ON m.event_id = e.event_id ",
                   " LEFT JOIN ratings ra ON m.user_id = ra.user_id ",
                   " WHERE m.event_id = #{event_id} ",
                   " And m.status = 0 ",

@@ -12,7 +12,7 @@ public class BaseController implements Serializable {
 
 	protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    public static final String MSG_401 = "Unauthorized.";
+	public static final String MSG_401 = "Unauthorized.";
 	public static final String MSG_404 = "Data not found.";
 
 	public static final String METHOD_GET = "get";
@@ -20,32 +20,33 @@ public class BaseController implements Serializable {
 	public static final String METHOD_PUT = "put";
 	public static final String METHOD_DELETE = "delete";
 
-    protected APIResponseBean checkException(Exception e, APIResponseBean res) {
+	// Custom http-status number
+	public static final Integer UnprocessableContentStatus = 422;
+
+	protected APIResponseBean checkException(Exception e, APIResponseBean res) {
 		if (e.getMessage().equals(MSG_404)) {
-			res.setResponse_code("40400");
+			res.setResponse_code(404);
 			res.setResponse_desc(e.getMessage());
 		} else if (e.getMessage().equals(MSG_401)) {
-			res.setResponse_code("40100");
+			res.setResponse_code(401);
 			res.setResponse_desc(e.getMessage());
 		} else if (e.getMessage().contains("is required.") || e.getMessage().contains("should not be")) {
-			res.setResponse_code("40000");
+			res.setResponse_code(400);
 			res.setResponse_desc(e.getMessage());
 		} else if (e.getMessage().contains("Duplicate")) {
-			res.setResponse_code("40900");
-			if(e.getCause() != null) {
-				res.setResponse_desc("Duplicated data, "+e.getCause().getMessage()+".");
-			}else {
+			res.setResponse_code(409);
+			if (e.getCause() != null) {
+				res.setResponse_desc("Duplicated data, " + e.getCause().getMessage() + ".");
+			} else {
 				res.setResponse_desc(e.getMessage());
 			}
 		} else {
 			logger.info("Got an exception. {}", e.getMessage());
-			res.setResponse_code("50000");
+			res.setResponse_code(50000);
 			res.setResponse_desc(e.getMessage());
 			// res.setResponse_desc("API error please contact administrator.");
 		}
 		return res;
 	}
 
-
 }
-

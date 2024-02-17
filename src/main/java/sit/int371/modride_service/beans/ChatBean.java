@@ -12,6 +12,7 @@ public class ChatBean {
     private Integer reqestStatus;
     private Integer user_id;
     private String fullname;
-    private String profile_img_path;
+    private String profile_img_name;
+    private String download_url;
     private Integer owner;
 }

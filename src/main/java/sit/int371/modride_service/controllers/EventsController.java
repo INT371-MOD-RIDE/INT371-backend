@@ -47,7 +47,7 @@ public class EventsController extends BaseController {
     private EventsRepository eventsRepository;
     @Autowired
     private FriendsRepository friendsRepository;
-    @Autowired  
+    @Autowired
     private VehiclesRepository vehiclesRepository;
 
     // Get all-users
@@ -92,8 +92,8 @@ public class EventsController extends BaseController {
     }
 
     @GetMapping("/get/{id}")
-    public APIResponseBean getEventsById(HttpServletRequest request, 
-    @PathVariable Integer id,@RequestParam(name = "user_id", required = false) Integer user_id) {
+    public APIResponseBean getEventsById(HttpServletRequest request,
+            @PathVariable Integer id, @RequestParam(name = "user_id", required = false) Integer user_id) {
         APIResponseBean res = new APIResponseBean();
         HashMap<String, Object> params = new HashMap<>();
         params.put("event_id", id);
@@ -102,8 +102,8 @@ public class EventsController extends BaseController {
             EventDetailBean eventsBean = eventsRepository.getEventsById(params);
             List<EventMemberBean> members = eventsRepository.getEventMembers(params);
             for (EventMemberBean memberBean : members) {
-            FriendsBean friendsBean = new FriendsBean();
-            friendsBean.setUser_id(user_id);
+                FriendsBean friendsBean = new FriendsBean();
+                friendsBean.setUser_id(user_id);
                 friendsBean.setFriend_id(memberBean.getUser_id());
                 List<FriendsBean> checkFriendShip = friendsRepository.checkFriendshipForEvent(friendsBean);
                 System.out.println("checkFriendship: " + checkFriendShip);
@@ -135,12 +135,12 @@ public class EventsController extends BaseController {
     }
 
     @PostMapping("/post")
-    public APIResponseBean createEvents(HttpServletRequest request, 
-    @Valid @RequestBody EventDetailBean bean) throws Exception {
+    public APIResponseBean createEvents(HttpServletRequest request,
+            @Valid @RequestBody EventDetailBean bean) throws Exception {
         APIResponseBean res = new APIResponseBean();
         HashMap<String, Object> params = new HashMap<>();
         try {
-            System.out.println("vehicle_id: "+bean);
+            System.out.println("vehicle_id: " + bean);
             // bean.setVehicle_id(57);
             // bean.setLicense_plate("กก-1111");
             params.put("user_id", bean.getUser_id());
@@ -156,16 +156,17 @@ public class EventsController extends BaseController {
             // Integer vehicle_id = vehiclesRepository.getVehiclesByLicense(params);
             // bean.setVehicle_id(vehicle_id);
             // if(vehicle_id == null){
-            //     System.out.println("vehicle_id is null");
-            //     vehiclesRepository.createVehicles(params);
-            //     params.put("vehicle_id", params.get("vehicle_id"));
-            //     // bean.setVehicle_id(params.get("vehicle_id"));
-            //     bean.setVehicle_id(Integer.parseInt(params.get("vehicle_id").toString()));
-            //     // bean.setCar_img_path("/images/car/" + params.get("vehicle_id").toString() + ".jpg");
+            // System.out.println("vehicle_id is null");
+            // vehiclesRepository.createVehicles(params);
+            // params.put("vehicle_id", params.get("vehicle_id"));
+            // // bean.setVehicle_id(params.get("vehicle_id"));
+            // bean.setVehicle_id(Integer.parseInt(params.get("vehicle_id").toString()));
+            // // bean.setCar_img_path("/images/car/" + params.get("vehicle_id").toString()
+            // + ".jpg");
             // }else{
-            //     System.out.println("vehicle_id not null");
-            //     bean.setVehicle_id(vehicle_id);
-            //     // bean.setCar_img_path("/images/car/" + vehicle_id + ".jpg");
+            // System.out.println("vehicle_id not null");
+            // bean.setVehicle_id(vehicle_id);
+            // // bean.setCar_img_path("/images/car/" + vehicle_id + ".jpg");
             // }
             // vehiclesRepository.createVehicles(params);
             // params.put("vehicle_id", params.get("vehicle_id"));
@@ -173,11 +174,11 @@ public class EventsController extends BaseController {
             eventsRepository.createEvents(bean);
             params.put("event_id", bean.getEvent_id());
             eventsRepository.createEventLocation(bean);
-            params.put("status",1);
+            params.put("status", 1);
             eventsRepository.joinEvent(params);
             res.setData(bean);
         } catch (Exception e) {
-            if(params.get("vehicle_id") != null){
+            if (params.get("vehicle_id") != null) {
                 params.put("vehicle_id", params.get("vehicle_id"));
                 vehiclesRepository.deleteVehicles(params);
             }
@@ -190,9 +191,8 @@ public class EventsController extends BaseController {
     }
 
     @PutMapping("/edit/{id}")
-    public APIResponseBean editEvents(HttpServletRequest request,@PathVariable Integer id,
-    @Valid @RequestBody EventDetailBean bean)
-    {
+    public APIResponseBean editEvents(HttpServletRequest request, @PathVariable Integer id,
+            @Valid @RequestBody EventDetailBean bean) {
         APIResponseBean res = new APIResponseBean();
         HashMap<String, Object> params = new HashMap<>();
         try {
@@ -222,10 +222,10 @@ public class EventsController extends BaseController {
         }
         return res;
     }
+
     @PutMapping("/updateStatus/{id}")
-    public APIResponseBean closeEvents(HttpServletRequest request,@PathVariable Integer id,
-    @RequestBody HashMap<String, Object> data)
-    {
+    public APIResponseBean closeEvents(HttpServletRequest request, @PathVariable Integer id,
+            @RequestBody HashMap<String, Object> data) {
         APIResponseBean res = new APIResponseBean();
         HashMap<String, Object> params = new HashMap<>();
         try {
@@ -240,8 +240,7 @@ public class EventsController extends BaseController {
     }
 
     @DeleteMapping("/delete/{id}")
-    public APIResponseBean deleteEvents(HttpServletRequest request,@PathVariable Integer id)
-    {
+    public APIResponseBean deleteEvents(HttpServletRequest request, @PathVariable Integer id) {
         APIResponseBean res = new APIResponseBean();
         HashMap<String, Object> params = new HashMap<>();
         try {
@@ -261,30 +260,47 @@ public class EventsController extends BaseController {
         }
         return res;
     }
+
     @PostMapping("/joinEvent")
-    public APIResponseBean joinEvent(HttpServletRequest request,@RequestBody HashMap<String, Object> data)
-    {
+    public APIResponseBean joinEvent(HttpServletRequest request, @RequestBody HashMap<String, Object> data) {
         APIResponseBean res = new APIResponseBean();
         HashMap<String, Object> params = new HashMap<>();
         try {
             // params.put("user_id", request.getAttribute("user_id"));
             params.put("user_id", data.get("user_id"));
             params.put("event_id", data.get("event_id"));
-            params.put("status", 0);
+
+            // หากส่ง status เข้ามา แล้วไม่เท่ากับ null จะเข้าเงื่อนไขนี้ เพื่อไป set: seats-1
+            System.out.println("data: " + data);
+            if (data.get("status") != null) {
+                params.put("seats", data.get("seats"));
+            } else {
+                params.put("status", 0);
+            }
             Integer seatAvailable = eventsRepository.getSeats(params);
             Integer duplicateMember = eventsRepository.checkDuplicateMember(params);
-            if(seatAvailable == 0){
-                res.setResponse_code("400");
+            if (seatAvailable == 0) {
+                res.setResponse_code(UnprocessableContentStatus);
                 res.setResponse_desc("Seat is full");
-            }else{
-                if(duplicateMember == 0){
-                    params.put("join_seat", seatAvailable-1);
-                    eventsRepository.joinEvent(params);
-                    eventsRepository.editSeats(params);
-                    res.setResponse_code("200");
+            } else {
+                if (duplicateMember == 0) {
+                    if (params.get("seats") == null) {
+                        params.put("join_seat", seatAvailable);
+                    } else {
+                        params.put("join_seat", data.get("seats"));
+                    }
+
+                    System.out.println("event/seats: " + params);
+                    // ถ้า status เป็น 1 จะเข้า edit-seats
+                    if (params.get("user_id") != null) {
+                        eventsRepository.joinEvent(params);
+                    } else {
+                        eventsRepository.editSeats(params);
+                    }
+                    // res.setResponse_code(200); // default มัน 200 อยู่แล้ว ไม่จำเป็นต้อง set
                     res.setResponse_desc("success");
-                }else{
-                    res.setResponse_code("400");
+                } else {
+                    res.setResponse_code(UnprocessableContentStatus);
                     res.setResponse_desc("Member Already Join Event");
                 }
             }
@@ -294,8 +310,9 @@ public class EventsController extends BaseController {
         }
         return res;
     }
+
     @GetMapping("/getVehicle/{id}")
-    public APIResponseBean getVehicle(HttpServletRequest request,@PathVariable Integer id){
+    public APIResponseBean getVehicle(HttpServletRequest request, @PathVariable Integer id) {
         APIResponseBean res = new APIResponseBean();
         HashMap<String, Object> params = new HashMap<>();
         try {
@@ -309,10 +326,9 @@ public class EventsController extends BaseController {
         return res;
     }
 
-
-    //For chat
+    // For chat
     @GetMapping("/getChatRoom/{id}")
-    public APIResponseBean getChatRoom(HttpServletRequest request,@PathVariable Integer id){
+    public APIResponseBean getChatRoom(HttpServletRequest request, @PathVariable Integer id) {
         APIResponseBean res = new APIResponseBean();
         HashMap<String, Object> params = new HashMap<>();
         try {
@@ -334,8 +350,9 @@ public class EventsController extends BaseController {
         }
         return res;
     }
+
     @GetMapping("/getChatRoomMember/{id}")
-    public APIResponseBean getChatRoomMember(HttpServletRequest request,@PathVariable Integer id){
+    public APIResponseBean getChatRoomMember(HttpServletRequest request, @PathVariable Integer id) {
         APIResponseBean res = new APIResponseBean();
         HashMap<String, Object> params = new HashMap<>();
         try {
@@ -348,10 +365,11 @@ public class EventsController extends BaseController {
         }
         return res;
     }
+
     @GetMapping("/getRequest")
     public APIResponseBean getRequest(HttpServletRequest request,
-    @RequestParam(name = "user_id", required = false) Integer user_id,
-    @RequestParam(name = "event_id", required = false) Integer event_id){
+            @RequestParam(name = "user_id", required = false) Integer user_id,
+            @RequestParam(name = "event_id", required = false) Integer event_id) {
         APIResponseBean res = new APIResponseBean();
         HashMap<String, Object> params = new HashMap<>();
         try {
@@ -359,8 +377,8 @@ public class EventsController extends BaseController {
             params.put("event_id", event_id);
             List<EventMemberBean> members = eventsRepository.getRequestMembers(params);
             for (EventMemberBean memberBean : members) {
-            FriendsBean friendsBean = new FriendsBean();
-            friendsBean.setUser_id(user_id);
+                FriendsBean friendsBean = new FriendsBean();
+                friendsBean.setUser_id(user_id);
                 friendsBean.setFriend_id(memberBean.getUser_id());
                 List<FriendsBean> checkFriendShip = friendsRepository.checkFriendshipForEvent(friendsBean);
                 System.out.println("checkFriendship: " + checkFriendShip);
@@ -388,10 +406,10 @@ public class EventsController extends BaseController {
         }
         return res;
     }
+
     @PutMapping("/responseRequest/{id}")
-    public APIResponseBean responseRequest(HttpServletRequest request,@PathVariable Integer id,
-    @RequestBody HashMap<String, Object> data)
-    {
+    public APIResponseBean responseRequest(HttpServletRequest request, @PathVariable Integer id,
+            @RequestBody HashMap<String, Object> data) {
         APIResponseBean res = new APIResponseBean();
         HashMap<String, Object> params = new HashMap<>();
         try {
@@ -399,6 +417,11 @@ public class EventsController extends BaseController {
             // params.put("user_id", data.get("user_id"));
             params.put("status", data.get("status"));
             params.put("detail", data.get("detail"));
+
+            // รับ event_id และ seats
+            params.put("event_id", data.get("event_id"));
+            params.put("seats", data.get("seats"));
+
             System.out.println("params: " + params);
             eventsRepository.responseRequest(params);
             res.setData(params);
@@ -407,9 +430,9 @@ public class EventsController extends BaseController {
         }
         return res;
     }
+
     @DeleteMapping("/cancelRequest/{id}")
-    public APIResponseBean deleteMember(HttpServletRequest request,@PathVariable Integer id)
-    {
+    public APIResponseBean deleteMember(HttpServletRequest request, @PathVariable Integer id) {
         APIResponseBean res = new APIResponseBean();
         HashMap<String, Object> params = new HashMap<>();
         try {
@@ -424,18 +447,19 @@ public class EventsController extends BaseController {
         }
         return res;
     }
+
     @GetMapping("/getDeniedDetail")
     public APIResponseBean getDeniedDetail(HttpServletRequest request,
-    @RequestParam(name = "user_id", required = false) Integer user_id,
-    @RequestParam(name = "members_id", required = false) Integer members_id){
+            @RequestParam(name = "user_id", required = false) Integer user_id,
+            @RequestParam(name = "members_id", required = false) Integer members_id) {
         APIResponseBean res = new APIResponseBean();
         HashMap<String, Object> params = new HashMap<>();
         try {
             params.put("members_id", members_id);
             List<DeniedRequestBean> owner = eventsRepository.getDeniedDetail(params);
             for (DeniedRequestBean deniedRequestBeanBean : owner) {
-            FriendsBean friendsBean = new FriendsBean();
-            friendsBean.setUser_id(user_id);
+                FriendsBean friendsBean = new FriendsBean();
+                friendsBean.setUser_id(user_id);
                 friendsBean.setFriend_id(deniedRequestBeanBean.getUser_id());
                 List<FriendsBean> checkFriendShip = friendsRepository.checkFriendshipForEvent(friendsBean);
                 System.out.println("checkFriendship: " + checkFriendShip);
@@ -462,10 +486,11 @@ public class EventsController extends BaseController {
         }
         return res;
     }
+
     @GetMapping("/getEventDriver")
     public APIResponseBean getEventDriver(HttpServletRequest request,
-    @RequestParam(name = "event_id", required = false) Integer event_id,
-    @RequestParam(name = "user_id", required = false) Integer user_id) throws Exception {
+            @RequestParam(name = "event_id", required = false) Integer event_id,
+            @RequestParam(name = "user_id", required = false) Integer user_id) throws Exception {
         APIResponseBean res = new APIResponseBean();
         HashMap<String, Object> params = new HashMap<>();
         try {
@@ -480,23 +505,23 @@ public class EventsController extends BaseController {
         }
         return res;
     }
+
     @PostMapping("/ratingDriver")
-    public APIResponseBean ratingDriver(HttpServletRequest request,@RequestBody RatingBean data)
-    {
+    public APIResponseBean ratingDriver(HttpServletRequest request, @RequestBody RatingBean data) {
         APIResponseBean res = new APIResponseBean();
         // HashMap<String, Object> params = new HashMap<>();
         try {
             Integer countRating = eventsRepository.findRating(data);
             System.out.println("countRating: " + countRating);
             HashMap<String, Object> params = new HashMap<>();
-            if(countRating > 0){
+            if (countRating > 0) {
                 HashMap<String, Object> rating = eventsRepository.getRating(data);
-                data.setRating_point(Integer.parseInt(rating.get("rating_point").toString())+data.getRating_point());
-                data.setRating_amount(Integer.parseInt(rating.get("rating_amount").toString())+1);
+                data.setRating_point(Integer.parseInt(rating.get("rating_point").toString()) + data.getRating_point());
+                data.setRating_amount(Integer.parseInt(rating.get("rating_amount").toString()) + 1);
                 eventsRepository.updateRating(data);
-            }else{
-            data.setRating_amount(1);
-            eventsRepository.ratingDriver(data);   
+            } else {
+                data.setRating_amount(1);
+                eventsRepository.ratingDriver(data);
             }
             params.put("members_id", data.getMember_id());
             params.put("status", 4);

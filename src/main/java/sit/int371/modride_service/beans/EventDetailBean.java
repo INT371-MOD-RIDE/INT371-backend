@@ -33,14 +33,14 @@ public class EventDetailBean {
     @NotEmpty(message = "Dest Point is required")
     private String dest_point;
 
-    @NotBlank(message = "Start Name is required")
-    @NotNull(message = "Start Name is required")
-    @NotEmpty(message = "Start Name is required")
+    // @NotBlank(message = "Start Name is required")
+    // @NotNull(message = "Start Name is required")
+    // @NotEmpty(message = "Start Name is required")
     private String start_name;
 
-    @NotBlank(message = "Dest Name is required")
-    @NotNull(message = "Dest Name is required")
-    @NotEmpty(message = "Dest Name is required")
+    // @NotBlank(message = "Dest Name is required")
+    // @NotNull(message = "Dest Name is required")
+    // @NotEmpty(message = "Dest Name is required")
     private String dest_name;
 
     @NotBlank(message = "Departure Time is required")
