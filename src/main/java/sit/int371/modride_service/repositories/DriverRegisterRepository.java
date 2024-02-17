@@ -21,7 +21,7 @@ public interface DriverRegisterRepository {
         // driver-profile
         @Select({
                         " select l.user_id,l.license_id,l.license_fn,l.license_ln ",
-                        " ,lf.license_file_name,lf.license_download ",
+                        " ,lf.license_file_name,lf.license_download,lf.license_size ",
                         " ,ls.approval_status,ls.denied_detail,ls.timestamp ",
                         " from licenses l  ",
                         " inner join users u on l.user_id = u.user_id ",
