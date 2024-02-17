@@ -169,6 +169,11 @@ public interface EventsRepository {
       })
       public Integer getSeats(HashMap<String, Object> params) throws Exception;
 
+      @Select({
+                  " select * from events where status != 3 and user_id = #{user_id} "
+      })
+      public List<EventsBean> getEventNotClose(Integer user_id) throws Exception;
+
       @Update({
                   " UPDATE events SET ",
                   " seats = #{join_seat}, ",

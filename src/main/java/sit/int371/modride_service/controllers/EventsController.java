@@ -134,6 +134,20 @@ public class EventsController extends BaseController {
         return res;
     }
 
+    // check events-close for driver
+    @GetMapping("/checkNotClose/{user_id}")
+    public APIResponseBean checkNotClose(HttpServletRequest request,
+    @PathVariable Integer user_id) {
+        APIResponseBean res = new APIResponseBean();
+        try {
+            List<EventsBean> eventList = eventsRepository.getEventNotClose(user_id);
+            res.setData(eventList);
+        } catch (Exception e) {
+            this.checkException(e, res);
+        }
+        return res;
+    }
+
     @PostMapping("/post")
     public APIResponseBean createEvents(HttpServletRequest request,
             @Valid @RequestBody EventDetailBean bean) throws Exception {
@@ -270,7 +284,8 @@ public class EventsController extends BaseController {
             params.put("user_id", data.get("user_id"));
             params.put("event_id", data.get("event_id"));
 
-            // หากส่ง status เข้ามา แล้วไม่เท่ากับ null จะเข้าเงื่อนไขนี้ เพื่อไป set: seats-1
+            // หากส่ง status เข้ามา แล้วไม่เท่ากับ null จะเข้าเงื่อนไขนี้ เพื่อไป set:
+            // seats-1
             System.out.println("data: " + data);
             if (data.get("status") != null) {
                 params.put("seats", data.get("seats"));

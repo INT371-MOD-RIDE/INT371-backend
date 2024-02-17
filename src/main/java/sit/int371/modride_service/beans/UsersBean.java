@@ -33,5 +33,7 @@ public class UsersBean {
     private List<MutualFriendBean> mutualFriend;
     private String profile_img_name;
     private String download_url;
+    // for driver
+    private Boolean disablePost;
 
 }

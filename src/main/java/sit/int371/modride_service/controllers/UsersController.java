@@ -16,6 +16,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import sit.int371.modride_service.beans.APIResponseBean;
 import sit.int371.modride_service.beans.BranchesBean;
+import sit.int371.modride_service.beans.EventsBean;
 import sit.int371.modride_service.beans.FacultiesBean;
 import sit.int371.modride_service.beans.ReportUserBean;
 import sit.int371.modride_service.beans.RolesBean;
@@ -23,6 +24,7 @@ import sit.int371.modride_service.beans.UsersBean;
 //import sit.int371.modride_service.dtos.NewUserDTO;
 import sit.int371.modride_service.dtos.*;
 import sit.int371.modride_service.entities.User;
+import sit.int371.modride_service.repositories.EventsRepository;
 import sit.int371.modride_service.repositories.OldUserRepository;
 import sit.int371.modride_service.repositories.UsersRepository;
 import sit.int371.modride_service.services.UserService;
@@ -42,6 +44,8 @@ public class UsersController extends BaseController {
     private UserService userService;
     @Autowired
     private UsersRepository usersRepository;
+    @Autowired
+    private EventsRepository eventsRepository;
 
     private Integer passengerId = 1;
     private Integer driverId = 2;
@@ -75,6 +79,14 @@ public class UsersController extends BaseController {
             UsersBean userBean = new UsersBean();
             userBean.setUser_id(user_id);
             UsersBean user = usersRepository.getUserById(userBean);
+
+            // เมื่อเป็น driver ถึงจะเช็ค
+            if (user.getRole_id() == 2) {
+                List<EventsBean> eventList = eventsRepository.getEventNotClose(user_id);
+                if (eventList.size() > 0) {
+                    user.setDisablePost(true);
+                }
+            }
             res.setData(user);
         } catch (Exception e) {
             this.checkException(e, res);
@@ -96,8 +108,6 @@ public class UsersController extends BaseController {
         }
         return res;
     }
-
-    
 
     // Get faculties
     @GetMapping("/getFaculties")
@@ -213,8 +223,10 @@ public class UsersController extends BaseController {
         userService.sendMail(SendMailDTO);
         throw new ResponseStatusException(HttpStatus.OK, "Send email complete");
     }
+
     @GetMapping("/getReportUser")
-    public APIResponseBean getReportUser(HttpServletRequest request, @RequestParam(name = "user_id", required = false) Integer user_id){
+    public APIResponseBean getReportUser(HttpServletRequest request,
+            @RequestParam(name = "user_id", required = false) Integer user_id) {
         APIResponseBean res = new APIResponseBean();
         HashMap<String, Object> params = new HashMap<>();
         try {
@@ -226,8 +238,9 @@ public class UsersController extends BaseController {
         }
         return res;
     }
+
     @PostMapping("/reportUser")
-    public APIResponseBean reportUser(HttpServletRequest request, @RequestBody ReportUserBean bean){
+    public APIResponseBean reportUser(HttpServletRequest request, @RequestBody ReportUserBean bean) {
         APIResponseBean res = new APIResponseBean();
         try {
             usersRepository.reportUser(bean);
