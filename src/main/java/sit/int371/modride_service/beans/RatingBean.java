@@ -7,6 +7,8 @@ import lombok.Data;
 
 @Data
 public class RatingBean {
+    private Integer event_id;
+    private Integer member_id;
     private Integer rating_id;
     // @NotBlank
     // @NotNull

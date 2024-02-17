@@ -4,9 +4,11 @@ import java.util.HashMap;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.method.P;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -38,6 +40,7 @@ import sit.int371.modride_service.repositories.UsersRepository;
 import sit.int371.modride_service.repositories.VehiclesRepository;
 
 @RestController
+@Validated // ใช้ @Validated ในการ validate request body
 @RequestMapping("/api/v1/events")
 public class EventsController extends BaseController {
     @Autowired
@@ -94,7 +97,7 @@ public class EventsController extends BaseController {
         APIResponseBean res = new APIResponseBean();
         HashMap<String, Object> params = new HashMap<>();
         params.put("event_id", id);
-        // params.put("user_id", user_id);
+        params.put("user_id", user_id);
         try {
             EventDetailBean eventsBean = eventsRepository.getEventsById(params);
             List<EventMemberBean> members = eventsRepository.getEventMembers(params);
@@ -121,6 +124,8 @@ public class EventsController extends BaseController {
 
                 }
             }
+            Integer status = eventsRepository.getMemberStatus(params);
+            eventsBean.setStatus(status);
             eventsBean.setMembers(members);
             res.setData(eventsBean);
         } catch (Exception e) {
@@ -131,7 +136,7 @@ public class EventsController extends BaseController {
 
     @PostMapping("/post")
     public APIResponseBean createEvents(HttpServletRequest request, 
-    @RequestBody EventDetailBean bean) throws Exception {
+    @Valid @RequestBody EventDetailBean bean) throws Exception {
         APIResponseBean res = new APIResponseBean();
         HashMap<String, Object> params = new HashMap<>();
         try {
@@ -186,7 +191,7 @@ public class EventsController extends BaseController {
 
     @PutMapping("/edit/{id}")
     public APIResponseBean editEvents(HttpServletRequest request,@PathVariable Integer id,
-    @RequestBody EventDetailBean bean)
+    @Valid @RequestBody EventDetailBean bean)
     {
         APIResponseBean res = new APIResponseBean();
         HashMap<String, Object> params = new HashMap<>();
@@ -408,6 +413,7 @@ public class EventsController extends BaseController {
         APIResponseBean res = new APIResponseBean();
         HashMap<String, Object> params = new HashMap<>();
         try {
+            System.out.println("id: " + id);
             params.put("members_id", id);
             eventsRepository.deleteMembers(params);
             res.setData(params);
@@ -458,12 +464,16 @@ public class EventsController extends BaseController {
     }
     @GetMapping("/getEventDriver")
     public APIResponseBean getEventDriver(HttpServletRequest request,
-    @RequestParam(name = "event_id", required = false) Integer event_id){
+    @RequestParam(name = "event_id", required = false) Integer event_id,
+    @RequestParam(name = "user_id", required = false) Integer user_id) throws Exception {
         APIResponseBean res = new APIResponseBean();
         HashMap<String, Object> params = new HashMap<>();
         try {
             params.put("event_id", event_id);
+            params.put("user_id", user_id);
             HashMap<String, Object> owner = eventsRepository.getEventDriver(params);
+            Integer getMemberId = eventsRepository.getMemberId(params);
+            owner.put("member_id", getMemberId);
             res.setData(owner);
         } catch (Exception e) {
             this.checkException(e, res);
@@ -478,6 +488,7 @@ public class EventsController extends BaseController {
         try {
             Integer countRating = eventsRepository.findRating(data);
             System.out.println("countRating: " + countRating);
+            HashMap<String, Object> params = new HashMap<>();
             if(countRating > 0){
                 HashMap<String, Object> rating = eventsRepository.getRating(data);
                 data.setRating_point(Integer.parseInt(rating.get("rating_point").toString())+data.getRating_point());
@@ -487,6 +498,9 @@ public class EventsController extends BaseController {
             data.setRating_amount(1);
             eventsRepository.ratingDriver(data);   
             }
+            params.put("members_id", data.getMember_id());
+            params.put("status", 4);
+            eventsRepository.responseRequest(params);
             res.setData(data);
         } catch (Exception e) {
             this.checkException(e, res);

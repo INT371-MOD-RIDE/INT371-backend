@@ -30,8 +30,11 @@ public interface EventsRepository {
                   // " where status = 1 ",
                   // " order by create_date desc ",
                   " SELECT e.event_id,e.user_id,e.event_name,e.event_detail, ",
-                  " e.departure_time,e.seats,e.costs,e.status,e.create_date,e.update_date ",
-                  " ,u.fullname,r.rating_point as rate,r.rating_amount as total,f.faculty_name,b.branch_name ",
+                  " e.departure_time,e.seats,e.costs,e.status,e.create_date,e.update_date,u.fullname, ",
+                  // " ,u.fullname,r.rating_point as rate,r.rating_amount as total,f.faculty_name,b.branch_name ",
+                  " CASE WHEN ROUND(r.rating_point / r.rating_amount, 1) * 10 % 10 = 0 THEN ROUND(r.rating_point / r.rating_amount, 0) ",
+                  " WHEN ROUND(r.rating_point / r.rating_amount, 1) * 10 % 10 > 0 THEN FORMAT(ROUND(r.rating_point / r.rating_amount, 1), 1) END as rate ",
+                  " ,r.rating_amount as total,f.faculty_name,b.branch_name ",
                   " ,case when el.start_name is null then el.start_point else el.start_name end as start_point  ",
                   " ,case when el.dest_name is null then el.dest_point else el.dest_name end as dest_point ",
                   " ,uf.profile_img_name,uf.download_url ",
@@ -78,10 +81,14 @@ public interface EventsRepository {
                   // " where event_id = #{event_id} ",
                   " SELECT m.members_id,m.event_id,m.user_id,u.fullname,f.faculty_name,b.branch_name, ",
                   " CASE WHEN m.user_id = e.user_id THEN ra.rating_amount END AS total, ",
-                  " CASE WHEN m.user_id = e.user_id THEN ra.rating_point END AS rate, ",
+                  // " CASE WHEN m.user_id = e.user_id THEN ra.rating_point END AS rate, ",
+                  " CASE WHEN m.user_id = e.user_id THEN ",
+                  " CASE WHEN ROUND(ra.rating_point / ra.rating_amount, 1) * 10 % 10 = 0 THEN ROUND(ra.rating_point / ra.rating_amount, 0) ",
+                  " WHEN ROUND(ra.rating_point / ra.rating_amount, 1) * 10 % 10 > 0 THEN FORMAT(ROUND(ra.rating_point / ra.rating_amount, 1), 1) ELSE NULL END END as rate, ",
+                  // ROUND(ra.rating_point / ra.rating_amount,2)  END AS rate, ",
                   " CASE WHEN m.user_id = e.user_id THEN 'driver' ELSE 'passenger' END AS role_name, ",
                   " r.role_name as role_check ",
-                  " ,uf.profile_img_name,uf.download_url ",
+                  " ,uf.profile_img_name,uf.download_url ,m.status",
                   " FROM members m ",
                   " LEFT JOIN users u ON u.user_id = m.user_id ",
                   // " LEFT JOIN roles ur ON ur.user_id = u.user_id ",
@@ -92,7 +99,7 @@ public interface EventsRepository {
                   " LEFT JOIN ratings ra ON m.user_id = ra.user_id ",
                   " left join users_files uf on uf.owner_id = u.user_id ",
                   " WHERE m.event_id = #{event_id} ",
-                  " And m.status = 1 ",
+                  " And m.status = 1",
       })
       public List<EventMemberBean> getEventMembers(HashMap<String, Object> event_id) throws Exception;
 
@@ -207,13 +214,13 @@ public interface EventsRepository {
                   // " select
                   // e.event_id,e.event_name,m.user_id,u.fullname,u.profile_img_path,e.user_id as
                   // owner,e.status ",
-                  " select e.event_id,e.event_name,m.user_id,u.fullname,e.user_id as owner,e.status ",
+                  " select e.event_id,e.event_name,m.user_id,u.fullname,e.user_id as owner,m.status ",
                   // " CASE WHEN e.user_id = m.user_id THEN 'owner' END as owner ",
                   " from events e ",
                   " left join members m on e.event_id=m.event_id ",
                   " left join users u on m.user_id=u.user_id ",
                   " where e.event_id = #{event_id} ",
-                  " and m.status = 1 ",
+                  " and m.status = 1 or m.status = 4",
                   " order by e.create_date desc "
       })
       public List<ChatBean> getChatRoomMember(HashMap<String, Object> params) throws Exception;
@@ -229,7 +236,9 @@ public interface EventsRepository {
       @Select({
                   " SELECT m.members_id,m.event_id,m.user_id,u.fullname,f.faculty_name,b.branch_name, ",
                   " CASE WHEN m.user_id = e.user_id THEN ra.rating_amount END AS total, ",
-                  " CASE WHEN m.user_id = e.user_id THEN ra.rating_point END AS rate, ",
+                  " CASE WHEN m.user_id = e.user_id THEN ",
+                  " CASE WHEN ROUND(ra.rating_point / ra.rating_amount, 1) * 10 % 10 = 0 THEN ROUND(ra.rating_point / ra.rating_amount, 0) ",
+                  " WHEN ROUND(ra.rating_point / ra.rating_amount, 1) * 10 % 10 > 0 THEN FORMAT(ROUND(ra.rating_point / ra.rating_amount, 1), 1) ELSE NULL END END as rate, ",
                   " CASE WHEN m.user_id = e.user_id THEN 'driver' ELSE 'passenger' END AS role_name, ",
                   " r.role_name as role_check ",
                   " FROM members m ",
@@ -258,7 +267,9 @@ public interface EventsRepository {
                   // e.event_id,e.user_id,u.fullname,u.role_id,f.faculty_name,b.branch_name,u.profile_img_path,
                   // ",
                   " SELECT e.event_id,e.user_id,u.fullname,u.role_id,f.faculty_name,b.branch_name, ",
-                  " ra.rating_amount as total,ra.rating_point as rate,m.detail ",
+                  // " ra.rating_amount as total,ROUND(ra.rating_point / ra.rating_amount,2) as rate,m.detail ",
+                  " ra.rating_amount as total,CASE WHEN ROUND(ra.rating_point / ra.rating_amount, 1) * 10 % 10 = 0 THEN ROUND(ra.rating_point / ra.rating_amount, 0) ",
+                  " WHEN ROUND(ra.rating_point / ra.rating_amount, 1) * 10 % 10 > 0 THEN FORMAT(ROUND(ra.rating_point / ra.rating_amount, 1), 1) END as rate,m.detail  ",
                   " FROM members m ",
                   " LEFT JOIN events e ON e.event_id = m.event_id ",
                   " LEFT JOIN users u ON e.user_id = u.user_id ",
@@ -306,4 +317,14 @@ public interface EventsRepository {
                   " WHERE user_id = #{user_id} "
       })
       public void updateRating(RatingBean bean) throws Exception;
+
+      @Select({
+            "select members_id from members where event_id = #{event_id} and user_id = #{user_id}"
+      })
+      public Integer getMemberId(HashMap<String, Object> params) throws Exception;
+
+      @Select({
+            "select status from members where event_id = #{event_id} and user_id = #{user_id}"
+      })
+      public Integer getMemberStatus(HashMap<String, Object> params) throws Exception;
 }
