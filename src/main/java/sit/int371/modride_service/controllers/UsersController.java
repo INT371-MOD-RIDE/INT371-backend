@@ -80,8 +80,8 @@ public class UsersController extends BaseController {
             userBean.setUser_id(user_id);
             UsersBean user = usersRepository.getUserById(userBean);
 
-            // เมื่อเป็น driver ถึงจะเช็ค
-            if (user.getRole_id() == 2) {
+            // เมื่อเป็น driver, admin ถึงจะเช็ค
+            if (user.getRole_id() == 2 || user.getRole_id() == 3) {
                 List<EventsBean> eventList = eventsRepository.getEventNotClose(user_id);
                 if (eventList.size() > 0) {
                     user.setDisablePost(true);
