@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -137,7 +138,7 @@ public class EventsController extends BaseController {
     // check events-close for driver
     @GetMapping("/checkNotClose/{user_id}")
     public APIResponseBean checkNotClose(HttpServletRequest request,
-    @PathVariable Integer user_id) {
+            @PathVariable Integer user_id) {
         APIResponseBean res = new APIResponseBean();
         try {
             List<EventsBean> eventList = eventsRepository.getEventNotClose(user_id);
@@ -149,12 +150,57 @@ public class EventsController extends BaseController {
     }
 
     @PostMapping("/post")
-    public APIResponseBean createEvents(HttpServletRequest request,
+    public APIResponseBean createEvents(HttpServletRequest request, HttpServletResponse response,
             @Valid @RequestBody EventDetailBean bean) throws Exception {
         APIResponseBean res = new APIResponseBean();
         HashMap<String, Object> params = new HashMap<>();
         try {
             System.out.println("vehicle_id: " + bean);
+
+            // ⚠️ validate: user_id is exists ?
+            List<UsersBean> userList = eventsRepository.CheckUser(bean.getUser_id());
+            if (userList.size() == 0) {
+                response.setStatus(UnprocessableContentStatus);
+                res.setResponse_code(UnprocessableContentStatus);
+                res.setResponse_desc("Cannot find this user_id.");
+                return res;
+            }
+
+            // ⚠️ validate: This user_id is driver (ดักเผื่อ admin ด้วย)?
+            List<UsersBean> isDriver = eventsRepository.CheckDriver(bean.getUser_id());
+            if (isDriver.size() == 0) {
+                response.setStatus(UnprocessableContentStatus);
+                res.setResponse_code(UnprocessableContentStatus);
+                res.setResponse_desc("This user_id is not driver.");
+                return res;
+            }
+
+            // ⚠️ validate: vehicle id is exists ?
+            List<VehiclesBean> vehicleList = eventsRepository.CheckVehicle(bean.getVehicle_id());
+            if (vehicleList.size() == 0) {
+                response.setStatus(UnprocessableContentStatus);
+                res.setResponse_code(UnprocessableContentStatus);
+                res.setResponse_desc("Cannot find this vehicle_id.");
+                return res;
+            }
+
+            // ⚠️ validate: ถ้า user เอารถคนอื่นมา: This vehicle_id is belong to other user.
+            List<VehiclesBean> checkVehicleOwner = eventsRepository.CheckVehicleOwner(bean);
+            if (checkVehicleOwner.size() == 0) {
+                response.setStatus(UnprocessableContentStatus);
+                res.setResponse_code(UnprocessableContentStatus);
+                res.setResponse_desc("This vehicle_id is belong to other user.");
+                return res;
+            }
+
+            List<EventsBean> eventList = eventsRepository.getEventNotClose(bean.getUser_id());
+            if (eventList.size() > 0) {
+                response.setStatus(UnprocessableContentStatus);
+                res.setResponse_code(UnprocessableContentStatus);
+                res.setResponse_desc("Cannot create new event due to you're still having unclosed event.");
+                return res;
+            }
+
             // bean.setVehicle_id(57);
             // bean.setLicense_plate("กก-1111");
             params.put("user_id", bean.getUser_id());

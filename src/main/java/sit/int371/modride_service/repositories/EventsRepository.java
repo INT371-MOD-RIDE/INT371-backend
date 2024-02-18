@@ -31,7 +31,8 @@ public interface EventsRepository {
                   // " order by create_date desc ",
                   " SELECT e.event_id,e.user_id,e.event_name,e.event_detail, ",
                   " e.departure_time,e.seats,e.costs,e.status,e.create_date,e.update_date,u.fullname, ",
-                  // " ,u.fullname,r.rating_point as rate,r.rating_amount as total,f.faculty_name,b.branch_name ",
+                  // " ,u.fullname,r.rating_point as rate,r.rating_amount as
+                  // total,f.faculty_name,b.branch_name ",
                   " CASE WHEN ROUND(r.rating_point / r.rating_amount, 1) * 10 % 10 = 0 THEN ROUND(r.rating_point / r.rating_amount, 0) ",
                   " WHEN ROUND(r.rating_point / r.rating_amount, 1) * 10 % 10 > 0 THEN FORMAT(ROUND(r.rating_point / r.rating_amount, 1), 1) END as rate ",
                   " ,r.rating_amount as total,f.faculty_name,b.branch_name ",
@@ -85,7 +86,7 @@ public interface EventsRepository {
                   " CASE WHEN m.user_id = e.user_id THEN ",
                   " CASE WHEN ROUND(ra.rating_point / ra.rating_amount, 1) * 10 % 10 = 0 THEN ROUND(ra.rating_point / ra.rating_amount, 0) ",
                   " WHEN ROUND(ra.rating_point / ra.rating_amount, 1) * 10 % 10 > 0 THEN FORMAT(ROUND(ra.rating_point / ra.rating_amount, 1), 1) ELSE NULL END END as rate, ",
-                  // ROUND(ra.rating_point / ra.rating_amount,2)  END AS rate, ",
+                  // ROUND(ra.rating_point / ra.rating_amount,2) END AS rate, ",
                   " CASE WHEN m.user_id = e.user_id THEN 'driver' ELSE 'passenger' END AS role_name, ",
                   " r.role_name as role_check ",
                   " ,uf.profile_img_name,uf.download_url ,m.status",
@@ -275,7 +276,8 @@ public interface EventsRepository {
                   // e.event_id,e.user_id,u.fullname,u.role_id,f.faculty_name,b.branch_name,u.profile_img_path,
                   // ",
                   " SELECT e.event_id,e.user_id,u.fullname,u.role_id,f.faculty_name,b.branch_name, ",
-                  // " ra.rating_amount as total,ROUND(ra.rating_point / ra.rating_amount,2) as rate,m.detail ",
+                  // " ra.rating_amount as total,ROUND(ra.rating_point / ra.rating_amount,2) as
+                  // rate,m.detail ",
                   " ra.rating_amount as total,CASE WHEN ROUND(ra.rating_point / ra.rating_amount, 1) * 10 % 10 = 0 THEN ROUND(ra.rating_point / ra.rating_amount, 0) ",
                   " WHEN ROUND(ra.rating_point / ra.rating_amount, 1) * 10 % 10 > 0 THEN FORMAT(ROUND(ra.rating_point / ra.rating_amount, 1), 1) END as rate,m.detail  ",
                   " FROM members m ",
@@ -327,12 +329,37 @@ public interface EventsRepository {
       public void updateRating(RatingBean bean) throws Exception;
 
       @Select({
-            "select members_id from members where event_id = #{event_id} and user_id = #{user_id}"
+                  "select members_id from members where event_id = #{event_id} and user_id = #{user_id}"
       })
       public Integer getMemberId(HashMap<String, Object> params) throws Exception;
 
       @Select({
-            "select status from members where event_id = #{event_id} and user_id = #{user_id}"
+                  "select status from members where event_id = #{event_id} and user_id = #{user_id}"
       })
       public Integer getMemberStatus(HashMap<String, Object> params) throws Exception;
+
+      // ⚠️ validate repository
+
+      @Select({
+                  " select * from users where user_id = #{user_id} "
+      })
+      public List<UsersBean> CheckUser(Integer user_id) throws Exception;
+
+      @Select({
+            " select * from users where user_id = #{user_id} and (role_id = 2 or role_id = 3) "
+      })
+      public List<UsersBean> CheckDriver(Integer user_id) throws Exception;
+
+      @Select({
+                  " select * from vehicles where vehicle_id = #{vehicle_id} "
+      })
+      public List<VehiclesBean> CheckVehicle(Integer vehicle_id) throws Exception;
+
+      @Select({
+                  " select * from users u  ",
+                  " inner join licenses l on u.user_id = l.user_id ",
+                  " inner join vehicles v on v.license_id = l.license_id ",
+                  " where v.vehicle_id = #{vehicle_id} and u.user_id = #{user_id} ",
+      })
+      public List<VehiclesBean> CheckVehicleOwner(EventDetailBean bean) throws Exception;
 }
