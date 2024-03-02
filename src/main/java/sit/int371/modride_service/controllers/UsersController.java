@@ -25,6 +25,7 @@ import sit.int371.modride_service.beans.UsersBean;
 import sit.int371.modride_service.dtos.*;
 import sit.int371.modride_service.entities.User;
 import sit.int371.modride_service.repositories.EventsRepository;
+import sit.int371.modride_service.repositories.FriendsRepository;
 import sit.int371.modride_service.repositories.OldUserRepository;
 import sit.int371.modride_service.repositories.UsersRepository;
 import sit.int371.modride_service.services.UserService;
@@ -44,6 +45,8 @@ public class UsersController extends BaseController {
     private UserService userService;
     @Autowired
     private UsersRepository usersRepository;
+    @Autowired
+    private FriendsRepository friendsRepository;
     @Autowired
     private EventsRepository eventsRepository;
 
@@ -88,6 +91,21 @@ public class UsersController extends BaseController {
                 }
             }
             res.setData(user);
+        } catch (Exception e) {
+            this.checkException(e, res);
+        }
+        return res;
+    }
+
+    // Get other-profile
+    @GetMapping("/getOtherProfile")
+    public APIResponseBean getOtherProfile(HttpServletRequest request, @ModelAttribute UsersBean usersBean) {
+        APIResponseBean res = new APIResponseBean();
+        try {
+            System.out.println("otherProfile(param): "+usersBean);
+            UsersBean otherUser = usersRepository.getOtherUserDetail(usersBean);
+            otherUser.setFriendList(friendsRepository.otherUserFriendList(usersBean));
+            res.setData(otherUser);
         } catch (Exception e) {
             this.checkException(e, res);
         }

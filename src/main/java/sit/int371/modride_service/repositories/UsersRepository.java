@@ -21,13 +21,13 @@ public interface UsersRepository {
         public List<UsersBean> getAllUsers() throws Exception;
 
         @Select({
-                " select u.user_id,r.role_id,r.role_name,u.email,u.fullname,COALESCE(u.tel, '') AS tel,u.other_contact,u.contact_info, ",
-                " f.faculty_name,b.branch_name,us.profile_img_name,us.download_url from users u  ",
-                " inner join branches b on u.branch_id = b.branch_id ",
-                " inner join faculties f on b.faculty_id = f.faculty_id ",
-                " inner join roles r on u.role_id = r.role_id ",
-                " left join users_files us on us.owner_id = u.user_id ",
-                " where u.user_id = #{user_id} ",
+                        " select u.user_id,r.role_id,r.role_name,u.email,u.fullname,COALESCE(u.tel, '') AS tel,u.other_contact,u.contact_info, ",
+                        " f.faculty_name,b.branch_name,us.profile_img_name,us.download_url from users u  ",
+                        " inner join branches b on u.branch_id = b.branch_id ",
+                        " inner join faculties f on b.faculty_id = f.faculty_id ",
+                        " inner join roles r on u.role_id = r.role_id ",
+                        " left join users_files us on us.owner_id = u.user_id ",
+                        " where u.user_id = #{user_id} ",
         })
         public UsersBean getUserById(UsersBean bean) throws Exception;
 
@@ -43,12 +43,13 @@ public interface UsersRepository {
         public UsersBean getUserByEmail(UsersBean bean) throws Exception;
 
         // @Select({
-        //         " select u.user_id,r.role_id,r.role_name,u.email,u.fullname,COALESCE(u.tel, '') AS tel,  ",
-        //         " f.faculty_name,b.branch_name from users u  ",
-        //         " inner join branches b on u.branch_id = b.branch_id ",
-        //         " inner join faculties f on b.faculty_id = f.faculty_id ",
-        //         " inner join roles r on u.role_id = r.role_id ",
-        //         " where u.fullname = #{fullname} and u.password = #{password}  ",
+        // " select u.user_id,r.role_id,r.role_name,u.email,u.fullname,COALESCE(u.tel,
+        // '') AS tel, ",
+        // " f.faculty_name,b.branch_name from users u ",
+        // " inner join branches b on u.branch_id = b.branch_id ",
+        // " inner join faculties f on b.faculty_id = f.faculty_id ",
+        // " inner join roles r on u.role_id = r.role_id ",
+        // " where u.fullname = #{fullname} and u.password = #{password} ",
         // })
         // public UsersBean getAdminUser(HashMap<String,String> param) throws Exception;
 
@@ -70,6 +71,38 @@ public interface UsersRepository {
                         " select branch_id,faculty_id,branch_name from branches order by branch_name asc "
         })
         public List<BranchesBean> getBranches() throws Exception;
+
+        // other-user-detail
+        // f2: คือตัวเรา
+        // u.user_id ใน where condition คือ otherUser
+        // check_friend: {0: not friend, 1: pending, 2: accepted}
+        @Select({
+                        " select u.user_id, u.fullname, u.role_id, b.branch_name, f.faculty_name, uf.download_url ",
+                        " , case  ",
+                        "        when exists( ",
+                        "                select * from friendships ",
+                        "                where user_id = #{my_id} and friend_id = #{user_id} ",
+                        "                and friend_status = 'accepted' ",
+                        "    ) then 2 ",
+                        "    when exists( ",
+                        "                select * from friendships ",
+                        "                where user_id = #{my_id} and friend_id = #{user_id} ",
+                        "                and friend_status = 'pending' ",
+                        "    ) then 1 ",
+                        "    else 0 ",
+                        "        end as check_friend ",
+                        " , count(f1.friend_id) as count_friend, u.count_travel ",
+                        " , count(f2.friend_id) as count_mutual ",
+                        " from users u ",
+                        " inner join branches b on u.branch_id = b.branch_id ",
+                        " inner join faculties f on b.faculty_id = f.faculty_id ",
+                        " left join users_files uf on uf.owner_id = u.user_id ",
+                        " left JOIN friendships f1 ON u.user_id = f1.friend_id AND f1.friend_status = 'accepted' ",
+                        " LEFT JOIN friendships f2 ON f1.user_id = f2.friend_id AND f2.user_id = #{my_id} and f2.friend_status = 'accepted' ",
+                        " where u.user_id = #{user_id} ",
+                        " group by u.user_id, uf.download_url; ",
+        })
+        public UsersBean getOtherUserDetail(UsersBean usersBean) throws Exception;
 
         // sign-up users account
         @Insert({
@@ -95,13 +128,13 @@ public interface UsersRepository {
         public void updateUserAccount(UsersBean bean) throws Exception;
 
         @Select({
-                " select user_id,fullname from users where user_id = #{user_id}"
+                        " select user_id,fullname from users where user_id = #{user_id}"
         })
         public UsersBean getReportUser(HashMap<String, Object> params) throws Exception;
 
         @Insert({
-                " insert into user_report(report_to,reporter_id,report_datetime,report_type,description) ",
-                " values(#{report_to},#{reporter_id},sysdate(),#{report_type},#{description}) "
+                        " insert into user_report(report_to,reporter_id,report_datetime,report_type,description) ",
+                        " values(#{report_to},#{reporter_id},sysdate(),#{report_type},#{description}) "
         })
         @Options(useGeneratedKeys = true, keyColumn = "report_id", keyProperty = "report_id")
         public void reportUser(ReportUserBean bean) throws Exception;

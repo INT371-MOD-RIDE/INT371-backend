@@ -33,6 +33,12 @@ public class UsersBean {
     private List<MutualFriendBean> mutualFriend;
     private String profile_img_name;
     private String download_url;
+    // 🧑‍🤝‍🧑exclusive for otherUserProfile
+    private Integer check_friend;
+    private Integer count_friend;
+    private Integer count_travel;
+    private Integer count_mutual;
+    private List<UsersBean> friendList;
     // for driver
     private Boolean disablePost;
 

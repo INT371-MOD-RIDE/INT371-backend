@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import reactor.netty.http.server.HttpServerResponse;
 import sit.int371.modride_service.beans.APIResponseBean;
 import sit.int371.modride_service.beans.EventsBean;
 import sit.int371.modride_service.beans.FriendsBean;
@@ -48,6 +50,7 @@ public class FriendsController extends BaseController {
             params.put("user_id", user_id);
             List<UsersBean> friendListSuggest = friendsRepository.friendListSuggestionSearch(params);
             // if นี้จะทำงานเมื่อมีการ request จากหน้า "ค้นหาเพื่อน"
+            // ⚠️ ไม่ต้อง loop มันทำให้การทำงานช้า
             if (search_friend) {
                 for (UsersBean usersBean : friendListSuggest) {
                     FriendsBean friendsBean = new FriendsBean();
@@ -119,17 +122,29 @@ public class FriendsController extends BaseController {
     }
 
     @PostMapping("/insertUpdateFriendship")
-    public APIResponseBean insertFriendship(HttpServletRequest request,
+    public APIResponseBean insertFriendship(HttpServletRequest request, HttpServletResponse response,
             @RequestBody FriendsBean bean) {
         APIResponseBean res = new APIResponseBean();
         // HashMap<String, Object> params = new HashMap<>();
         try {
             switch (bean.getFriend_status()) {
                 case pendingStatus:
+                    if (!friendsRepository.checkBeforeCreateFS(bean).isEmpty()) {
+                        response.setStatus(UnprocessableContentStatus);
+                        res.setResponse_code(UnprocessableContentStatus);
+                        res.setResponse_desc("ข้อมูลมีการเปลี่ยนแปลง");
+                        return res;
+                    }
                     friendsRepository.createFriendship(bean);
                     break;
 
                 case acceptedStatus:
+                    if (friendsRepository.checkBeforeAccept(bean).isEmpty()) {
+                        response.setStatus(UnprocessableContentStatus);
+                        res.setResponse_code(UnprocessableContentStatus);
+                        res.setResponse_desc("ข้อมูลมีการเปลี่ยนแปลง");
+                        return res;
+                    }
                     friendsRepository.updateFriendship(bean);
                     friendsRepository.createFriendship(bean);
                     break;
@@ -142,10 +157,17 @@ public class FriendsController extends BaseController {
     }
 
     @DeleteMapping("/cancelFriend")
-    public APIResponseBean deleteEvents(HttpServletRequest request, @RequestBody FriendsBean bean) {
+    public APIResponseBean deleteEvents(HttpServletRequest request, HttpServletResponse response,
+            @RequestBody FriendsBean bean) {
         APIResponseBean res = new APIResponseBean();
         try {
             System.out.println("cancel by: " + bean);
+            if (!friendsRepository.checkBeforeCancel(bean).isEmpty()) {
+                response.setStatus(UnprocessableContentStatus);
+                res.setResponse_code(UnprocessableContentStatus);
+                res.setResponse_desc("ข้อมูลมีการเปลี่ยนแปลง");
+                return res;
+            }
             friendsRepository.cancelFriend(bean);
             // res.setData(params);
             res.setResponse_code(200);
