@@ -128,7 +128,7 @@ public interface UsersRepository {
         public void updateUserAccount(UsersBean bean) throws Exception;
 
         @Select({
-                        " select user_id,fullname from users where user_id = #{user_id}"
+                        " select user_id,fullname,role_id from users where user_id = #{user_id}"
         })
         public UsersBean getReportUser(HashMap<String, Object> params) throws Exception;
 

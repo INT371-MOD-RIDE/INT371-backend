@@ -177,4 +177,19 @@ public class FriendsController extends BaseController {
         }
         return res;
     }
+    
+    @DeleteMapping("/deleteFriend")
+    public APIResponseBean deleteFriend(HttpServletRequest request, HttpServletResponse response,
+            @RequestBody FriendsBean bean) {
+        APIResponseBean res = new APIResponseBean();
+        try {
+            
+            friendsRepository.deleteFriend(bean);
+            res.setResponse_code(200);
+            res.setResponse_desc("Delete-Friend Success");
+        } catch (Exception e) {
+            this.checkException(e, res);
+        }
+        return res;
+    }
 }

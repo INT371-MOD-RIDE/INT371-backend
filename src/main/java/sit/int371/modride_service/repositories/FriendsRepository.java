@@ -190,6 +190,15 @@ public interface FriendsRepository {
         })
         public void cancelFriend(FriendsBean bean) throws Exception;
 
+        // delete friendships between 2 users
+        @Delete({
+                        " delete from friendships ",
+                        " where ((user_id = #{user_id} and friend_id = #{friend_id}) ",
+                        " or (user_id = #{friend_id} and friend_id = #{user_id})) ",
+                        " and friend_status = 'accepted' ",
+        })
+        public void deleteFriend(FriendsBean bean) throws Exception;
+
         // --------queries for exception----------------------
         @Select({
                         " select * from friendships ",
