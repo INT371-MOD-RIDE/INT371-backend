@@ -193,6 +193,13 @@ public class EventsController extends BaseController {
                 return res;
             }
 
+            if (bean.getSeats() == 1) {
+                response.setStatus(UnprocessableContentStatus);
+                res.setResponse_code(UnprocessableContentStatus);
+                res.setResponse_desc("ไม่สามารถกรอกที่นั่งเท่ากับ 1 ได้ เนื่องจากจำนวนที่นั่งจะถูกลบออกเป็นที่นั่งของผู้ขับขี่");
+                return res;
+            }
+
             List<EventsBean> eventList = eventsRepository.getEventNotClose(bean.getUser_id());
             if (eventList.size() > 0) {
                 response.setStatus(UnprocessableContentStatus);

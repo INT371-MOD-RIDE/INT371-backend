@@ -54,7 +54,7 @@ public interface EventsRepository {
 
       @Select({
                   " SELECT e.event_id,e.user_id,e.event_name,e.event_detail, ",
-                  " e.departure_time,e.seats,e.costs,e.create_date,e.update_date ",
+                  " e.departure_time,e.seats,e.costs,e.cost_type,e.create_date,e.update_date ",
                   " ,u.fullname,u.email,u.tel,u.other_contact,u.contact_info,f.faculty_name,b.branch_name ",
                   " ,v.brand,v.model,v.vehicle_type,v.vehicle_color,v.license_plate,v.vehicle_id,vf.vehicle_download ",
                   " ,el.start_point,el.dest_point,el.start_name,el.dest_name ",
@@ -128,6 +128,7 @@ public interface EventsRepository {
                   " e.departure_time = #{departure_time}, ",
                   " e.seats = #{seats}, ",
                   " e.costs = #{costs}, ",
+                  " e.cost_type = #{cost_type}, ",
                   " e.update_date = sysdate(), ",
                   " el.start_point = #{start_point} ",
                   " ,el.dest_point = #{dest_point} ",
