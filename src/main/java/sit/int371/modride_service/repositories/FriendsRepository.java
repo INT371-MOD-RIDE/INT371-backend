@@ -39,7 +39,7 @@ public interface FriendsRepository {
                         "         INNER JOIN faculties f ON b.faculty_id = f.faculty_id ",
                         "         LEFT JOIN friendships fs ON (u.user_id = fs.friend_id AND fs.user_id = #{user_id}) ",
                         "         LEFT JOIN users_files uf ON uf.owner_id = u.user_id ",
-                        "         WHERE u.user_id != #{user_id} AND fs.user_id IS NULL AND fs.friend_status IS NULL ",
+                        "         WHERE u.user_id != #{user_id} AND fs.user_id IS NULL or fs.friend_status = 'pending' ",
                         "     ) ",
                         "     SELECT ",
                         "         user_id,faculty_id,email,fullname,tel,faculty_name,branch_name,my_id, ",
