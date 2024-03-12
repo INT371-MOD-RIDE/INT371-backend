@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import reactor.netty.http.server.HttpServerResponse;
 import sit.int371.modride_service.beans.APIResponseBean;
 import sit.int371.modride_service.beans.EventsBean;
 import sit.int371.modride_service.beans.FriendsBean;

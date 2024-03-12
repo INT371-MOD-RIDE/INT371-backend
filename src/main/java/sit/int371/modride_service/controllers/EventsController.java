@@ -20,9 +20,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.azure.core.annotation.Delete;
-import com.azure.core.annotation.Post;
-
 import sit.int371.modride_service.beans.APIResponseBean;
 import sit.int371.modride_service.beans.ChatBean;
 import sit.int371.modride_service.beans.DeniedRequestBean;
@@ -196,7 +193,8 @@ public class EventsController extends BaseController {
             if (bean.getSeats() == 1) {
                 response.setStatus(UnprocessableContentStatus);
                 res.setResponse_code(UnprocessableContentStatus);
-                res.setResponse_desc("ไม่สามารถกรอกที่นั่งเท่ากับ 1 ได้ เนื่องจากจำนวนที่นั่งจะถูกลบออกเป็นที่นั่งของผู้ขับขี่");
+                res.setResponse_desc(
+                        "ไม่สามารถกรอกที่นั่งเท่ากับ 1 ได้ เนื่องจากจำนวนที่นั่งจะถูกลบออกเป็นที่นั่งของผู้ขับขี่");
                 return res;
             }
 
@@ -274,6 +272,10 @@ public class EventsController extends BaseController {
             // params.put("seats", data.get("seats"));
             // params.put("costs", data.get("costs"));
             bean.setEvent_id(id);
+            // จะนับว่าเป็นการ select-vehicle process ใหม่ จะต้อง -1 เพราะนับเจ้าของด้วย
+            if (bean.getOld_seats() != bean.getSeats()) {
+                bean.setSeats(bean.getSeats() - 1);
+            }
             System.out.println("editbean: " + bean);
             eventsRepository.editEvents(bean);
             // params.put("vehicle_id", bean.getVehicle_id());

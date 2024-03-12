@@ -56,6 +56,9 @@ public class EventDetailBean {
     @NotNull(message = "Seats cannot be null or blank.")
     private Integer seats;
 
+    // ใช้สำหรับเช็ค เมื่อมีการ edit seat ใน event-detail เช็คกับ seats ก่อนหน้า
+    private Integer old_seats;
+
     @NotNull(message = "Costs cannot be null or blank.")
     private Integer costs;
 
