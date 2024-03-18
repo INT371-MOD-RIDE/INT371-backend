@@ -41,5 +41,6 @@ public class UsersBean {
     private List<UsersBean> friendList;
     // for driver
     private Boolean disablePost;
+    private Integer check_thread;
 
 }

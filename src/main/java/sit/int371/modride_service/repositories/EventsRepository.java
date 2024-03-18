@@ -49,7 +49,6 @@ public interface EventsRepository {
                   // " where status = 1 ",
                   " order by create_date desc ",
       })
-
       public List<EventsBean> getAllEvents() throws Exception;
 
       @Select({
@@ -58,6 +57,8 @@ public interface EventsRepository {
                   " ,u.fullname,u.email,u.tel,u.other_contact,u.contact_info,f.faculty_name,b.branch_name ",
                   " ,v.brand,v.model,v.vehicle_type,v.vehicle_color,v.license_plate,v.vehicle_id,vf.vehicle_download ",
                   " ,el.start_point,el.dest_point,el.start_name,el.dest_name ",
+                  " ,CASE WHEN el.distance = TRUNCATE(el.distance, 0) THEN FORMAT(el.distance, 0) ELSE el.distance ",
+                  " END AS distance ",
                   " FROM events e ",
                   " left join users u on e.user_id = u.user_id ",
                   " left join branches b on u.branch_id = b.branch_id ",
@@ -114,8 +115,8 @@ public interface EventsRepository {
       public void createEvents(EventDetailBean eventsBean) throws Exception;
 
       @Insert({
-                  " insert into event_location(event_id,start_point,start_name,dest_point,dest_name) ",
-                  " values(#{event_id},#{start_point},#{start_name},#{dest_point},#{dest_name}) ",
+                  " insert into event_location(event_id,start_point,start_name,dest_point,dest_name,distance) ",
+                  " values(#{event_id},#{start_point},#{start_name},#{dest_point},#{dest_name},#{distance}) ",
       })
       public void createEventLocation(EventDetailBean eventsBean) throws Exception;
 
@@ -134,6 +135,7 @@ public interface EventsRepository {
                   " ,el.dest_point = #{dest_point} ",
                   " ,el.start_name = #{start_name} ",
                   " ,el.dest_name = #{dest_name} ",
+                  " ,el.distance = #{distance} ",
                   " WHERE e.event_id = #{event_id} "
       })
       // @UpdateProvider(type = EventsSqlProvider.class, method = "updateEvents")
@@ -347,7 +349,7 @@ public interface EventsRepository {
       public List<UsersBean> CheckUser(Integer user_id) throws Exception;
 
       @Select({
-            " select * from users where user_id = #{user_id} and (role_id = 2 or role_id = 3) "
+                  " select * from users where user_id = #{user_id} and (role_id = 2 or role_id = 3) "
       })
       public List<UsersBean> CheckDriver(Integer user_id) throws Exception;
 

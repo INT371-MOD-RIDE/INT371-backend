@@ -22,12 +22,19 @@ public interface UsersRepository {
 
         @Select({
                         " select u.user_id,r.role_id,r.role_name,u.email,u.fullname,COALESCE(u.tel, '') AS tel,u.other_contact,u.contact_info, ",
-                        " f.faculty_name,b.branch_name,us.profile_img_name,us.download_url from users u  ",
+                        " f.faculty_name,b.branch_name,us.profile_img_name,us.download_url ",
+                        " ,case  ",
+                        "         when r.role_id = 1 then count(t.thread_id) ",
+                        "         else 0 ",
+                        " end as check_thread ",
+                        " from users u  ",
                         " inner join branches b on u.branch_id = b.branch_id ",
                         " inner join faculties f on b.faculty_id = f.faculty_id ",
                         " inner join roles r on u.role_id = r.role_id ",
                         " left join users_files us on us.owner_id = u.user_id ",
+                        " left join threads t on t.user_id = u.user_id ",
                         " where u.user_id = #{user_id} ",
+                        " group by us.profile_img_name, us.download_url ",
         })
         public UsersBean getUserById(UsersBean bean) throws Exception;
 

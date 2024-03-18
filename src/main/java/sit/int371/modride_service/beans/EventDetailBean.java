@@ -72,6 +72,7 @@ public class EventDetailBean {
 
     // status จะถูก set อยู่แล้ว ไม่ต้องดัก
     private Integer status;
+    private Double distance;
     private String create_date;
     private String update_date;
     private String fullname;
