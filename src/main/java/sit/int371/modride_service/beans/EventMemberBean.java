@@ -24,4 +24,5 @@ public class EventMemberBean {
     // list for friendship
     private List<FriendsBean> friendShip;
     private List<MutualFriendBean> mutualFriend;
+    private Integer count_mutual;
 }

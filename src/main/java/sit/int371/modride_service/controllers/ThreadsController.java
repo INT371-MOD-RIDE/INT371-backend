@@ -48,6 +48,39 @@ public class ThreadsController extends BaseController {
     // @Autowired
     // private VehiclesRepository vehiclesRepository;
 
+    // for driver !!! ---------------------------------------------------
+    // getAllThreads
+    // สำหรับ driver เมื่อเข้าดู "รายการกระทู้"
+    @GetMapping("/getAllThreads")
+    public APIResponseBean getAllThreads(HttpServletRequest request,
+            @RequestParam(name = "my_id", required = true) Integer my_id) {
+        APIResponseBean res = new APIResponseBean();
+        try {
+            res.setData(threadsRepository.getAllThreads(my_id));
+        } catch (Exception e) {
+            this.checkException(e, res);
+        }
+        return res;
+    }
+
+    // ข้อมูลเจ้าของ thread (สำหรับใช้กับ members-component)
+    @GetMapping("/getThreadOwner")
+    public APIResponseBean getThreadOwner(HttpServletRequest request,
+            @RequestParam(name = "thread_id", required = true) Integer thread_id,
+            @RequestParam(name = "my_id", required = true) Integer my_id) {
+        APIResponseBean res = new APIResponseBean();
+        HashMap<String, Object> param = new HashMap<>();
+        try {
+            param.put("thread_id", thread_id);
+            param.put("my_id", my_id);
+            res.setData(threadsRepository.getThreadOwner(param));
+        } catch (Exception e) {
+            this.checkException(e, res);
+        }
+        return res;
+    }
+
+    // for passenger !!! ---------------------------------------------------
     // getPassengerEvent
     @GetMapping("/getPassengerEvent/{user_id}")
     public APIResponseBean getPassengerEvent(HttpServletRequest request,

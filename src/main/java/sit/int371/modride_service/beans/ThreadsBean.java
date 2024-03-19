@@ -6,6 +6,12 @@ import lombok.Data;
 public class ThreadsBean {
     private Integer thread_id;
     private Integer user_id;
+    private String fullname;
+    private String faculty_name;
+    private String branch_name;
+    private String download_url;
+    private Integer count_mutual;
+    private Boolean isThisFriend;
     private String thread_detail;
     private Integer seats;
     private Integer costs;
