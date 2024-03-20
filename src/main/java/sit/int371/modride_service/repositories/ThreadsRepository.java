@@ -46,7 +46,7 @@ public interface ThreadsRepository {
         public List<ThreadsBean> getAllThreads(Integer my_id) throws Exception;
 
         @Select({
-                        " SELECT u.fullname,f.faculty_name,b.branch_name,r.role_name as role_check ",
+                        " SELECT u.fullname,f.faculty_name,b.branch_name,r.role_name as role_check, r.role_name ",
                         " ,uf.profile_img_name,uf.download_url ",
                         " ,count(f2.friend_id) as count_mutual ",
                         " ,case  ",
