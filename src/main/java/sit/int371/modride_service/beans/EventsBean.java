@@ -1,9 +1,7 @@
 package sit.int371.modride_service.beans;
 
-
 import java.util.List;
 import sit.int371.modride_service.beans.FriendsBean;
-
 
 import lombok.*;
 
@@ -29,10 +27,11 @@ public class EventsBean {
     private String download_url;
     private String rate;
     private String total;
-    private String faculty_name;    
-    private String branch_name;    
+    private String faculty_name;
+    private String branch_name;
     // check is it friend-together
     private Boolean isThisFriend;
+    private Integer count_mutual;
     // list for friendship
     private List<FriendsBean> friendShip;
     private List<MutualFriendBean> mutualFriend;

@@ -48,40 +48,42 @@ public class EventsController extends BaseController {
     @Autowired
     private VehiclesRepository vehiclesRepository;
 
-    // Get all-users
+    // Get all-events
     @GetMapping("/get")
     public APIResponseBean getAllEvents(HttpServletRequest request,
             @RequestParam(name = "user_id", required = false) Integer user_id) {
         APIResponseBean res = new APIResponseBean();
         try {
             System.out.println("user_id: " + user_id);
-            List<EventsBean> eventList = eventsRepository.getAllEvents();
+            List<EventsBean> eventList = eventsRepository.getAllEvents(user_id);
 
-            for (EventsBean eventsBean : eventList) {
-                System.out.println("-----------------------");
-                System.out.println("events-bean: " + eventsBean);
-                FriendsBean friendsBean = new FriendsBean();
-                friendsBean.setUser_id(user_id);
-                friendsBean.setFriend_id(eventsBean.getUser_id());
-                List<FriendsBean> checkFriendShip = friendsRepository.checkFriendshipForEvent(friendsBean);
-                System.out.println("checkFriendship: " + checkFriendShip);
-                if (!checkFriendShip.isEmpty()) {
-                    System.out.println("เป็นเพื่อนกัน");
-                    eventsBean.setIsThisFriend(true);
-                    eventsBean.setFriendShip(checkFriendShip);
+            // for (EventsBean eventsBean : eventList) {
+            // System.out.println("-----------------------");
+            // System.out.println("events-bean: " + eventsBean);
+            // FriendsBean friendsBean = new FriendsBean();
+            // friendsBean.setUser_id(user_id);
+            // friendsBean.setFriend_id(eventsBean.getUser_id());
+            // List<FriendsBean> checkFriendShip =
+            // friendsRepository.checkFriendshipForEvent(friendsBean);
+            // System.out.println("checkFriendship: " + checkFriendShip);
+            // if (!checkFriendShip.isEmpty()) {
+            // System.out.println("เป็นเพื่อนกัน");
+            // eventsBean.setIsThisFriend(true);
+            // eventsBean.setFriendShip(checkFriendShip);
 
-                } else {
-                    // ไม่ได้เป็นเพื่อนกัน ให้หา mutual friend
-                    eventsBean.setIsThisFriend(false);
-                    List<MutualFriendBean> checkMutualFriend = friendsRepository.getMutualFriend(friendsBean);
-                    if (!checkMutualFriend.isEmpty()) {
-                        eventsBean.setMutualFriend(checkMutualFriend);
-                    } else {
-                        eventsBean.setMutualFriend(null);
-                    }
+            // } else {
+            // // ไม่ได้เป็นเพื่อนกัน ให้หา mutual friend
+            // eventsBean.setIsThisFriend(false);
+            // List<MutualFriendBean> checkMutualFriend =
+            // friendsRepository.getMutualFriend(friendsBean);
+            // if (!checkMutualFriend.isEmpty()) {
+            // eventsBean.setMutualFriend(checkMutualFriend);
+            // } else {
+            // eventsBean.setMutualFriend(null);
+            // }
 
-                }
-            }
+            // }
+            // }
             res.setData(eventList);
         } catch (Exception e) {
             this.checkException(e, res);

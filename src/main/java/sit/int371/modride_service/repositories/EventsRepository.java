@@ -24,21 +24,22 @@ import sit.int371.modride_service.provider.EventsSqlProvider;
 @Mapper
 public interface EventsRepository {
       @Select({
-                  // " SELECT event_id,user_id,event_name,event_detail, ",
-                  // " start_point,dest_point,departure_time,seats,costs,create_date,update_date
-                  // FROM events ",
-                  // " where status = 1 ",
-                  // " order by create_date desc ",
                   " SELECT e.event_id,e.user_id,e.event_name,e.event_detail, ",
                   " e.departure_time,e.seats,e.costs,e.status,e.create_date,e.update_date,u.fullname, ",
-                  // " ,u.fullname,r.rating_point as rate,r.rating_amount as
-                  // total,f.faculty_name,b.branch_name ",
                   " CASE WHEN ROUND(r.rating_point / r.rating_amount, 1) * 10 % 10 = 0 THEN ROUND(r.rating_point / r.rating_amount, 0) ",
                   " WHEN ROUND(r.rating_point / r.rating_amount, 1) * 10 % 10 > 0 THEN FORMAT(ROUND(r.rating_point / r.rating_amount, 1), 1) END as rate ",
                   " ,r.rating_amount as total,f.faculty_name,b.branch_name ",
                   " ,case when el.start_name is null then el.start_point else el.start_name end as start_point  ",
                   " ,case when el.dest_name is null then el.dest_point else el.dest_name end as dest_point ",
                   " ,uf.profile_img_name,uf.download_url ",
+                  " ,count(f2.friend_id) as count_mutual ",
+                  " ,case  ",
+                  "             when exists( ",
+                  "                   select * from friendships ",
+                  "                   where user_id = #{my_id} and friend_id = u.user_id ",
+                  "                   and friend_status = 'accepted' ",
+                  "             ) then 1 ",
+                  "             else 0 end as isThisFriend ",
                   " FROM events e ",
                   " left join users u on e.user_id = u.user_id ",
                   " left join ratings r on e.user_id = r.user_id ",
@@ -46,10 +47,12 @@ public interface EventsRepository {
                   " left join faculties f on b.faculty_id = f.faculty_id ",
                   " left join event_location el on el.event_id = e.event_id ",
                   " left join users_files uf on uf.owner_id = u.user_id ",
-                  // " where status = 1 ",
-                  " order by create_date desc ",
+                  " left JOIN friendships f1 ON u.user_id = f1.friend_id AND f1.friend_status = 'accepted' ",
+                  "         LEFT JOIN friendships f2  ON f1.user_id = f2.friend_id AND f2.user_id = #{my_id} and f2.friend_status = 'accepted'  ",
+                  " group by e.event_id, uf.profile_img_name, uf.download_url ",
+                  " order by create_date desc; ",
       })
-      public List<EventsBean> getAllEvents() throws Exception;
+      public List<EventsBean> getAllEvents(Integer my_id) throws Exception;
 
       @Select({
                   " SELECT e.event_id,e.user_id,e.event_name,e.event_detail, ",
