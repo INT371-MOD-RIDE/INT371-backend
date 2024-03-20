@@ -60,7 +60,7 @@ public interface EventsRepository {
                   " ,u.fullname,u.email,u.tel,u.other_contact,u.contact_info,f.faculty_name,b.branch_name ",
                   " ,v.brand,v.model,v.vehicle_type,v.vehicle_color,v.license_plate,v.vehicle_id,vf.vehicle_download ",
                   " ,el.start_point,el.dest_point,el.start_name,el.dest_name ",
-                  " ,CASE WHEN el.distance = TRUNCATE(el.distance, 0) THEN FORMAT(el.distance, 0) ELSE el.distance ",
+                  " ,CASE WHEN el.distance = TRUNCATE(el.distance, 0) THEN TRUNCATE(el.distance, 0) ELSE el.distance ",
                   " END AS distance ",
                   " FROM events e ",
                   " left join users u on e.user_id = u.user_id ",
