@@ -368,4 +368,12 @@ public interface EventsRepository {
                   " where v.vehicle_id = #{vehicle_id} and u.user_id = #{user_id} ",
       })
       public List<VehiclesBean> CheckVehicleOwner(EventDetailBean bean) throws Exception;
+
+      @Select({
+            " select count(members_id) ",
+            " from members ",
+            " where user_id = #{user_id} ",
+            " and status = 1 or status = 0 "
+      })
+      public Integer checkJoined(HashMap<String, Object> params) throws Exception;
 }
