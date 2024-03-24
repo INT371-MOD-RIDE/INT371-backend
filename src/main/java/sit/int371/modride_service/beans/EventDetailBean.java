@@ -90,6 +90,10 @@ public class EventDetailBean {
     private String license_plate;
     private String vehicle_download;
     private List<EventMemberBean> members;
+    // for Event With Thread
+    private Boolean isEventThread = false;
+    private Integer thread_id;
+    private Integer threadOwnerId;
 
     // public void setEvent_name(String name) {
     // this.event_name = name.trim();

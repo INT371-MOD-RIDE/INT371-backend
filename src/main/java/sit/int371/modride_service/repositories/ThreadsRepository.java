@@ -46,7 +46,7 @@ public interface ThreadsRepository {
         public List<ThreadsBean> getAllThreads(Integer my_id) throws Exception;
 
         @Select({
-                        " SELECT u.fullname,f.faculty_name,b.branch_name,r.role_name as role_check, r.role_name ",
+                        " SELECT u.user_id,u.fullname,f.faculty_name,b.branch_name,r.role_name as role_check, r.role_name ",
                         " ,uf.profile_img_name,uf.download_url ",
                         " ,count(f2.friend_id) as count_mutual ",
                         " ,case  ",
@@ -71,24 +71,44 @@ public interface ThreadsRepository {
 
         // สำหรับ passenger (thread) -----------------------------------
         @Select({
-                        " select thread_id,user_id,thread_detail,departure_time ",
-                        " ,seats,cost_type,costs,status ",
-                        " ,case when start_name is null then start_point else start_name end as start_point ",
-                        " ,case when dest_name is null then dest_point else dest_name end as dest_point ",
-                        " ,start_name,dest_name,distance,create_date from threads ",
-                        " where user_id = #{user_id} and status = 0 ",
+                        " select t.thread_id,et.event_id,t.user_id,t.thread_detail,t.departure_time ",
+                        " ,t.seats,t.cost_type,t.costs,t.status ",
+                        " ,case when t.start_name is null then t.start_point else t.start_name end as start_point ",
+                        " ,case when t.dest_name is null then t.dest_point else t.dest_name end as dest_point ",
+                        " ,t.start_name,t.dest_name,t.distance,t.create_date from threads t ",
+                        " left join events_with_threads et on et.thread_id = t.thread_id ",
+                        " where t.user_id = #{user_id} ",
         })
         public List<ThreadsBean> getPassengerEvent(Integer user_id) throws Exception;
 
         @Select({
-                        " select thread_id,user_id,thread_detail,departure_time ",
-                        " ,seats,cost_type,costs,status ",
-                        " ,start_point ",
-                        " ,dest_point ",
-                        " ,start_name,dest_name,distance,create_date from threads ",
-                        " where thread_id = #{thread_id} ",
+                        " select * from threads ",
+                        " where user_id = #{user_id} ",
+        })
+        public List<ThreadsBean> getPassengerEvent2(HashMap<String,Object> param) throws Exception;
+
+        @Select({
+                        " select t.thread_id,u.user_id,u.fullname,t.thread_detail,t.departure_time ",
+                        " ,t.seats,t.cost_type,t.costs,t.status ",
+                        " ,t.start_point ",
+                        " ,t.dest_point ",
+                        " ,t.start_name,t.dest_name,t.distance,t.create_date from threads t ",
+                        " left join users u on u.user_id = t.user_id ",
+                        " where t.thread_id = #{thread_id} ",
         })
         public ThreadsBean getPasEventDetail(Integer thread_id) throws Exception;
+
+        // <user_id> is id of vehicle's owner
+        // <thread_seat> is number of seats require from thread
+        // +1 is number for vehicle's owner
+        @Select({
+                        " select * from vehicles v ",
+                        " inner join licenses l on v.license_id = l.license_id ",
+                        " inner join users u on u.user_id = l.user_id ",
+                        " where u.user_id = #{user_id} and u.role_id != 1  ",
+                        " and (#{thread_seat} + 1 <= v.seats) ",
+        })
+        public List<ThreadsBean> checkVehicleForThread(HashMap<String, Object> params) throws Exception;
 
         // status = 0(open status by default)
         @Insert({
@@ -104,4 +124,7 @@ public interface ThreadsRepository {
 
         @Delete("delete from threads where thread_id = #{thread_id}")
         public void deleteThread(Integer thread_id) throws Exception;
+
+        @Delete("delete from events_with_threads where thread_id = #{thread_id}")
+        public void deleteEventThread(Integer thread_id) throws Exception;
 }

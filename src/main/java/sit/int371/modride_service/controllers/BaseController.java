@@ -9,6 +9,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class BaseController implements Serializable {
+	public static final String AES_ALGORITHM = "AES";
+	public static final String SECRET_KEY = "MoDRideAdmiN.Un2";
 
 	protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 

@@ -17,6 +17,7 @@ import sit.int371.modride_service.beans.EventDetailBean;
 import sit.int371.modride_service.beans.EventMemberBean;
 import sit.int371.modride_service.beans.EventsBean;
 import sit.int371.modride_service.beans.RatingBean;
+import sit.int371.modride_service.beans.ThreadsBean;
 import sit.int371.modride_service.beans.UsersBean;
 import sit.int371.modride_service.beans.VehiclesBean;
 import sit.int371.modride_service.provider.EventsSqlProvider;
@@ -157,6 +158,9 @@ public interface EventsRepository {
 
       @Delete("DELETE FROM event_location WHERE event_id = #{event_id}")
       public void deleteLocation(HashMap<String, Object> params) throws Exception;
+
+      @Delete("DELETE FROM events_with_threads WHERE event_id = #{event_id}")
+      public void deleteEventThread(HashMap<String, Object> params) throws Exception;
 
       @Insert({
                   " INSERT INTO members(event_id,user_id,status) ",
@@ -368,4 +372,26 @@ public interface EventsRepository {
                   " where v.vehicle_id = #{vehicle_id} and u.user_id = #{user_id} ",
       })
       public List<VehiclesBean> CheckVehicleOwner(EventDetailBean bean) throws Exception;
+
+      // Event with Thread -----------------------------------------------------------
+      @Select({
+                  " select thread_id from events_with_threads ",
+                  " where event_id = #{event_id} ",
+      })
+      public ThreadsBean checkEventThread(HashMap<String, Object> params) throws Exception;
+
+      @Insert({
+                  " insert into events_with_threads(event_id,thread_id) ",
+                  " values(#{event_id},#{thread_id}) ",
+      })
+      public void createEventWithThread(EventDetailBean bean) throws Exception;
+
+      @Update({
+                  " update threads set ",
+                  " status = #{status} ",
+                  " where thread_id = #{thread_id}  ",
+      })
+      public void updateThreadStatus(HashMap<String, Object> params) throws Exception;
+
+      // -----------------------------------------------------------------------------
 }

@@ -36,6 +36,7 @@ import sit.int371.modride_service.repositories.EventsRepository;
 import sit.int371.modride_service.repositories.FriendsRepository;
 import sit.int371.modride_service.repositories.ThreadsRepository;
 import sit.int371.modride_service.repositories.VehiclesRepository;
+import sit.int371.modride_service.services.SecureService;
 
 @RestController
 @Validated // ใช้ @Validated ในการ validate request body
@@ -43,6 +44,8 @@ import sit.int371.modride_service.repositories.VehiclesRepository;
 public class ThreadsController extends BaseController {
     @Autowired
     private ThreadsRepository threadsRepository;
+    @Autowired
+    private SecureService secureService;
     // @Autowired
     // private FriendsRepository friendsRepository;
     // @Autowired
@@ -56,7 +59,11 @@ public class ThreadsController extends BaseController {
             @RequestParam(name = "my_id", required = true) Integer my_id) {
         APIResponseBean res = new APIResponseBean();
         try {
-            res.setData(threadsRepository.getAllThreads(my_id));
+            List<ThreadsBean> threadsBean = threadsRepository.getAllThreads(my_id);
+            for (ThreadsBean bean : threadsBean) {
+                bean.setEncrypt_id(secureService.encryptAES(String.valueOf(bean.getUser_id()), SECRET_KEY));
+            }
+            res.setData(threadsBean);
         } catch (Exception e) {
             this.checkException(e, res);
         }
@@ -73,7 +80,11 @@ public class ThreadsController extends BaseController {
         try {
             param.put("thread_id", thread_id);
             param.put("my_id", my_id);
-            res.setData(threadsRepository.getThreadOwner(param));
+            List<EventMemberBean> threadOwnerBeans = threadsRepository.getThreadOwner(param);
+            for (EventMemberBean bean : threadOwnerBeans) {
+                bean.setEncrypt_id(secureService.encryptAES(String.valueOf(bean.getUser_id()), SECRET_KEY));
+            }
+            res.setData(threadOwnerBeans);
         } catch (Exception e) {
             this.checkException(e, res);
         }
@@ -105,6 +116,22 @@ public class ThreadsController extends BaseController {
         // params.put("user_id", user_id);
         try {
             res.setData(threadsRepository.getPasEventDetail(thread_id));
+        } catch (Exception e) {
+            this.checkException(e, res);
+        }
+        return res;
+    }
+
+    @GetMapping("/checkVehicleForThread")
+    public APIResponseBean checkVehicleForThread(HttpServletRequest request,
+            @RequestParam(name = "user_id", required = true) Integer user_id,
+            @RequestParam(name = "thread_seat", required = true) Integer thread_seat) {
+        APIResponseBean res = new APIResponseBean();
+        HashMap<String, Object> params = new HashMap<>();
+        params.put("user_id", user_id);
+        params.put("thread_seat", thread_seat);
+        try {
+            res.setData(threadsRepository.checkVehicleForThread(params));
         } catch (Exception e) {
             this.checkException(e, res);
         }

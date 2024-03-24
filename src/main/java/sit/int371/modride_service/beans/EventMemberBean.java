@@ -9,6 +9,7 @@ public class EventMemberBean {
     private Integer members_id;
     private Integer event_id;
     private Integer user_id;
+    private String encrypt_id;
     private String role_name;
     private String role_check;
     private String faculty_name;

@@ -5,7 +5,9 @@ import lombok.Data;
 @Data
 public class ThreadsBean {
     private Integer thread_id;
+    private Integer event_id;
     private Integer user_id;
+    private String encrypt_id;
     private String fullname;
     private String faculty_name;
     private String branch_name;

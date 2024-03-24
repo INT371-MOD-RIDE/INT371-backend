@@ -9,6 +9,7 @@ import lombok.*;
 @Data
 public class UsersBean {
     private Integer user_id;
+    private String encrypt_id;
     private Integer role_id;
     private String role_name;
     private String role_name_th;

@@ -29,13 +29,16 @@ import sit.int371.modride_service.beans.EventsBean;
 import sit.int371.modride_service.beans.FriendsBean;
 import sit.int371.modride_service.beans.MutualFriendBean;
 import sit.int371.modride_service.beans.RatingBean;
+import sit.int371.modride_service.beans.ThreadsBean;
 import sit.int371.modride_service.beans.UsersBean;
 import sit.int371.modride_service.beans.VehiclesBean;
 import sit.int371.modride_service.dtos.ChangeDTO;
 import sit.int371.modride_service.repositories.EventsRepository;
 import sit.int371.modride_service.repositories.FriendsRepository;
+import sit.int371.modride_service.repositories.ThreadsRepository;
 import sit.int371.modride_service.repositories.UsersRepository;
 import sit.int371.modride_service.repositories.VehiclesRepository;
+import sit.int371.modride_service.services.SecureService;
 
 @RestController
 @Validated // ใช้ @Validated ในการ validate request body
@@ -47,6 +50,11 @@ public class EventsController extends BaseController {
     private FriendsRepository friendsRepository;
     @Autowired
     private VehiclesRepository vehiclesRepository;
+    @Autowired
+    private ThreadsRepository threadsRepository;
+
+    @Autowired
+    private SecureService secureService;
 
     // Get all-events
     @GetMapping("/get")
@@ -56,8 +64,9 @@ public class EventsController extends BaseController {
         try {
             System.out.println("user_id: " + user_id);
             List<EventsBean> eventList = eventsRepository.getAllEvents(user_id);
-
-            // for (EventsBean eventsBean : eventList) {
+            for (EventsBean eventsBean : eventList) {
+                eventsBean.setEncrypt_id(secureService.encryptAES(String.valueOf(eventsBean.getUser_id()), SECRET_KEY));
+            }
             // System.out.println("-----------------------");
             // System.out.println("events-bean: " + eventsBean);
             // FriendsBean friendsBean = new FriendsBean();
@@ -102,6 +111,7 @@ public class EventsController extends BaseController {
             EventDetailBean eventsBean = eventsRepository.getEventsById(params);
             List<EventMemberBean> members = eventsRepository.getEventMembers(params);
             for (EventMemberBean memberBean : members) {
+                memberBean.setEncrypt_id(secureService.encryptAES(String.valueOf(memberBean.getUser_id()), SECRET_KEY));
                 FriendsBean friendsBean = new FriendsBean();
                 friendsBean.setUser_id(user_id);
                 friendsBean.setFriend_id(memberBean.getUser_id());
@@ -210,7 +220,6 @@ public class EventsController extends BaseController {
 
             // bean.setVehicle_id(57);
             // bean.setLicense_plate("กก-1111");
-            params.put("user_id", bean.getUser_id());
             // params.put("brand", bean.getBrand());
             // params.put("model", bean.getModel());
             // params.put("vehicle_type", bean.getVehicle_type());
@@ -240,10 +249,30 @@ public class EventsController extends BaseController {
             // bean.setVehicle_id(params.get("vehicle_id"));
             bean.setSeats(bean.getSeats() - 1);
             eventsRepository.createEvents(bean);
-            params.put("event_id", bean.getEvent_id());
             eventsRepository.createEventLocation(bean);
+            params.put("user_id", bean.getUser_id());
+            params.put("event_id", bean.getEvent_id());
             params.put("status", 1);
             eventsRepository.joinEvent(params);
+
+            if (bean.getIsEventThread()) {
+                // #1 thread_id(ถูกส่งจากหน้าบ้าน) และ event_id(เพิ่งมาจากการสร้าง)
+                eventsRepository.createEventWithThread(bean);
+
+                // #2 update thread status เป็น ongoing(1) ของ thread ที่คู่กับ event
+                // [อาจพิจารณาใช้เป็น ⚠️trigger ค่อยว่ากันอีกที]
+                params.put("thread_id", bean.getThread_id());
+                eventsRepository.updateThreadStatus(params);
+
+                // #3 member ของ thread'owner ต้อง join ด้วย
+                params.put("user_id", bean.getThreadOwnerId());
+                eventsRepository.joinEvent(params);
+
+                // eventWithThread จะ set ลบ seats 2 ที่นั่ง (driver & thread'owner)
+                params.put("join_seat", bean.getSeats() - 1);
+                eventsRepository.editSeats(params);
+            }
+
             res.setData(bean);
         } catch (Exception e) {
             if (params.get("vehicle_id") != null) {
@@ -323,6 +352,16 @@ public class EventsController extends BaseController {
                 eventsRepository.deleteMembers(params);
             }
             eventsRepository.deleteLocation(params);
+
+            // check event_with_thread ถ้ามีให้ set status ของ thread_id = 0
+            ThreadsBean threadsBean = eventsRepository.checkEventThread(params);
+            if (threadsBean != null) {
+                params.put("thread_id", threadsBean.getThread_id());
+                params.put("status", 0);
+                eventsRepository.updateThreadStatus(params);
+            }
+
+            eventsRepository.deleteEventThread(params);
             eventsRepository.deleteEvents(params);
             res.setData(params);
             // res.setResponse_code("200");
@@ -411,6 +450,7 @@ public class EventsController extends BaseController {
             events.forEach(event -> {
                 params.put("event_id", event.getEvent_id());
                 try {
+                    event.setEncrypt_id(secureService.encryptAES(String.valueOf(event.getUser_id()), SECRET_KEY));
                     Integer members = eventsRepository.getMemberCount(params);
                     event.setMember_count(members);
                 } catch (Exception e) {
@@ -432,6 +472,9 @@ public class EventsController extends BaseController {
             // params.put("user_id", request.getAttribute("user_id"));
             params.put("event_id", id);
             List<ChatBean> events = eventsRepository.getChatRoomMember(params);
+            for (ChatBean bean : events) {
+                bean.setEncrypt_id(secureService.encryptAES(String.valueOf(bean.getUser_id()), SECRET_KEY));
+            }
             res.setData(events);
         } catch (Exception e) {
             this.checkException(e, res);
@@ -487,7 +530,7 @@ public class EventsController extends BaseController {
         HashMap<String, Object> params = new HashMap<>();
         try {
             params.put("members_id", id);
-            // params.put("user_id", data.get("user_id"));
+            params.put("user_id", data.get("user_id"));
             params.put("status", data.get("status"));
             params.put("detail", data.get("detail"));
 
@@ -496,6 +539,16 @@ public class EventsController extends BaseController {
             params.put("seats", data.get("seats"));
 
             System.out.println("params: " + params);
+
+            // ถ้าเช็ค thread ด้วย userId แล้วพบ thread จะทำการ delete thread ตัวนั้น
+            List<ThreadsBean> threadList = threadsRepository.getPassengerEvent2(params);
+            if (!threadList.isEmpty()) {
+                for (ThreadsBean threadsBean : threadList) {
+                    threadsRepository.deleteEventThread(threadsBean.getThread_id());
+                    threadsRepository.deleteThread(threadsBean.getThread_id());
+                }
+            }
+
             eventsRepository.responseRequest(params);
             res.setData(params);
         } catch (Exception e) {

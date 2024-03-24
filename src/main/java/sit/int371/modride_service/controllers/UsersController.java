@@ -28,6 +28,7 @@ import sit.int371.modride_service.repositories.EventsRepository;
 import sit.int371.modride_service.repositories.FriendsRepository;
 import sit.int371.modride_service.repositories.OldUserRepository;
 import sit.int371.modride_service.repositories.UsersRepository;
+import sit.int371.modride_service.services.SecureService;
 import sit.int371.modride_service.services.UserService;
 import sit.int371.modride_service.utils.JwtUtility;
 
@@ -49,6 +50,8 @@ public class UsersController extends BaseController {
     private FriendsRepository friendsRepository;
     @Autowired
     private EventsRepository eventsRepository;
+    @Autowired
+    private SecureService secureService;
 
     private Integer passengerId = 1;
     private Integer driverId = 2;
@@ -82,6 +85,7 @@ public class UsersController extends BaseController {
             UsersBean userBean = new UsersBean();
             userBean.setUser_id(user_id);
             UsersBean user = usersRepository.getUserById(userBean);
+            user.setEncrypt_id(secureService.encryptAES(String.valueOf(user_id), SECRET_KEY));
 
             // เมื่อเป็น driver, admin ถึงจะเช็ค
             if (user.getRole_id() == 2 || user.getRole_id() == 3) {
@@ -102,9 +106,14 @@ public class UsersController extends BaseController {
     public APIResponseBean getOtherProfile(HttpServletRequest request, @ModelAttribute UsersBean usersBean) {
         APIResponseBean res = new APIResponseBean();
         try {
-            System.out.println("otherProfile(param): "+usersBean);
+            System.out.println("otherProfile(param): " + usersBean);
+            usersBean.setUser_id(secureService.decryptAES(usersBean.getEncrypt_id(), SECRET_KEY));
             UsersBean otherUser = usersRepository.getOtherUserDetail(usersBean);
-            otherUser.setFriendList(friendsRepository.otherUserFriendList(usersBean));
+            List<UsersBean> otherFriend = friendsRepository.otherUserFriendList(usersBean);
+            for (UsersBean bean : otherFriend) {
+                bean.setEncrypt_id(secureService.encryptAES(String.valueOf(bean.getUser_id()), SECRET_KEY));
+            }
+            otherUser.setFriendList(otherFriend);
             res.setData(otherUser);
         } catch (Exception e) {
             this.checkException(e, res);

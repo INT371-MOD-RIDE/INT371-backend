@@ -9,6 +9,7 @@ import lombok.*;
 public class EventsBean {
     private Integer event_id;
     private Integer user_id;
+    private String encrypt_id;
     private String event_name;
     private Integer status;
     private String event_detail;

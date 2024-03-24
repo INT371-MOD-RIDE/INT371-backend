@@ -12,6 +12,7 @@ public class ChatBean {
     private Integer members_id;
     private Integer reqestStatus;
     private Integer user_id;
+    private String encrypt_id;
     private String fullname;
     private String profile_img_name;
     private String download_url;
