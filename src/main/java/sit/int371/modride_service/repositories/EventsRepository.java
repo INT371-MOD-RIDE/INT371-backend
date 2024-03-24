@@ -394,4 +394,12 @@ public interface EventsRepository {
       public void updateThreadStatus(HashMap<String, Object> params) throws Exception;
 
       // -----------------------------------------------------------------------------
+      
+      @Select({
+            " select count(members_id) ",
+            " from members ",
+            " where user_id = #{user_id} ",
+            " and status = 1 or status = 0 "
+      })
+      public Integer checkJoined(HashMap<String, Object> params) throws Exception;
 }

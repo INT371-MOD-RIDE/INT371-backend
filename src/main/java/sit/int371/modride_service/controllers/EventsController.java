@@ -391,11 +391,15 @@ public class EventsController extends BaseController {
             }
             Integer seatAvailable = eventsRepository.getSeats(params);
             Integer duplicateMember = eventsRepository.checkDuplicateMember(params);
+            Integer joined = eventsRepository.checkJoined(params);
             if (seatAvailable == 0) {
                 res.setResponse_code(UnprocessableContentStatus);
                 res.setResponse_desc("Seat is full");
             } else {
+                // if(joined == 0){
+                // }
                 if (duplicateMember == 0) {
+                    if (joined == 0) {
                     if (params.get("seats") == null) {
                         params.put("join_seat", seatAvailable);
                     } else {
@@ -411,10 +415,20 @@ public class EventsController extends BaseController {
                     }
                     // res.setResponse_code(200); // default มัน 200 อยู่แล้ว ไม่จำเป็นต้อง set
                     res.setResponse_desc("success");
+                    // if(joined == 0){
+                    } else {
+                        res.setResponse_code(UnprocessableContentStatus);
+                        res.setResponse_desc("Already Joined Other Event");
+                    }
+                    // }
                 } else {
                     res.setResponse_code(UnprocessableContentStatus);
                     res.setResponse_desc("Member Already Join Event");
                 }
+                // }else{
+                // res.setResponse_code(UnprocessableContentStatus);
+                // res.setResponse_desc("Member Can Join Only 1 Event");
+                // }
             }
             res.setData(params);
         } catch (Exception e) {
