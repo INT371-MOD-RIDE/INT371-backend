@@ -187,6 +187,11 @@ public interface EventsRepository {
       })
       public List<EventsBean> getEventNotClose(Integer user_id) throws Exception;
 
+      @Select({
+                  " select * from events where status != 3 and user_id = #{user_id} "
+      })
+      public List<EventsBean> getEventNotClose2(HashMap<String, Object> param) throws Exception;
+
       @Update({
                   " UPDATE events SET ",
                   " seats = #{join_seat}, ",
@@ -280,6 +285,15 @@ public interface EventsRepository {
                   " WHERE members_id = #{members_id} "
       })
       public void responseRequest(HashMap<String, Object> params) throws Exception;
+
+      // เก็บไว้ก่อน
+      // @Update({
+      //             " UPDATE members SET ",
+      //             " status = #{status}, ",
+      //             " detail = if( status = 2,#{detail},null) ",
+      //             " WHERE event_id = #{event_id} "
+      // })
+      // public void updateWhenOwnerLeave(HashMap<String, Object> params) throws Exception;
 
       @Select({
                   // " SELECT
@@ -394,12 +408,11 @@ public interface EventsRepository {
       public void updateThreadStatus(HashMap<String, Object> params) throws Exception;
 
       // -----------------------------------------------------------------------------
-      
+
       @Select({
-            " select count(members_id) ",
-            " from members ",
-            " where user_id = #{user_id} ",
-            " and status = 1 or status = 0 "
+                  " select count(members_id) ",
+                  " from members ",
+                  " where (user_id = #{user_id} and status = 1) or (user_id = #{user_id}  and status = 0) "
       })
       public Integer checkJoined(HashMap<String, Object> params) throws Exception;
 }

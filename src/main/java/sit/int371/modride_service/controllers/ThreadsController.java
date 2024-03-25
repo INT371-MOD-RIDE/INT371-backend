@@ -32,6 +32,7 @@ import sit.int371.modride_service.beans.RatingBean;
 import sit.int371.modride_service.beans.ThreadsBean;
 import sit.int371.modride_service.beans.UsersBean;
 import sit.int371.modride_service.beans.VehiclesBean;
+import sit.int371.modride_service.repositories.EventRepository;
 import sit.int371.modride_service.repositories.EventsRepository;
 import sit.int371.modride_service.repositories.FriendsRepository;
 import sit.int371.modride_service.repositories.ThreadsRepository;
@@ -44,6 +45,8 @@ import sit.int371.modride_service.services.SecureService;
 public class ThreadsController extends BaseController {
     @Autowired
     private ThreadsRepository threadsRepository;
+    @Autowired
+    private EventsRepository eventsRepository;
     @Autowired
     private SecureService secureService;
     // @Autowired
@@ -122,8 +125,8 @@ public class ThreadsController extends BaseController {
         return res;
     }
 
-    @GetMapping("/checkVehicleForThread")
-    public APIResponseBean checkVehicleForThread(HttpServletRequest request,
+    @GetMapping("/checkForAcceptThread")
+    public APIResponseBean checkForAcceptThread(HttpServletRequest request, HttpServletResponse response,
             @RequestParam(name = "user_id", required = true) Integer user_id,
             @RequestParam(name = "thread_seat", required = true) Integer thread_seat) {
         APIResponseBean res = new APIResponseBean();
@@ -131,7 +134,24 @@ public class ThreadsController extends BaseController {
         params.put("user_id", user_id);
         params.put("thread_seat", thread_seat);
         try {
-            res.setData(threadsRepository.checkVehicleForThread(params));
+
+            List<EventsBean> eventList = eventsRepository.getEventNotClose2(params);
+            if (eventList.size() > 0) {
+                response.setStatus(UnprocessableContentStatus);
+                res.setResponse_code(UnprocessableContentStatus);
+                res.setResponse_desc("เนื่องจากคุณมีโพสต์\nการเดินทางที่กำลังดำเนินอยู่");
+                return res;
+            }
+
+            List<ThreadsBean> threadList = threadsRepository.checkVehicleForThread(params);
+            if (threadList.size() == 0) {
+                response.setStatus(UnprocessableContentStatus);
+                res.setResponse_code(UnprocessableContentStatus);
+                res.setResponse_desc("เนื่องจากยานพานหนะของคุณ\nไม่เพียงพอต่อจำนวนที่นั่ง");
+                return res;
+            }
+
+            res.setData(threadList);
         } catch (Exception e) {
             this.checkException(e, res);
         }

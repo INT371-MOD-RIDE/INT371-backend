@@ -184,6 +184,14 @@ public class EventsController extends BaseController {
                 return res;
             }
 
+            List<EventsBean> eventList = eventsRepository.getEventNotClose(bean.getUser_id());
+            if (eventList.size() > 0) {
+                response.setStatus(UnprocessableContentStatus);
+                res.setResponse_code(UnprocessableContentStatus);
+                res.setResponse_desc("Cannot create new event due to you're still having unclosed event.");
+                return res;
+            }
+
             // ⚠️ validate: vehicle id is exists ?
             List<VehiclesBean> vehicleList = eventsRepository.CheckVehicle(bean.getVehicle_id());
             if (vehicleList.size() == 0) {
@@ -207,14 +215,6 @@ public class EventsController extends BaseController {
                 res.setResponse_code(UnprocessableContentStatus);
                 res.setResponse_desc(
                         "ไม่สามารถกรอกที่นั่งเท่ากับ 1 ได้ เนื่องจากจำนวนที่นั่งจะถูกลบออกเป็นที่นั่งของผู้ขับขี่");
-                return res;
-            }
-
-            List<EventsBean> eventList = eventsRepository.getEventNotClose(bean.getUser_id());
-            if (eventList.size() > 0) {
-                response.setStatus(UnprocessableContentStatus);
-                res.setResponse_code(UnprocessableContentStatus);
-                res.setResponse_desc("Cannot create new event due to you're still having unclosed event.");
                 return res;
             }
 
@@ -400,22 +400,22 @@ public class EventsController extends BaseController {
                 // }
                 if (duplicateMember == 0) {
                     if (joined == 0) {
-                    if (params.get("seats") == null) {
-                        params.put("join_seat", seatAvailable);
-                    } else {
-                        params.put("join_seat", data.get("seats"));
-                    }
+                        if (params.get("seats") == null) {
+                            params.put("join_seat", seatAvailable);
+                        } else {
+                            params.put("join_seat", data.get("seats"));
+                        }
 
-                    System.out.println("event/seats: " + params);
-                    // ถ้า status เป็น 1 จะเข้า edit-seats
-                    if (params.get("user_id") != null) {
-                        eventsRepository.joinEvent(params);
-                    } else {
-                        eventsRepository.editSeats(params);
-                    }
-                    // res.setResponse_code(200); // default มัน 200 อยู่แล้ว ไม่จำเป็นต้อง set
-                    res.setResponse_desc("success");
-                    // if(joined == 0){
+                        System.out.println("event/seats: " + params);
+                        // ถ้า status เป็น 1 จะเข้า edit-seats
+                        if (params.get("user_id") != null) {
+                            eventsRepository.joinEvent(params);
+                        } else {
+                            eventsRepository.editSeats(params);
+                        }
+                        // res.setResponse_code(200); // default มัน 200 อยู่แล้ว ไม่จำเป็นต้อง set
+                        res.setResponse_desc("success");
+                        // if(joined == 0){
                     } else {
                         res.setResponse_code(UnprocessableContentStatus);
                         res.setResponse_desc("Already Joined Other Event");
@@ -562,6 +562,22 @@ public class EventsController extends BaseController {
                     threadsRepository.deleteThread(threadsBean.getThread_id());
                 }
             }
+
+            // // จัดการ put data "isOwner" สำหรับเช็คว่าเป็นเจ้าของ event
+            // System.out.println("data.get(\"isOwner\"): " + data.get("isOwner"));
+            // if (data.get("isOwner") != null) {
+            // params.put("isOwner", data.get("isOwner"));
+            // } else {
+            // params.put("isOwner", false);
+            // }
+            // System.out.println("params.get(\"isOwner\"): " + params.get("isOwner"));
+            // // เช็คว่าเป็นเจ้าของหรือไม่, จะทำการ set all member status ของ event เป็น 4
+            // if (((Boolean) params.get("isOwner"))) {
+            // eventsRepository.updateWhenOwnerLeave(params);
+            // } else {
+            // // set แค่คนเดียว
+            // eventsRepository.responseRequest(params);
+            // }
 
             eventsRepository.responseRequest(params);
             res.setData(params);
