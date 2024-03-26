@@ -266,6 +266,7 @@ public class EventsController extends BaseController {
 
                 // #3 member ของ thread'owner ต้อง join ด้วย
                 params.put("user_id", bean.getThreadOwnerId());
+                params.put("is_review", 0);
                 eventsRepository.joinEvent(params);
 
                 // eventWithThread จะ set ลบ seats 2 ที่นั่ง (driver & thread'owner)
@@ -409,6 +410,7 @@ public class EventsController extends BaseController {
                         System.out.println("event/seats: " + params);
                         // ถ้า status เป็น 1 จะเข้า edit-seats
                         if (params.get("user_id") != null) {
+                            params.put("is_review", 0);
                             eventsRepository.joinEvent(params);
                         } else {
                             eventsRepository.editSeats(params);
@@ -563,23 +565,37 @@ public class EventsController extends BaseController {
                 }
             }
 
-            // // จัดการ put data "isOwner" สำหรับเช็คว่าเป็นเจ้าของ event
-            // System.out.println("data.get(\"isOwner\"): " + data.get("isOwner"));
-            // if (data.get("isOwner") != null) {
-            // params.put("isOwner", data.get("isOwner"));
-            // } else {
-            // params.put("isOwner", false);
-            // }
-            // System.out.println("params.get(\"isOwner\"): " + params.get("isOwner"));
-            // // เช็คว่าเป็นเจ้าของหรือไม่, จะทำการ set all member status ของ event เป็น 4
-            // if (((Boolean) params.get("isOwner"))) {
-            // eventsRepository.updateWhenOwnerLeave(params);
-            // } else {
-            // // set แค่คนเดียว
-            // eventsRepository.responseRequest(params);
-            // }
+            // จัดการ put data "isOwner" สำหรับเช็คว่าเป็นเจ้าของ event
+            System.out.println("data.get(\"isOwner\"): " + data.get("isOwner"));
+            if (data.get("isOwner") != null) {
+                params.put("isOwner", data.get("isOwner"));
+            } else {
+                params.put("isOwner", false);
+            }
+            System.out.println("params.get(\"isOwner\"): " + params.get("isOwner"));
+            // เช็คว่าเป็นเจ้าของหรือไม่, จะทำการ set all member status ของ event เป็น 4 และ
+            // ++count_travel
+            if (((Boolean) params.get("isOwner"))) {
+                eventsRepository.increaseCountTravel(params);
+                eventsRepository.updateWhenOwnerLeave(params);
+            } else {
+                // set แค่คนเดียว
+                // จะ updateIsReview เมื่อ isTriggerBtn == true
+                if (data.get("isTriggerBtn") != null) {
+                    params.put("isTriggerBtn", data.get("isTriggerBtn"));
+                } else {
+                    params.put("isTriggerBtn", false);
+                }
+                if (((Boolean) params.get("isTriggerBtn"))) {
+                    // เมื่อ normal-member จบ review-flow = count_travel + 1
+                    eventsRepository.increaseCountTravel(params);
+                    eventsRepository.updateIsReview(params);
+                }
 
-            eventsRepository.responseRequest(params);
+                eventsRepository.responseRequest(params);
+            }
+
+            // eventsRepository.responseRequest(params);
             res.setData(params);
         } catch (Exception e) {
             this.checkException(e, res);
@@ -653,6 +669,11 @@ public class EventsController extends BaseController {
             params.put("event_id", event_id);
             params.put("user_id", user_id);
             HashMap<String, Object> owner = eventsRepository.getEventDriver(params);
+
+            // encrypt driverId
+            Integer driverId = (Integer) owner.get("user_id");
+            owner.put("encrypt_id",secureService.encryptAES(String.valueOf(driverId), SECRET_KEY));
+
             Integer getMemberId = eventsRepository.getMemberId(params);
             owner.put("member_id", getMemberId);
             res.setData(owner);
@@ -670,6 +691,21 @@ public class EventsController extends BaseController {
             Integer countRating = eventsRepository.findRating(data);
             System.out.println("countRating: " + countRating);
             HashMap<String, Object> params = new HashMap<>();
+            // user_id นี้ คือ id ของ driver คนที่เราจะ rate
+            params.put("user_id", data.getUser_id());
+            params.put("event_id", data.getEvent_id());
+
+            // จะ updateIsReview เมื่อ isTriggerBtn == true
+            if (data.getIsTriggerBtn()) {
+                // ต้อง replace ด้วย id ของเรา เพื่อเพิ่ม countTravel และ updateIsReview
+                // เป็นอันจบ flow ของ passenger
+                params.put("user_id", data.getMy_id());
+                eventsRepository.increaseCountTravel(params);
+                eventsRepository.updateIsReview(params);
+                // กลับไป set user_id ของ driver ที่เราจะ rate
+                params.put("user_id", data.getUser_id());
+            }
+
             if (countRating > 0) {
                 HashMap<String, Object> rating = eventsRepository.getRating(data);
                 data.setRating_point(Integer.parseInt(rating.get("rating_point").toString()) + data.getRating_point());

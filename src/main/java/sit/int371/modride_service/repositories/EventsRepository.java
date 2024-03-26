@@ -163,8 +163,8 @@ public interface EventsRepository {
       public void deleteEventThread(HashMap<String, Object> params) throws Exception;
 
       @Insert({
-                  " INSERT INTO members(event_id,user_id,status) ",
-                  " VALUES(#{event_id},#{user_id},#{status}) "
+                  " INSERT INTO members(event_id,user_id,status,is_review) ",
+                  " VALUES(#{event_id},#{user_id},#{status},#{is_review}) "
       })
       @Options(useGeneratedKeys = true, keyColumn = "members_id", keyProperty = "members_id")
       public void joinEvent(HashMap<String, Object> params) throws Exception;
@@ -239,6 +239,15 @@ public interface EventsRepository {
                   // owner,e.status ",
                   " select e.event_id,e.event_name,e.status,m.user_id,u.fullname,uf.download_url,e.user_id as owner,m.status as reqStatus,m.members_id  ",
                   // " CASE WHEN e.user_id = m.user_id THEN 'owner' END as owner ",
+                  " ,case  ",
+                  " when exists( ",
+                  "       select u.user_id from users u ",
+                  "       inner join events e on e.user_id = u.user_id ",
+                  "       inner join members m on m.event_id = e.event_id and u.user_id = m.user_id ",
+                  "       where e.event_id = #{event_id} and m.status = 1 ",
+                  " ) then 0 ",
+                  " else 1 end as isOwnerLeft ",
+                  " ,m.is_review ",
                   " from events e ",
                   " left join members m on e.event_id=m.event_id ",
                   " left join users u on m.user_id=u.user_id ",
@@ -286,14 +295,13 @@ public interface EventsRepository {
       })
       public void responseRequest(HashMap<String, Object> params) throws Exception;
 
-      // เก็บไว้ก่อน
-      // @Update({
-      //             " UPDATE members SET ",
-      //             " status = #{status}, ",
-      //             " detail = if( status = 2,#{detail},null) ",
-      //             " WHERE event_id = #{event_id} "
-      // })
-      // public void updateWhenOwnerLeave(HashMap<String, Object> params) throws Exception;
+      @Update({
+                  " UPDATE members SET ",
+                  " status = #{status}, ",
+                  " detail = if( status = 2,#{detail},null) ",
+                  " WHERE event_id = #{event_id} "
+      })
+      public void updateWhenOwnerLeave(HashMap<String, Object> params) throws Exception;
 
       @Select({
                   // " SELECT
@@ -315,10 +323,11 @@ public interface EventsRepository {
       public List<DeniedRequestBean> getDeniedDetail(HashMap<String, Object> params) throws Exception;
 
       @Select({
-                  " select e.user_id,u.fullname,u.role_id,e.event_id,e.event_name,e.status,ra.rating_id ",
+                  " select e.user_id,u.fullname,u.role_id,e.event_id,e.event_name,e.status,ra.rating_id,us.download_url ",
                   " from events e ",
                   " left join users u on e.user_id = u.user_id ",
                   " left join ratings ra on e.user_id = ra.user_id ",
+                  " left join users_files us on us.owner_id = u.user_id ",
                   " where e.event_id = #{event_id} ",
       })
       public HashMap<String, Object> getEventDriver(HashMap<String, Object> params) throws Exception;
@@ -386,6 +395,20 @@ public interface EventsRepository {
                   " where v.vehicle_id = #{vehicle_id} and u.user_id = #{user_id} ",
       })
       public List<VehiclesBean> CheckVehicleOwner(EventDetailBean bean) throws Exception;
+
+      @Update({
+                  " update users ",
+                  " set count_travel = count_travel + 1 ",
+                  " where user_id = #{user_id} ",
+      })
+      public void increaseCountTravel(HashMap<String, Object> params) throws Exception;
+
+      @Update({
+                  " update members  ",
+                  " set is_review = 1 ",
+                  " where event_id = #{event_id} and user_id = #{user_id} ",
+      })
+      public void updateIsReview(HashMap<String, Object> params) throws Exception;
 
       // Event with Thread -----------------------------------------------------------
       @Select({

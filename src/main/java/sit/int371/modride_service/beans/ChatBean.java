@@ -17,4 +17,6 @@ public class ChatBean {
     private String profile_img_name;
     private String download_url;
     private Integer owner;
+    private Boolean is_review;
+    private Boolean isOwnerLeft;
 }

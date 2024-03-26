@@ -13,9 +13,11 @@ public class RatingBean {
     // @NotBlank
     // @NotNull
     private Integer user_id;
-    
+    private Integer my_id;
+
     // @NotBlank(message = "rating_point is required")
     // @NotNull(message = "rating_point is required")
     private Integer rating_point;
     private Integer rating_amount;
+    private Boolean isTriggerBtn = false;
 }

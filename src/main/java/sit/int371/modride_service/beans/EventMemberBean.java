@@ -16,7 +16,7 @@ public class EventMemberBean {
     private String branch_name;
     private String fullname;
     private String download_url;
-    private Integer rate;
+    private String rate;
     private Integer total;
     private Integer status;
     private Integer seats;

@@ -23,6 +23,7 @@ import sit.int371.modride_service.beans.MutualFriendBean;
 import sit.int371.modride_service.beans.UsersBean;
 import sit.int371.modride_service.repositories.FriendsRepository;
 import sit.int371.modride_service.repositories.UsersRepository;
+import sit.int371.modride_service.services.SecureService;
 
 @RestController
 @RequestMapping("/api/v1/friends")
@@ -30,6 +31,8 @@ public class FriendsController extends BaseController {
 
     @Autowired
     private FriendsRepository friendsRepository;
+    @Autowired
+    private SecureService secureService;
 
     private final String pendingStatus = "pending";
     private final String acceptedStatus = "accepted";
@@ -80,6 +83,7 @@ public class FriendsController extends BaseController {
             params.put("user_id", user_id);
             List<UsersBean> friendList = friendsRepository.friendsList(params);
             for (UsersBean usersBean : friendList) {
+                usersBean.setEncrypt_id(secureService.encryptAES(String.valueOf(usersBean.getUser_id()), SECRET_KEY));
                 FriendsBean friendsBean = new FriendsBean();
                 friendsBean.setUser_id(user_id);
                 friendsBean.setFriend_id(usersBean.getUser_id());
@@ -176,13 +180,13 @@ public class FriendsController extends BaseController {
         }
         return res;
     }
-    
+
     @DeleteMapping("/deleteFriend")
     public APIResponseBean deleteFriend(HttpServletRequest request, HttpServletResponse response,
             @RequestBody FriendsBean bean) {
         APIResponseBean res = new APIResponseBean();
         try {
-            
+
             friendsRepository.deleteFriend(bean);
             res.setResponse_code(200);
             res.setResponse_desc("Delete-Friend Success");

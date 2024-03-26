@@ -43,5 +43,7 @@ public class UsersBean {
     // for driver
     private Boolean disablePost;
     private Integer check_thread;
+    private String rate;
+    private Integer total;
 
 }
